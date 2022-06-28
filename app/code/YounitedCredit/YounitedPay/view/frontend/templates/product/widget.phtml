@@ -1,0 +1,158 @@
+<?php
+/**
+ * Copyright since 2022 Younited Credit
+ *
+ * NOTICE OF LICENSE
+ *
+ * This source file is subject to the Academic Free License (AFL 3.0)
+ * that is bundled with this package in the file LICENSE.md.
+ * It is also available through the world-wide-web at this URL:
+ * https://opensource.org/licenses/AFL-3.0
+ * If you did not receive a copy of the license and are unable to
+ * obtain it through the world-wide-web, please send an email
+ * to tech@202-ecommerce.com so we can send you a copy immediately.
+ *
+ * @author     202 ecommerce <tech@202-ecommerce.com>
+ * @copyright 2022 Younited Credit
+ * @license   https://opensource.org/licenses/AFL-3.0  Academic Free License (AFL 3.0)
+ */
+?>
+<?php
+/**
+ * @var $block \YounitedCredit\YounitedPay\Block\Product\Widget
+ */
+?>
+<?php $product = $block->getProduct() ?>
+<?php if ($block->isEnabled() && $product && $product->getId()) : ?>
+    <?php $productPrice = (float)$product->getPrice() ?>
+    <?php $installments = $block->getInstallments($productPrice) ?>
+    <?php if (!is_array($installments)) : ?>
+        <div class="yp-error-notice"><?= $installments ?></div>
+    <?php elseif (!empty($installments)) : ?>
+        <?php $defaultMaturity = 0 ?>
+        <?php $defaultInstallment = 0 ?>
+        <div class="younitedpay-widget-root">
+            <div class="younited_block">
+                <div class="">
+                    <img src="<?= $block->getImageSrc('logo-younitedpay.png') ?>" alt="logo Younited Pay">
+                    <?php $i = 0;
+                    foreach ($installments as $installment => $amount) : ?>
+                        <?php $defaultMaturity = ($i == 0) ? $amount['monthlyInstallmentAmount'] : $defaultMaturity; ?>
+                        <?php $defaultInstallment = ($i == 0) ? $installment : $defaultInstallment; ?>
+                        <div class="maturity_installment <?= ($i == 0) ? 'selected' : '' ?>"
+                             id="maturity_installment<?= $i ?>" data-key="<?= $i ?>"
+                             data-maturity="<?= $amount['monthlyInstallmentAmount'] ?>"
+                             data-installment="x<?= $installment ?>">
+                            <span><?= $installment ?>x</span>
+                        </div>
+                        <?php $i++; endforeach; ?>
+                    <div class="yp-current-installment">
+                        <span><span id="yp-maturity"><?= $defaultMaturity ?></span>€</span>
+                        <span id="yp-installment"><?= $defaultInstallment ?></span>
+                    </div>
+                </div>
+            </div>
+            <div id="younited_popupzone" style="display:none;">
+                <div class="popup-content">
+                    <button id="yp-close-popup">x</button>
+                    <div class="yp-left">
+                        <img class="yp-popup-logo" src="<?= $block->getImageSrc('logo-younitedpay.png') ?>"
+                             alt="youpay">
+                        <div class="yp-left-title">
+                            <h3>Simple.</h3>
+                            <h3>Instantané.</h3>
+                            <h3>Sécurisé.</h3>
+                        </div>
+                        <div class="yp-text">
+                            Cela n’a jamais été aussi simple<br>
+                            de payer en plusieurs fois !
+                        </div>
+                        <div class="yp-link">
+                            Un question ? C'est par <a href="https://www.younited-credit.com/questions-reponses"
+                                                       target="_blank">ici</a>
+                        </div>
+                        <div class="logo-cards">
+                            <img class="yp-h-8 lazyloaded" src="<?= $block->getImageSrc('cb.png') ?>"
+                                 alt="Cartes Bancaires">
+                            <img class="yp-h-8 lazyloaded" src="<?= $block->getImageSrc('visa.png') ?>" alt="Visa">
+                            <img class="yp-h-8 lazyloaded" src="<?= $block->getImageSrc('mastercard.png') ?>"
+                                 alt="Mastercard">
+                        </div>
+                    </div>
+                    <div class="yp-right">
+                        <h4>
+                            Votre achat pour <span id="popup-maturity"><?= $defaultMaturity ?></span>€/mois avec<br>
+                            <span class="yp-purple">Younited Pay</span>
+                        </h4>
+                        <ul>
+                            <?php $i = 0; ?>
+                            <?php $defautAmount = []; ?>
+                            <?php foreach ($installments as $installment => $amount) : ?>
+                                <?php $defautAmount = ($i == 0) ? $amount : $defautAmount ?>
+                                <li class="blocks_maturities_popup <?= ($i == 0) ? 'selected' : '' ?>"
+                                    id="blocks_maturities_popup<?= $i ?>"
+                                    data-key="<?= $i ?>"
+                                    data-maturity="<?= $amount['monthlyInstallmentAmount'] ?>"
+                                    data-amount="<?= $amount['requestedAmount'] ?>"
+                                    data-percent="<?= $amount['annualPercentageRate'] ?>"
+                                    data-debit="<?= $amount['annualDebitRate'] ?>"
+                                    data-total="<?= $amount['creditTotalAmount'] ?>"
+                                    data-interests="<?= $amount['interestsTotalAmount'] ?>">
+                                    <span class=""><?= $installment ?><br/>mois</span>
+                                </li>
+                                <?php $i++; endforeach; ?>
+                        </ul>
+
+                        <p class="info-text">
+                            <span class="yp-dark-purple">Achetez aujourd’hui et commencez à payer </span><br>
+                            <span class="yp-purple">dans 30 jours seulement !</span>
+                        </p>
+
+                        <div class="yp-finance">
+                            <div>
+                                <p class="yp-dark-purple yp-font-normal">Montant du financement</p>
+                                <p class="yp-dark-purple"><span id="yp-amount"><?= $amount['requestedAmount'] ?></span>
+                                    €</p>
+                            </div>
+                            <div>
+                                <p class="yp-dark-purple">+ <span class="yp-font-normal">Coût du paiement</span></p>
+                                <p class="yp-dark-purple"><span
+                                        id="yp-cost"><?= $amount['interestsTotalAmount'] ?></span> €</p>
+                            </div>
+                            <hr/>
+                            <div>
+                                <p class="yp-dark-purple">= Montant total dû</p>
+                                <p class="yp-dark-purple"><span id="yp-total"><?= $amount['creditTotalAmount'] ?></span>
+                                    €</p>
+                            </div>
+                        </div>
+
+                        <div class="yp-tax">
+                            <div><span class="yp-dark-purple">TAEG fixe:&nbsp;&nbsp;<span
+                                        id="yp-percent"><?= $amount['annualPercentageRate'] * 100 ?></span> %</span>
+                            </div>
+                            <div><span class="yp-dark-purple">Taux débiteur fixe:&nbsp;&nbsp;<span
+                                        id="yp-debit"><?= $amount['annualDebitRate'] * 100 ?></span> %</span></div>
+                        </div>
+
+                        <div class="yp-engagement">
+                            Un crédit vous engage et doit
+                            <br>être remboursé. Vérifiez vos
+                            <br>capacités de remboursement
+                            <br>avant de vous engager.
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <script type="text/x-magento-init">
+            {
+                "*": {
+                    "ypwidget" : {}
+                }
+            }
+        </script>
+    <?php endif; ?>
+<?php endif; ?>
+
+

@@ -1,0 +1,323 @@
+/**
+ * Copyright since 2022 Younited Credit
+ *
+ * NOTICE OF LICENSE
+ *
+ * This source file is subject to the Academic Free License (AFL 3.0)
+ * that is bundled with this package in the file LICENSE.md.
+ * It is also available through the world-wide-web at this URL:
+ * https://opensource.org/licenses/AFL-3.0
+ * If you did not receive a copy of the license and are unable to
+ * obtain it through the world-wide-web, please send an email
+ * to tech@202-ecommerce.com so we can send you a copy immediately.
+ *
+ * @author     202 ecommerce <tech@202-ecommerce.com>
+ * @copyright 2022 Younited Credit
+ * @license   https://opensource.org/licenses/AFL-3.0  Academic Free License (AFL 3.0)
+ */
+
+@font-face {
+    font-family: 'RocGrotesk';
+    src: url('../fonts/rocgrotesk/RocGroteskMedium.otf');
+    font-weight: 400;
+    font-style: normal;
+}
+
+@font-face {
+    font-family: 'RocGrotesk';
+    src: url('../fonts/rocgrotesk/RocGroteskBold.otf');
+    font-weight: 700;
+    font-style: normal;
+}
+
+//
+//  Common
+//  _____________________________________________
+& when (@media-common = true) {
+    .yp-error-notice {
+        text-align: center;
+        color: red;
+        font-weight: 700;
+        margin-bottom: 20px;
+    }
+
+    .younitedpay-widget-root {
+        margin-bottom: 20px;
+        padding: 16px 0;
+        border: 1px solid #e2e8f0;
+        background: #fff;
+
+        .maturity_installment {
+            display: inline-block;
+            text-align: center;
+            width: 68px;
+            padding: 14px 0;
+            margin: 0 8px;
+            cursor: pointer;
+            font-size: 22px;
+            border-radius: 2px;
+            background-color: #f4ecff;
+            transition-duration: .5s;
+            transition-property: background-color, border-color, color, fill, stroke;
+
+            &:hover, &.selected {
+                background-color: #c5a1fe;
+            }
+        }
+
+        .yp-current-installment {
+            display: inline-block;
+            font-size: 22px;
+            margin: 0 0 0 8px;
+        }
+    }
+
+    #younited_popupzone {
+        font-family: 'Roboto';
+        font-size: 12px;
+        font-weight: 400;
+        z-index: 1000;
+        position: fixed;
+        top: 0;
+        bottom: 0;
+        left: 0;
+        right: 0;
+        justify-content: center;
+        align-items: center;
+        background-color: #ccc;
+        background-color: #00000077;
+        align-items: center;
+        display: flex;
+        justify-content: center;
+
+        h3 {
+            font-family: "RocGrotesk";
+            font-size: 40px;
+            font-weight: 700;
+            line-height: 58px;
+            letter-spacing: -0.02em;
+            padding-left: 24px;
+            margin: 0;
+        }
+
+        .popup-content {
+            width: 91%;
+            max-width: 896px;
+            height: 670px;
+            position: relative;
+            overflow: auto;
+            max-height: 95vh;
+            font-size: 18px;
+            font-weight: 700;
+            border-radius: 2px;
+            background-color: #fff;
+
+        }
+
+        .yp-left {
+            background-color: #F9F5FF;
+            width: 40%;
+            padding: 32px 5%;
+            float: left;
+
+            img.yp-popup-logo {
+                position: relative;
+                right: 15px;
+                bottom: 15px;
+            }
+
+            .yp-left-title {
+                font-size: 40px;
+                margin: 64px 0 0;
+                padding: 0;
+            }
+
+            .yp-text {
+                padding: 0 0 0 24px;
+                margin: 64px 0 0 0;
+            }
+
+            .yp-link {
+                padding: 0 0 0 24px;
+                margin: 64px 0 0 0;
+                font-weight: 400;
+                color: #7a7a7a;
+                font-size: 15px;
+
+                a {
+                    text-decoration: underline;
+                }
+            }
+
+            .logo-cards {
+                padding: 0 0 0 24px;
+                margin: 28px 0 0 0;
+            }
+        }
+
+        .yp-right {
+            background-color: #fff;
+            width: 40%;
+            padding: 32px 5%;
+            float: left;
+
+            h4 {
+                text-align: center;
+                font-size: 18px;
+                line-height: 22px;
+                margin: 0;
+            }
+
+            ul {
+                list-style: none;
+                justify-content: center;
+                margin: 0;
+
+                li {
+                    transition-property: all;
+                    font-size: 14px;
+                    display: inline-block;
+                    cursor: pointer;
+                    margin: 16px 6px 16px 0;
+                    border: 1px solid #000;
+                    padding: 8px 11px;
+                    text-align: left;
+                    line-height: 17px;
+
+                    &.selected {
+                        background: #000;
+                        color: #fff;
+                    }
+                }
+            }
+
+            p.info-text {
+                padding-top: 16px;
+                font-size: 18px;
+                font-weight: 400;
+            }
+
+            .yp-finance {
+                margin-top: 32px;
+                margin-bottom: 32px;
+
+                p {
+                    margin-bottom: 0;
+                }
+
+                hr {
+                    margin: 0;
+                    padding-bottom: 16px;
+                }
+
+                > div {
+                    padding-bottom: 16px;
+
+                    flex-direction: row;
+                    display: flex;
+                    justify-content: space-between;
+                }
+
+                > div:first-child {
+                    margin-bottom: 8px;
+                    padding-bottom: 0;
+                }
+            }
+
+            .yp-tax {
+                margin-top: 32px;
+                margin-bottom: 32px;
+
+                > div {
+                    flex-direction: row;
+                    display: flex;
+                    justify-content: flex-end;
+                }
+            }
+
+            .yp-engagement {
+                margin-top: 32px;
+                display: flex;
+                background-color: #F4ECFF;
+                color: #000;
+                height: 125px;
+                justify-content: center;
+                align-items: center;
+                line-height: 22px;
+            }
+        }
+
+        .yp-dark-purple {
+            color: #564C5D;
+        }
+
+        .yp-purple {
+            color: #6200fe;
+        }
+
+        .yp-font-normal {
+            font-weight: 400;
+            font-size: 16px!important;
+        }
+
+        #yp-close-popup {
+            cursor: pointer;
+            background-color: transparent;
+            background-image: none;
+            overflow: visible;
+            transition-duration: .1s;
+            transition-property: opacity, font-size;
+            position: absolute;
+            right: 16px;
+            top: 12px;
+            outline: 2px solid transparent;
+            outline-offset: 2px;
+            opacity: .5;
+            font-size: 35px;
+            margin: 0;
+            padding: 0;
+            border: 0;
+
+            &:hover {
+                opacity: 1;
+                font-size: 44px;
+            }
+        }
+    }
+
+}
+
+//
+//  Mobile
+//  _____________________________________________
+.media-width(@extremum, @break) when (@extremum = 'max') and (@break = @screen__xs) {
+
+}
+
+//
+//  Mobile landscape
+//  _____________________________________________
+.media-width(@extremum, @break) when (@extremum = 'max') and (@break = @screen__m) {
+
+}
+
+//
+//  Mobile & tablet
+//  _____________________________________________
+.media-width(@extremum, @break) when (@extremum = 'max') and (@break = @screen__l) {
+
+}
+
+//
+//  Mobile & tablet
+//  _____________________________________________
+.media-width(@extremum, @break) when (@extremum = 'max') and (@break = @screen__l) {
+
+}
+
+//
+//  Desktop only
+//  _____________________________________________
+.media-width(@extremum, @break) when (@extremum = 'min') and (@break = @screen__l) {
+
+}

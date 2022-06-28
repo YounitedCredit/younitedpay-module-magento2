@@ -1,0 +1,204 @@
+<?xml version="1.0" ?>
+<!--
+/**
+ * Copyright since 2022 Younited Credit
+ *
+ * NOTICE OF LICENSE
+ *
+ * This source file is subject to the Academic Free License (AFL 3.0)
+ * that is bundled with this package in the file LICENSE.md.
+ * It is also available through the world-wide-web at this URL:
+ * https://opensource.org/licenses/AFL-3.0
+ * If you did not receive a copy of the license and are unable to
+ * obtain it through the world-wide-web, please send an email
+ * to tech@202-ecommerce.com so we can send you a copy immediately.
+ *
+ * @author     202 ecommerce <tech@202-ecommerce.com>
+ * @copyright 2022 Younited Credit
+ * @license   https://opensource.org/licenses/AFL-3.0  Academic Free License (AFL 3.0)
+ */
+-->
+<config xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="urn:magento:module:Magento_Config:etc/system_file.xsd">
+    <system>
+        <tab id="younited" translate="label" sortOrder="105">
+            <label>Younited</label>
+        </tab>
+        <section id="younited_setup" translate="label" type="text" sortOrder="10" showInDefault="1" showInWebsite="1" showInStore="1">
+            <class>separator-top</class>
+            <label>Setting up</label>
+            <tab>younited</tab>
+            <resource>YounitedCredit_YounitedPay::general_settings</resource>
+            <group id="general" translate="label" type="text" sortOrder="1" showInDefault="1" showInWebsite="1" showInStore="1" >
+                <label>Setting up</label>
+                <field id="text_info_help" translate="label comment" type="text" sortOrder="10" showInDefault="1" showInWebsite="1" showInStore="1">
+                    <frontend_model>YounitedCredit\YounitedPay\Block\Adminhtml\System\Config\Help</frontend_model>
+                    <label><![CDATA[<strong>Account creation/Lifetime help</strong>]]></label>
+                    <comment><![CDATA[Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.
+                    <br /><br />Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat.]]></comment>
+                </field>
+                <field id="text_info_image" translate="label comment" type="text" sortOrder="10" showInDefault="1" showInWebsite="1" showInStore="1">
+                    <frontend_model>YounitedCredit\YounitedPay\Block\Adminhtml\System\Config\Image</frontend_model>
+                    <label>https://i0.wp.com/www.lumosmarketing.io/wp-content/uploads/2019/04/placeholder-image.jpg</label>
+                </field>
+                <field id="text_info_requirments" translate="label comment" type="text" sortOrder="10" showInDefault="1" showInWebsite="1" showInStore="1">
+                    <frontend_model>YounitedCredit\YounitedPay\Block\Adminhtml\System\Config\Requirements</frontend_model>
+                    <label><![CDATA[<strong>Requirements</strong>]]></label>
+                    <comment><![CDATA[Help text]]></comment>
+                </field>
+                <field id="mode" translate="label comment" type="select" sortOrder="10" showInDefault="1" showInStore="1" showInWebsite="1">
+                    <label>Mode</label>
+                    <source_model>YounitedCredit\YounitedPay\Model\Config\Source\Mode</source_model>
+                    <comment>
+                        <![CDATA[ This option defines in witch environment your module is configured. ]]>
+                    </comment>
+                </field>
+                <field id="client_id" translate="label comment" sortOrder="20" type="text" showInDefault="1" showInWebsite="1" showInStore="1">
+                    <label>Client ID</label>
+                    <comment>
+                        <![CDATA[ This information is located in your dashboard: 'Settings' > 'General settings'. ]]>
+                    </comment>
+                </field>
+                <field id="client_secret" translate="label comment" sortOrder="30" type="text" showInDefault="1" showInWebsite="1" showInStore="1">
+                    <label>Client Secret</label>
+                    <comment>
+                        <![CDATA[ This information is located in your dashboard: 'Settings' > 'General settings'. ]]>
+                    </comment>
+                </field>
+                <field id="secret_webhook" translate="label" sortOrder="40" type="text" showInDefault="1" showInWebsite="1" showInStore="1">
+                    <label>Secret webhook</label>
+                </field>
+                <field id="enable_ip_whitelist" translate="label" type="select" sortOrder="50" showInDefault="1" showInStore="1" showInWebsite="1">
+                    <label>Enable IP whitelist</label>
+                    <source_model>Magento\Config\Model\Config\Source\Yesno</source_model>
+                    <comment>
+                        <![CDATA[ This option defines in witch environment your module is configured. ]]>
+                    </comment>
+                </field>
+                <field id="ip_whitelist" translate="label" sortOrder="60" type="text" showInDefault="1" showInWebsite="1" showInStore="1">
+                    <label>IP whitelist</label>
+                    <comment>
+                        <![CDATA[ Comma separated IP list.<br />When enabled, only the listed IPs will see the module’s components on the site. ]]>
+                    </comment>
+                </field>
+            </group>
+        </section>
+        <section id="younited_appearance" translate="label" type="text" sortOrder="20" showInDefault="1" showInWebsite="1" showInStore="1">
+            <class>separator-top</class>
+            <label>Appearance</label>
+            <tab>younited</tab>
+            <resource>YounitedCredit_YounitedPay::general_settings</resource>
+            <group id="general" translate="label" type="text" sortOrder="1" showInDefault="1" showInWebsite="1" showInStore="1">
+                <label>General</label>
+                <field id="display_on_product_page" translate="label comment" type="select" sortOrder="10" showInDefault="1" showInStore="1" showInWebsite="1">
+                    <label>Show monthly installments</label>
+                    <source_model>Magento\Config\Model\Config\Source\Yesno</source_model>
+                    <comment>
+                        <![CDATA[ If you wish only have theses informations on the cart you can select "no" to hide it on product pages. This also disables the widget codes. ]]>
+                    </comment>
+                </field>
+                <field id="product_page_location" translate="label comment" type="select" sortOrder="20" showInDefault="1" showInStore="1" showInWebsite="1">
+                    <label>Monthly installments location</label>
+                    <source_model>YounitedCredit\YounitedPay\Model\Config\Source\Location</source_model>
+                    <comment>
+                        <![CDATA[ These values are locations registered by your current theme, you can choose any of them to place the block where it looks the best. ]]>
+                    </comment>
+                </field>
+                <field id="product_block" translate="label comment" sortOrder="30" type="label" showInDefault="1" showInWebsite="1" showInStore="1">
+                    <label><![CDATA[<strong>Monthly installments block</strong>]]></label>
+                    <comment>
+                        <![CDATA[<strong><input type="text" value='&lt;block class="YounitedCredit\YounitedPay\Block\Product\Widget" name="younited.widget" template="YounitedCredit_YounitedPay::product/widget.phtml" / /&gt;' disabled></strong>
+                        <br />Alernatively you can copy this code and paste it on any text editor or theme file to display the block. ]]>
+                    </comment>
+                </field>
+            </group>
+        </section>
+        <section id="younited_faq" translate="label" type="text" sortOrder="30" showInDefault="1" showInWebsite="1" showInStore="1">
+            <class>separator-top</class>
+            <label>FAQ</label>
+            <tab>younited</tab>
+            <resource>YounitedCredit_YounitedPay::general_settings</resource>
+            <group id="first" translate="label" type="text" sortOrder="1" showInDefault="1" showInWebsite="1" showInStore="1">
+                <label>First question</label>
+                <field id="comment" translate="label comment" sortOrder="10" type="label" showInDefault="1" showInWebsite="1" showInStore="1">
+                    <label><![CDATA[<strong>Get more insights from Magento Business Intelligence</strong>]]></label>
+                    <comment><![CDATA[Magento Business Intelligence provides you with a simple and clear path to
+                    becoming more data driven.</br> Learn more about <a target="_blank"
+                    href="https://dashboard.rjmetrics.com/v2/magento/signup/">Magento BI Essentials and BI Pro</a> tiers.]]></comment>
+                    <frontend_model>YounitedCredit\YounitedPay\Block\Adminhtml\System\Config\AdditionalComment</frontend_model>
+                </field>
+            </group>
+            <group id="second" translate="label" type="text" sortOrder="1" showInDefault="1" showInWebsite="1" showInStore="1">
+                <label>Second question</label>
+                <field id="comment" translate="label comment" sortOrder="10" type="label" showInDefault="1" showInWebsite="1" showInStore="1">
+                    <label><![CDATA[<strong>Get more insights from Magento Business Intelligence</strong>]]></label>
+                    <comment><![CDATA[Magento Business Intelligence provides you with a simple and clear path to
+                    becoming more data driven.</br> Learn more about <a target="_blank"
+                    href="https://dashboard.rjmetrics.com/v2/magento/signup/">Magento BI Essentials and BI Pro</a> tiers.]]></comment>
+                    <frontend_model>YounitedCredit\YounitedPay\Block\Adminhtml\System\Config\AdditionalComment</frontend_model>
+                </field>
+            </group>
+            <group id="third" translate="label" type="text" sortOrder="1" showInDefault="1" showInWebsite="1" showInStore="1">
+                <label>Third question</label>
+                <field id="comment" translate="label comment" sortOrder="10" type="label" showInDefault="1" showInWebsite="1" showInStore="1">
+                    <label><![CDATA[<strong>Get more insights from Magento Business Intelligence</strong>]]></label>
+                    <comment><![CDATA[Magento Business Intelligence provides you with a simple and clear path to
+                    becoming more data driven.</br> Learn more about <a target="_blank"
+                    href="https://dashboard.rjmetrics.com/v2/magento/signup/">Magento BI Essentials and BI Pro</a> tiers.]]></comment>
+                    <frontend_model>YounitedCredit\YounitedPay\Block\Adminhtml\System\Config\AdditionalComment</frontend_model>
+                </field>
+            </group>
+        </section>
+        <section id="payment">
+            <group id="younited" translate="label" type="text" sortOrder="33" showInDefault="1" showInWebsite="1" showInStore="1">
+                <label>Younited Credit</label>
+                <field id="active" translate="label" type="select" sortOrder="1" showInDefault="1" showInWebsite="1" canRestore="1">
+                    <label>Enabled</label>
+                    <source_model>Magento\Config\Model\Config\Source\Yesno</source_model>
+                </field>
+                <field id="order_status" translate="label" type="select" sortOrder="2" showInDefault="1" showInWebsite="1" canRestore="1">
+                    <label>New Order Status</label>
+                    <source_model>Magento\Sales\Model\Config\Source\Order\Status\NewStatus</source_model>
+                </field>
+                <field id="maturities" translate="label" sortOrder="3" showInDefault="1" showInWebsite="1" canRestore="1">
+                    <label>Selected maturities</label>
+                    <frontend_model>YounitedCredit\YounitedPay\Block\Adminhtml\Form\Field\MaturitiesConfig</frontend_model>
+                    <backend_model>YounitedCredit\YounitedPay\Model\System\Config\Backend\Maturities</backend_model>
+                </field>
+                <field id="credit_trigger_status" translate="label comment" type="multiselect" sortOrder="3" showInDefault="1" showInWebsite="1" canRestore="1">
+                    <label>Credit trigger status</label>
+                    <source_model>Magento\Sales\Model\Config\Source\Order\Status</source_model>
+                    <comment>The credit will be activated when the order changes to the selected status.</comment>
+                </field>
+                <field id="sort_order" translate="label" type="text" sortOrder="100" showInDefault="1" showInWebsite="1">
+                    <label>Sort Order</label>
+                    <frontend_class>validate-number</frontend_class>
+                </field>
+                <field id="title" translate="label" type="text" sortOrder="1" showInDefault="1" showInWebsite="1" showInStore="1" canRestore="1">
+                    <label>Title</label>
+                </field>
+                <field id="allowspecific" translate="label" type="allowspecific" sortOrder="50" showInDefault="1" showInWebsite="1" canRestore="1">
+                    <label>Payment from Applicable Countries</label>
+                    <source_model>Magento\Payment\Model\Config\Source\Allspecificcountries</source_model>
+                </field>
+                <field id="specificcountry" translate="label" type="multiselect" sortOrder="51" showInDefault="1" showInWebsite="1">
+                    <label>Payment from Specific Countries</label>
+                    <source_model>Magento\Directory\Model\Config\Source\Country</source_model>
+                    <can_be_empty>1</can_be_empty>
+                </field>
+                <field id="min_order_total" translate="label" type="text" sortOrder="98" showInDefault="1" showInWebsite="1">
+                    <label>Minimum Order Total</label>
+                    <validate>validate-number validate-zero-or-greater</validate>
+                </field>
+                <field id="max_order_total" translate="label" type="text" sortOrder="99" showInDefault="1" showInWebsite="1">
+                    <label>Maximum Order Total</label>
+                    <validate>validate-number validate-zero-or-greater</validate>
+                </field>
+                <field id="flush_cache" translate="label comment" type="button" sortOrder="200" showInDefault="1" showInWebsite="1">
+                    <frontend_model>YounitedCredit\YounitedPay\Block\System\Config\Cache</frontend_model>
+                    <label>Cache</label>
+                    <comment>If you have any problem or the informations in the module aren't up to date you can empty the cache, new data will be fetched automatically.</comment>
+                </field>
+            </group>
+        </section>
+    </system>
+</config>
