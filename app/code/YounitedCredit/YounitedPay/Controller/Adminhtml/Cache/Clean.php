@@ -20,12 +20,7 @@
 namespace YounitedCredit\YounitedPay\Controller\Adminhtml\Cache;
 
 use Magento\Backend\App\Action;
-use Magento\Framework\App\Config\ScopeConfigInterface;
 use Magento\Framework\Controller\ResultFactory;
-use YounitedCredit\YounitedPay\Helper\Config;
-use YounitedPaySDK\Client;
-use YounitedPaySDK\Model\BestPrice;
-use YounitedPaySDK\Request\BestPriceRequest;
 
 /**
  * Class Clean
@@ -35,22 +30,22 @@ use YounitedPaySDK\Request\BestPriceRequest;
 class Clean extends Action
 {
     /**
-     * @var ScopeConfigInterface
+     * @var \Magento\Framework\App\Cache\TypeListInterface
      */
-    protected $scopeConfig;
+    private $cacheTypeList;
 
     /**
      * Clean constructor.
      *
      * @param Action\Context $context
-     * @param ScopeConfigInterface $scopeConfig
+     * @param \Magento\Framework\App\Cache\TypeListInterface $cacheTypeList
      */
     public function __construct(
         Action\Context $context,
-        ScopeConfigInterface $scopeConfig
+        \Magento\Framework\App\Cache\TypeListInterface $cacheTypeList
     ) {
         parent::__construct($context);
-        $this->scopeConfig = $scopeConfig;
+        $this->cacheTypeList = $cacheTypeList;
     }
 
     /**
@@ -58,41 +53,14 @@ class Clean extends Action
      */
     public function execute()
     {
-        $apiMode = $this->scopeConfig->getValue(Config::XML_PATH_API_DEV_MODE, 'store', 1);
-        $clientId = $this->scopeConfig->getValue(Config::XML_PATH_API_CLIENT_ID, 'store', 1);
-        $clientSecret = $this->scopeConfig->getValue(Config::XML_PATH_API_CLIENT_SECRET, 'store', 1);
-
-        if (!$clientId || !$clientSecret) {
-            // @todo foreach continue
+        /**
+         * Clean Magento cache
+         */
+        $types = ['config', 'layout', 'block_html', 'full_page'];
+        foreach ($types as $type) {
+            $this->cacheTypeList->cleanType($type);
         }
-
-
-        \Zend_Debug::dump($apiMode);
-        \Zend_Debug::dump($clientId);
-        \Zend_Debug::dump($clientSecret);
-
-        $client = new Client();
-        $body = new BestPrice();
-        $body->setBorrowedAmount(149.01);
-        $request = (new BestPriceRequest())->enableSandbox()->setModel($body);
-
-        try {
-
-            $response = $client->setCredential($clientId, $clientSecret)->sendRequest($request);
-            if ($response->getStatusCode() === 200) {
-                \Zend_Debug::dump($response->getModel());
-            } else {
-                \Zend_Debug::dump($response->getStatusCode());
-                \Zend_Debug::dump($response->getReasonPhrase());
-                \Zend_Debug::dump($response->getModel());
-            }
-        } catch (Exception $e) {
-            \Zend_Debug::dump('error catched here');
-            echo($e->getMessage() . $e->getFile() . ':' . $e->getLine() . $e->getTraceAsString());
-        }
-
-//        $this->messageManager;
-        die('ok');
+        $this->messageManager->addSuccessMessage(__('The Magento cache storage has been flushed.'));
 
         return $this->defaultRedirect();
     }

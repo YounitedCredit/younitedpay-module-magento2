@@ -19,6 +19,12 @@
 
 namespace YounitedCredit\YounitedPay\Block\Adminhtml\System\Config;
 
+use Magento\Store\Model\ScopeInterface;
+use YounitedCredit\YounitedPay\Helper\Config;
+use YounitedPaySDK\Client;
+use YounitedPaySDK\Model\BestPrice;
+use YounitedPaySDK\Request\BestPriceRequest;
+
 /**
  * Provides field with additional information
  */
@@ -77,7 +83,12 @@ class Requirements extends \Magento\Config\Block\System\Config\Form\Field
         }
         $format .= '<div class="config-younited-server"><span class="' . $isValid . '"></span> SSL & TLS1.2 - ' . $isEnabled . ' on all the shop</div>';
 
-        $format .= '<div class="config-younited-server"><span class="invalid"></span> Connected to Younited API</div>';
+        try {
+            $isValid = $this->isApiConnected() ? 'valid' : 'invalid';
+            $format .= '<div class="config-younited-server"><span class="' . $isValid . '"></span> Connected to Younited API</div>';
+        } catch (\Exception $e) {
+            $format .= '<div class="config-younited-server">Please Check SDK installation: ' . $e->getMessage() . '</div>';
+        }
 
         $format .= '<div class="config-younited-server"><span class="invalid"></span> WebHook contacted</div>';
 
@@ -98,5 +109,49 @@ class Requirements extends \Magento\Config\Block\System\Config\Form\Field
             $element->getHtmlId(),
             $html
         );
+    }
+
+    /**
+     * Check API connection
+     */
+    private function isApiConnected()
+    {
+        $storeId = $this->getRequest()->getParam('store');
+        $websiteId = $this->getRequest()->getParam('website');
+        if (!$storeId && !$websiteId) {
+            return false;
+        }
+
+        if ($storeId) {
+            $apiMode = $this->_scopeConfig->getValue(Config::XML_PATH_API_DEV_MODE, ScopeInterface::SCOPE_STORE, $storeId);
+            $clientId = $this->_scopeConfig->getValue(Config::XML_PATH_API_CLIENT_ID, ScopeInterface::SCOPE_STORE, $storeId);
+            $clientSecret = $this->_scopeConfig->getValue(Config::XML_PATH_API_CLIENT_SECRET, ScopeInterface::SCOPE_STORE, $storeId);
+        } else {
+            $apiMode = $this->_scopeConfig->getValue(Config::XML_PATH_API_DEV_MODE, ScopeInterface::SCOPE_WEBSITE, $websiteId);
+            $clientId = $this->_scopeConfig->getValue(Config::XML_PATH_API_CLIENT_ID, ScopeInterface::SCOPE_WEBSITE, $websiteId);
+            $clientSecret = $this->_scopeConfig->getValue(Config::XML_PATH_API_CLIENT_SECRET, ScopeInterface::SCOPE_WEBSITE, $websiteId);
+        }
+
+        if (!$clientId || !$clientSecret) {
+            return false;
+        }
+
+        $client = new Client();
+        $body = new BestPrice();
+        $body->setBorrowedAmount(149.01);
+
+        if ($apiMode !== 'dev') {
+            $request = (new BestPriceRequest())->setModel($body);
+        } else {
+            $request = (new BestPriceRequest())->enableSandbox()->setModel($body);
+        }
+
+        try {
+            $response = $client->setCredential($clientId, $clientSecret)->sendRequest($request);
+            return ($response->getStatusCode() === 200);
+        } catch (Exception $e) {
+            // Do nothing
+        }
+        return false;
     }
 }

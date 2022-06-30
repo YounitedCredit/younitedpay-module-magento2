@@ -18,21 +18,6 @@
  */
 ?>
 <?php /* @var $block \YounitedCredit\YounitedPay\Block\System\Config\Cache */ ?>
-<script>
-    require([
-        'jquery',
-        'prototype'
-    ], function (jQuery) {
-        var sandboxSpan = jQuery('#younited_span');
-        var CheckThisUrl = '<?= $block->getAjaxUrl() ?>';
-
-        jQuery('#younited_flush_cache').click(function () {
-            // console.log(CheckThisUrl);
-            window.location.href = CheckThisUrl;
-        });
-    });
-</script>
-
 <?= $block->getButtonHtml() ?>
 <span class="sandbox-indicator" id="younited_span">
     <img class="processing" hidden="hidden" alt="processing" style="margin:0 5px"
@@ -45,7 +30,15 @@
 </span>
 
 <script>
-    requirejs(['jquery'], function ($) {
+    require([
+        'jquery'
+    ], function ($) {
+        var cleanCacheUrl = '<?= $block->getCleanCacheUrl() ?>';
+
+        $('#younited_flush_cache').click(function () {
+            window.location.href = cleanCacheUrl;
+        });
+
         const addRowNotice = function (startObservers) {
             $.each($('#payment_fr_younited_maturities').find('tr'), function () {
 
@@ -63,15 +56,16 @@
                         if (startObservers === true) $(this).on('input', addRowNotice);
                     });
 
+                    if (startObservers === true) $(document).on('change',row.find('select'), addRowNotice);
+
                     installment = parseInt(installment)
-                    let from = minAmount / installment
-                    let to = maxAmount / installment
-                    let html = `<div class="maturity-notice">Installments from ${from} €/month. And up to ${to} €/month.</div>`
+                    let from = (minAmount / installment).toFixed(2)
+                    let to = (maxAmount / installment).toFixed(2)
+                    let html = `<div class="maturity-notice"><?= __('Installments from') ?> ${from} <?= __('€/month. And up to') ?> ${to} <?= __('€/month') ?>.</div>`
                     row.append(html);
                 }
             });
         }
-
         addRowNotice(true);
     });
 </script>

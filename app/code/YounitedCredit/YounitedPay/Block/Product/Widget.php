@@ -22,9 +22,6 @@ namespace YounitedCredit\YounitedPay\Block\Product;
 use Magento\Catalog\Api\ProductRepositoryInterface;
 use Magento\Store\Model\ScopeInterface;
 use YounitedCredit\YounitedPay\Helper\Config;
-use YounitedPaySDK\Client;
-use YounitedPaySDK\Model\BestPrice;
-use YounitedPaySDK\Request\BestPriceRequest;
 
 /**
  * Class Widget
@@ -47,6 +44,11 @@ class Widget extends \Magento\Catalog\Block\Product\View
      * @var \YounitedCredit\YounitedPay\Helper\Maturity
      */
     protected $maturityHelper;
+
+    /**
+     * @var float
+     */
+    protected $productPrice;
 
     /**
      * Widget constructor.
@@ -171,60 +173,38 @@ class Widget extends \Magento\Catalog\Block\Product\View
     }
 
     /**
-     * @param $productPrice float
+     * Get installments for spécified price
+     *
+     * @param \Magento\Catalog\Model\Product $product
      *
      * @return array|null
      * @throws \Magento\Framework\Exception\NoSuchEntityException
      */
-    public function getInstallments(float $productPrice)
+    public function getInstallments($product)
     {
-        $maturities = [];
-        $apiMode = $this->getConfig(Config::XML_PATH_API_DEV_MODE);
-        $clientId = $this->getConfig(Config::XML_PATH_API_CLIENT_ID);
-        $clientSecret = $this->getConfig(Config::XML_PATH_API_CLIENT_SECRET);
+        return $this->maturityHelper->getInstallments($this->getProductPrice($product), $this->getStoreCode());
+    }
 
-        if (!$clientId || !$clientSecret) {
-            return __('Please check your Magento configuration client_id and client_secret to enable Younited Credit.');
-        }
-
-        $client = new Client();
-        $body = new BestPrice();
-        $body->setBorrowedAmount($productPrice);
-
-        $request = ($apiMode === 'dev')
-            ? (new BestPriceRequest())->enableSandbox()->setModel($body)
-            : (new BestPriceRequest())->setModel($body);
-
-        try {
-            $response = $client->setCredential($clientId, $clientSecret)->sendRequest($request);
-            if ($response->getStatusCode() !== 200) {
-                return __('Cannot contact Younited Credit API. Status code: %s - %s', $response->getStatusCode(),
-                    $response->getReasonPhrase());
+    /**
+     * @param \Magento\Catalog\Model\Product $product
+     *
+     * @return float
+     */
+    public function getProductPrice($product)
+    {
+        if (!$this->productPrice) {
+            if ($product->getTypeId() == 'configurable') {
+                $this->productPrice = (float)$product->getPriceInfo()->getPrice('regular_price')
+                    ->getMinRegularAmount()->getValue();
+            } else if ($product->getTypeId() == 'bundle') {
+                /** @var \Magento\Bundle\Pricing\Price\BundleRegularPrice $priceInfo */
+                $priceInfo = $product->getPriceInfo()->getPrice('regular_price');
+                $this->productPrice = (float)$priceInfo->getMinimalPrice()->getValue();
+            } else {
+                $this->productPrice = (float)$product->getPrice();
             }
-        } catch (Exception $e) {
-            return __('Exception: ') . $e->getMessage() . $e->getFile() . ':' . $e->getLine() . $e->getTraceAsString();
         }
-
-        $maturityConfig = $this->maturityHelper->getConfigValue($productPrice, $this->getStore()->getCode());
-
-        /** @var \YounitedPaySDK\Model\OfferItem $offers */
-        foreach ($response->getModel() as $offers) {
-            if (!isset($maturityConfig[$offers->getMaturityInMonths()])) {
-                continue;
-            }
-
-            $maturity = $maturityConfig[$offers->getMaturityInMonths()];
-            $maturity['requestedAmount'] = $offers->getRequestedAmount();
-            $maturity['annualPercentageRate'] = $offers->getAnnualPercentageRate();
-            $maturity['annualDebitRate'] = $offers->getAnnualDebitRate();
-            $maturity['monthlyInstallmentAmount'] = $offers->getMonthlyInstallmentAmount();
-            $maturity['creditTotalAmount'] = $offers->getCreditTotalAmount();
-            $maturity['interestsTotalAmount'] = $offers->getInterestsTotalAmount();
-
-            $maturities[$offers->getMaturityInMonths()] = $maturity;
-        }
-
-        return $maturities;
+        return $this->productPrice;
     }
 
     /**

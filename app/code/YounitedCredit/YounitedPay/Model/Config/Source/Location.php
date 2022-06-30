@@ -34,9 +34,10 @@ class Location implements \Magento\Framework\Option\ArrayInterface
     public function toOptionArray()
     {
         return [
-            ['value' => 'product_price_after', 'label' => __('After product price')],
+            ['value' => 'product_price_after', 'label' => __('After products prices')],
             ['value' => 'product_addtocart_after', 'label' => __('After Add To Cart button')],
             ['value' => 'product_informations', 'label' => __('Product Information')],
+            ['value' => 'custom', 'label' => __('Custom')]
         ];
     }
 
@@ -48,9 +49,10 @@ class Location implements \Magento\Framework\Option\ArrayInterface
     public function toArray()
     {
         return [
-            'product_price_after' => __('After product price'),
+            'product_price_after' => __('After products prices'),
             'product_addtocart_after' => __('After Add To Cart button'),
-            'product_informations' => __('In Product Information')
+            'product_informations' => __('Product Information'),
+            'custom' => __('Custom')
         ];
     }
 }

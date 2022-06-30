@@ -80,7 +80,7 @@ class Cache extends Field
      *
      * @return string
      */
-    public function getAjaxUrl()
+    public function getCleanCacheUrl()
     {
         return $this->getUrl('younitedcredit/cache/clean');
     }

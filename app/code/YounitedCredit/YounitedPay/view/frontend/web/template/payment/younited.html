@@ -1,0 +1,85 @@
+<div class="younited payment-method" data-bind="css: {'_active': (getCode() == isChecked())}">
+    <div class="payment-method-title field choice">
+        <input type="radio"
+               name="payment[method]"
+               class="radio"
+               data-bind="attr: {'id': getCode()}, value: getCode(), checked: isChecked, click: selectPaymentMethod, visible: isRadioButtonVisible()"/>
+        <label data-bind="attr: {'for': getCode()}" class="label"><span data-bind="text: getTitle()"></span></label>
+    </div>
+    <div class="payment-method-content">
+        <div class="maturities">
+            <!-- ko foreach: {data: getMaturities(), as: 'maturity'} -->
+            <div class="maturity">
+                <input type="radio"
+                       name="maturity"
+                       class="radio mat_radio"
+                       data-bind="attr: {'id': 'mat_' + maturity.installment}, value: maturity.installment, click:$parent.selectMaturity.bind($data, maturity.installment)"/>
+                <label data-bind="html: maturity.subTitle, attr: {'for': 'mat_' + maturity.installment}"
+                       class="label"></label>
+                <div class="yp-info" data-bind="attr: {'id': 'yp-info-' + maturity.installment}, visible: false">
+                    <p>
+                        <b>
+                            <span data-bind="i18n: 'Total amount due of'"></span>
+                            <span data-bind="text: maturity.creditTotalAmount"></span>€.
+                        </b>
+                        <span data-bind="i18n: 'You pay back'"></span>
+                        <span data-bind="text: maturity.installment"></span>
+                        <b>
+                            <span data-bind="i18n: 'installements of'"></span>
+                            <span data-bind="text: maturity.monthlyInstallmentAmount"></span>€
+                        </b>
+                        <span data-bind="i18n: 'over a period of'"></span>
+                        <span data-bind="text: maturity.installment"></span>
+                        <span data-bind="i18n: 'months'"></span>.
+                    </p>
+                    <p>
+                        <b>
+                            <span data-bind="i18n: 'Fixed Annual Percentage Rate (APR) of'"></span>
+                            <span data-bind="text: maturity.annualPercentageRate"></span>%.
+                        </b>
+                        <br />
+                        <span data-bind="i18n: 'Fixed borrowing rate of'"></span>
+                        <span data-bind="text: maturity.annualDebitRate"></span>%.
+                        <span data-bind="i18n: 'Interest and fees due of'"></span>
+                        <span data-bind="text: maturity.interestsTotalAmount"></span>€.
+                    </p>
+                    <p><b data-bind="i18n: 'Taking out a loan is a commitment with an obligation of repayment. Verify your ability to repay the loan before committing.'"></b></p>
+                    <div class="yp-error messages">
+                        <div class="message-error error message">
+                            <p class="yp-error-phone" data-bind="i18n: 'Cell Phone number is not french and in international format (+33X XX XX XX XX). Please update your phone number of your address and try again.'"></p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <!--/ko-->
+        </div>
+
+        <!-- ko foreach: getRegion('messages') -->
+        <!-- ko template: getTemplate() --><!-- /ko -->
+        <!--/ko-->
+        <div class="payment-method-billing-address">
+            <!-- ko foreach: $parent.getRegion(getBillingAddressFormName()) -->
+            <!-- ko template: getTemplate() --><!-- /ko -->
+            <!--/ko-->
+        </div>
+        <div class="checkout-agreements-block">
+            <!-- ko foreach: $parent.getRegion('before-place-order') -->
+            <!-- ko template: getTemplate() --><!-- /ko -->
+            <!--/ko-->
+        </div>
+        <div class="actions-toolbar">
+            <div class="primary">
+                <button class="action primary checkout"
+                        id="yp-checkout"
+                        type="submit"
+                        data-bind="
+                        click: placeOrder,
+                        attr: {title: $t('Place Order')}
+                        "
+                        disabled>
+                    <span data-bind="i18n: 'Place Order'"></span>
+                </button>
+            </div>
+        </div>
+    </div>
+</div>

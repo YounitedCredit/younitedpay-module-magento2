@@ -21,7 +21,11 @@ namespace YounitedCredit\YounitedPay\Helper;
 
 use Magento\Framework\App\ObjectManager;
 use Magento\Framework\Serialize\Serializer\Json;
+use Magento\Store\Model\ScopeInterface;
 use Magento\Store\Model\Store;
+use YounitedPaySDK\Client;
+use YounitedPaySDK\Model\BestPrice;
+use YounitedPaySDK\Request\BestPriceRequest;
 
 /**
  * MinSaleQty value manipulation helper
@@ -211,7 +215,7 @@ class Maturity
      *
      * @return array|null
      */
-    public function getConfigValue($productPrice, $store = null)
+    public function getConfigValue($productPrice, $store)
     {
         if (!isset($this->maturityCache[$store])) {
             $value = $this->scopeConfig->getValue(
@@ -273,6 +277,75 @@ class Maturity
 
         $value = $this->serializeValue($value);
         return $value;
+    }
+
+    /**
+     * Get installments for spécified price
+     *
+     * @param $price float
+     *
+     * @return array|null
+     * @throws \Magento\Framework\Exception\NoSuchEntityException
+     */
+    public function getInstallments(float $price, $storeCode)
+    {
+        $maturities = [];
+        $apiMode = $this->getConfig(Config::XML_PATH_API_DEV_MODE, $storeCode);
+        $clientId = $this->getConfig(Config::XML_PATH_API_CLIENT_ID, $storeCode);
+        $clientSecret = $this->getConfig(Config::XML_PATH_API_CLIENT_SECRET, $storeCode);
+
+        if (!$clientId || !$clientSecret) {
+            return __('Please check your Magento configuration client_id and client_secret to enable Younited Credit.');
+        }
+
+        $client = new Client();
+        $body = new BestPrice();
+        $body->setBorrowedAmount($price);
+
+        $request = ($apiMode === 'dev')
+            ? (new BestPriceRequest())->enableSandbox()->setModel($body)
+            : (new BestPriceRequest())->setModel($body);
+
+        try {
+            $response = $client->setCredential($clientId, $clientSecret)->sendRequest($request);
+            if ($response->getStatusCode() !== 200) {
+                return __('Cannot contact Younited Credit API. Status code: %s - %s', $response->getStatusCode(),
+                    $response->getReasonPhrase());
+            }
+        } catch (Exception $e) {
+            return __('Exception: ') . $e->getMessage() . $e->getFile() . ':' . $e->getLine() . $e->getTraceAsString();
+        }
+
+        $maturityConfig = $this->getConfigValue($price, $storeCode);
+
+        /** @var \YounitedPaySDK\Model\OfferItem $offers */
+        foreach ($response->getModel() as $offers) {
+            if (!isset($maturityConfig[$offers->getMaturityInMonths()])) {
+                continue;
+            }
+
+            $maturity = $maturityConfig[$offers->getMaturityInMonths()];
+            $maturity['requestedAmount'] = $offers->getRequestedAmount();
+            $maturity['annualPercentageRate'] = $offers->getAnnualPercentageRate();
+            $maturity['annualDebitRate'] = $offers->getAnnualDebitRate();
+            $maturity['monthlyInstallmentAmount'] = $offers->getMonthlyInstallmentAmount();
+            $maturity['creditTotalAmount'] = $offers->getCreditTotalAmount();
+            $maturity['interestsTotalAmount'] = $offers->getInterestsTotalAmount();
+
+            $maturities[$offers->getMaturityInMonths()] = $maturity;
+        }
+
+        return $maturities;
+    }
+
+    /**
+     * @param $path
+     *
+     * @return mixed
+     */
+    public function getConfig($path, $storeCode)
+    {
+        return $this->scopeConfig->getValue($path, ScopeInterface::SCOPE_STORE, $storeCode);
     }
 
     /**

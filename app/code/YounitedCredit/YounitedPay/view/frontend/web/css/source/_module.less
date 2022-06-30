@@ -17,15 +17,15 @@
  */
 
 @font-face {
-    font-family: 'RocGrotesk';
-    src: url('../fonts/rocgrotesk/RocGroteskMedium.otf');
+    font-family: 'Roboto';
+    src: url('../fonts/Roboto/Roboto-Medium.ttf');
     font-weight: 400;
     font-style: normal;
 }
 
 @font-face {
-    font-family: 'RocGrotesk';
-    src: url('../fonts/rocgrotesk/RocGroteskBold.otf');
+    font-family: 'Roboto';
+    src: url('../fonts/Roboto/Roboto-Bold.ttf');
     font-weight: 700;
     font-style: normal;
 }
@@ -42,27 +42,36 @@
     }
 
     .younitedpay-widget-root {
+        font-family: 'Roboto';
         margin-bottom: 20px;
         padding: 16px 0;
-        border: 1px solid #e2e8f0;
         background: #fff;
+
+        .younited_block img {
+            float: left;
+        }
 
         .maturity_installment {
             display: inline-block;
             text-align: center;
-            width: 68px;
-            padding: 14px 0;
-            margin: 0 8px;
+            width: 48px;
+            padding: 6px 0px;
+            margin: 13px 8px;
             cursor: pointer;
             font-size: 22px;
             border-radius: 2px;
-            background-color: #f4ecff;
             transition-duration: .5s;
+            border: 1px solid #c5a1fe;
             transition-property: background-color, border-color, color, fill, stroke;
 
             &:hover, &.selected {
-                background-color: #c5a1fe;
+                border-width: 2px;
+                width: 46px;
             }
+        }
+
+        #yp-current-maturities {
+            display: inline-block;
         }
 
         .yp-current-installment {
@@ -73,7 +82,7 @@
     }
 
     #younited_popupzone {
-        font-family: 'Roboto';
+        color: #000;
         font-size: 12px;
         font-weight: 400;
         z-index: 1000;
@@ -91,10 +100,9 @@
         justify-content: center;
 
         h3 {
-            font-family: "RocGrotesk";
             font-size: 40px;
             font-weight: 700;
-            line-height: 58px;
+            line-height: 48px;
             letter-spacing: -0.02em;
             padding-left: 24px;
             margin: 0;
@@ -103,7 +111,7 @@
         .popup-content {
             width: 91%;
             max-width: 896px;
-            height: 670px;
+            height: 650px;
             position: relative;
             overflow: auto;
             max-height: 95vh;
@@ -111,11 +119,9 @@
             font-weight: 700;
             border-radius: 2px;
             background-color: #fff;
-
         }
 
         .yp-left {
-            background-color: #F9F5FF;
             width: 40%;
             padding: 32px 5%;
             float: left;
@@ -152,6 +158,10 @@
             .logo-cards {
                 padding: 0 0 0 24px;
                 margin: 28px 0 0 0;
+
+                img {
+                    height: 32px;
+                }
             }
         }
 
@@ -257,7 +267,7 @@
 
         .yp-font-normal {
             font-weight: 400;
-            font-size: 16px!important;
+            font-size: 16px
         }
 
         #yp-close-popup {
@@ -281,6 +291,39 @@
             &:hover {
                 opacity: 1;
                 font-size: 44px;
+            }
+        }
+    }
+
+    .younited.payment-method {
+
+        .maturity {
+            clear: both;
+
+            input {
+                margin: 11px 10px 0 0;
+            }
+
+            input,
+            label span {
+                line-height: 35px;
+                display: block;
+                float: left;
+            }
+        }
+
+        .maturities {
+            margin: 0 0 40px;
+        }
+
+        .yp-error {
+
+            .message.error > *:first-child:before {
+                margin: -3px 0 0;
+            }
+
+            p {
+                margin-bottom: 0;
             }
         }
     }
@@ -318,6 +361,8 @@
 //
 //  Desktop only
 //  _____________________________________________
-.media-width(@extremum, @break) when (@extremum = 'min') and (@break = @screen__l) {
-
+.media-width(@extremum, @break) when (@extremum = 'min') and (@break = @screen__m) {
+    body .product.data.items {
+        z-index: 10;
+    }
 }

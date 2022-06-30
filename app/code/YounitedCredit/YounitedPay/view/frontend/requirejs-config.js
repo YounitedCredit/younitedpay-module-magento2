@@ -20,5 +20,12 @@ var config = {
         '*': {
             ypwidget: 'YounitedCredit_YounitedPay/js/ypwidget',
         }
+    },
+    config: {
+        mixins: {
+            'Magento_Checkout/js/view/shipping-address/address-renderer/default': {
+                'YounitedCredit_YounitedPay/js/view/shipping-address/address-renderer/default': true
+            }
+        }
     }
 };

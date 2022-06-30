@@ -59,7 +59,7 @@ class Maturities extends \Magento\Framework\View\Element\Html\Select
         if ($this->_maturities === null) {
             $this->_maturities = [];
             $i = 1;
-            while ($i < $this->maxMaturity) {
+            while ($i <= $this->maxMaturity) {
                 $this->_maturities[$i] = $i . 'x';
                 $i++;
             }
