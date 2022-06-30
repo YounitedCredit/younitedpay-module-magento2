@@ -23,9 +23,9 @@
  */
 ?>
 <?php $product = $block->getProduct() ?>
-<?php if ($block->isEnabled() && $product && $product->getId()) : ?>
+<?php if ($block->isEnabled() && $product && $product->getId() && $product->getTypeId() != 'grouped') : ?>
     <?php $installments = $block->getInstallments($product) ?>
-    <?php if (!is_array($installments)) : ?>
+    <?php if (!is_array($installments) && $block->isDevMode()) : ?>
         <div class="yp-error-notice"><?= $installments ?></div>
     <?php elseif (!empty($installments)) : ?>
         <?php $defaultMaturity = 0 ?>
@@ -83,7 +83,7 @@
                     <div class="yp-right">
                         <h4>
                             <?= __("Your purchase for") ?> <span
-                                id="popup-maturity"><?= $defaultMaturity ?></span>€/<?= __("/month with") ?><br>
+                                id="popup-maturity"><?= $defaultMaturity ?></span>€<?= __("/month with") ?><br>
                             <span class="yp-purple"><?= __("Younited Pay") ?></span>
                         </h4>
                         <ul id="yp-popup-maturities">

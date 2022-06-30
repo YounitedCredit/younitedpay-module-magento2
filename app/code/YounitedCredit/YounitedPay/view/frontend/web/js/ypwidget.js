@@ -59,7 +59,7 @@ define([
                 var price = $(this).find('.price').html()
                 if (typeof price != 'undefined') {
                     var currentPrice = parseFloat($('#yp-widget').data('price')).toFixed(2);
-                    price = price.replace(/[^\d.-]/g, '');
+                    price = price.replace(/[^\d.,-]/g, '');
                     price = parseFloat(price).toFixed(2);
                     if (currentPrice != price) {
                         // @see https://stackoverflow.com/questions/1862130/strip-all-non-numeric-characters-from-string-in-javascript

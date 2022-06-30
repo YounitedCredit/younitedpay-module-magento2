@@ -101,12 +101,25 @@ class Widget extends \Magento\Catalog\Block\Product\View
     }
 
     /**
+     * Check if module is in developper mode
+     *
+     * @return bool
+     */
+    public function isDevMode() {
+        return $this->getConfig(Config::XML_PATH_API_DEV_MODE);
+    }
+
+    /**
      * Check if module is enabled and display allowed
      *
      * @return bool
      */
     public function isEnabled()
     {
+        if ($this->getStore()->getCurrentCurrency()->getCode() !== 'EUR') {
+            return false;
+        }
+
         if (!$this->getConfig(Config::XML_PATH_IS_ACTIVE) || !$this->getConfig(Config::XML_PATH_IS_ON_PRODUCT_PAGE)) {
             return false;
         }

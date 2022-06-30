@@ -30,8 +30,16 @@ class Help extends \Magento\Config\Block\System\Config\Form\Field
      */
     public function render(\Magento\Framework\Data\Form\Element\AbstractElement $element)
     {
-        $html = '<div class="config-additional-comment-title">' . $element->getLabel() . '</div>';
-        $html .= '<div class="config-additional-comment-content">' . $element->getComment() . '</div>';
+        $urlSupport = 'https://github.com/YounitedCredit/younitedpay-module-magento2';
+        $urlBtn = $this->getUrl('adminhtml/system_config/edit', ['section' => 'younited_faq']);
+        $html = '<div class="config-additional-comment-title"><strong>' . $element->getLabel() . '</strong></div>';
+        $html .= '<div class="config-additional-comment-content">
+<p>' . __('Have a question about') . ' <a href="mailto:contact@younited-pay.fr">' . __('Younited Pay') . '</a> ?</p>
+<p>' . __('You can reach a technical team or your account manager from your back office via our ticketing system.') . '</p>
+<p>' . __('If your question concerns technical difficulties with the module, please refer to') . ' <a href="' . $urlSupport . '" target="_blank">' . __('our support team') . '</a></p>
+        </div>';
+        $html .= '<a class="button action-default" target="_blank" href="' . $urlBtn . '">' .
+            __('More informations') . '</a>';
         return $this->decorateRowHtml($element, $html);
     }
 

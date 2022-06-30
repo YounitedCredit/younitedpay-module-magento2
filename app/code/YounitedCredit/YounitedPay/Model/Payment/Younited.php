@@ -31,6 +31,10 @@ use Magento\Quote\Api\Data\PaymentInterface;
 class Younited extends \Magento\Payment\Model\Method\AbstractMethod
 {
     /**
+     * @var \Magento\Store\Model\StoreManagerInterface
+     */
+    protected $storeManager;
+    /**
      * @var string
      */
     protected $_formBlockType = \Magento\Payment\Block\Form\Cc::class;
@@ -39,16 +43,6 @@ class Younited extends \Magento\Payment\Model\Method\AbstractMethod
      * @var string
      */
     protected $_infoBlockType = \Magento\Payment\Block\Info\Cc::class;
-
-    /**
-     * @var \Magento\Framework\Module\ModuleListInterface
-     */
-    protected $_moduleList;
-
-    /**
-     * @var \Magento\Framework\Stdlib\DateTime\TimezoneInterface
-     */
-    protected $_localeDate;
 
 
     protected $_isGateway = true;
@@ -78,10 +72,9 @@ class Younited extends \Magento\Payment\Model\Method\AbstractMethod
      * @param \Magento\Payment\Helper\Data $paymentData
      * @param \Magento\Framework\App\Config\ScopeConfigInterface $scopeConfig
      * @param \Magento\Payment\Model\Method\Logger $logger
-     * @param \Magento\Framework\Module\ModuleListInterface $moduleList
-     * @param \Magento\Framework\Stdlib\DateTime\TimezoneInterface $localeDate
-     * @param \Magento\Directory\Model\CountryFactory $countryFactory
+     * @param \Magento\Store\Model\StoreManagerInterface $storeManager
      * @param array $data
+     * @param DirectoryHelper|null $directory
      */
     public function __construct(
         \Magento\Framework\Model\Context $context,
@@ -91,9 +84,7 @@ class Younited extends \Magento\Payment\Model\Method\AbstractMethod
         \Magento\Payment\Helper\Data $paymentData,
         \Magento\Framework\App\Config\ScopeConfigInterface $scopeConfig,
         \Magento\Payment\Model\Method\Logger $logger,
-        \Magento\Framework\Module\ModuleListInterface $moduleList,
-        \Magento\Framework\Stdlib\DateTime\TimezoneInterface $localeDate,
-        \Magento\Directory\Model\CountryFactory $countryFactory,
+        \Magento\Store\Model\StoreManagerInterface $storeManager,
         array $data = [],
         DirectoryHelper $directory = null
     ) {
@@ -102,10 +93,8 @@ class Younited extends \Magento\Payment\Model\Method\AbstractMethod
             null, null, $data, $directory
         );
 
-        $this->_moduleList = $moduleList;
-        $this->_localeDate = $localeDate;
+        $this->storeManager = $storeManager;
 
-        $this->_countryFactory = $countryFactory;
         $this->_minAmount = $this->getConfigData('min_order_total');
         $this->_maxAmount = $this->getConfigData('max_order_total');
     }
@@ -128,22 +117,17 @@ class Younited extends \Magento\Payment\Model\Method\AbstractMethod
 
         $info = $this->getInfoInstance();
 
-        $info->setAdditionalInformation('test', 'okTEST');
-        $info->setTestInfo('okTEST2');
-        $errorMsg = false;
+//        $errorMsg = false;
+//        $errorMsg = __('Not a valid currency');
 
         // remove credit card number delimiters such as "-" and space
 //        $ccNumber = $info->getCcNumber();
 //        $ccNumber = preg_replace('/[\-\s]+/', '', $ccNumber);
 //        $info->setCcNumber($ccNumber);
 
-//        if ($ccType != 'SS' && !$this->_validateExpDate($info->getCcExpYear(), $info->getCcExpMonth())) {
-//            $errorMsg = __('Please enter a valid credit card expiration date.');
+//        if ($errorMsg) {
+//            throw new \Magento\Framework\Exception\LocalizedException($errorMsg);
 //        }
-
-        if ($errorMsg) {
-            throw new \Magento\Framework\Exception\LocalizedException($errorMsg);
-        }
 
         return $this;
     }
@@ -242,16 +226,7 @@ class Younited extends \Magento\Payment\Model\Method\AbstractMethod
         $info = $this->getInfoInstance();
         $info->addData(
             [
-                'cc_type' => $additionalData->getCcType(),
-                'cc_owner' => $additionalData->getCcOwner(),
-                'cc_last_4' => substr($additionalData->getCcNumber(), -4),
-                'cc_number' => $additionalData->getCcNumber(),
-                'cc_cid' => $additionalData->getCcCid(),
-                'cc_exp_month' => $additionalData->getCcExpMonth(),
-                'cc_exp_year' => $additionalData->getCcExpYear(),
-                'cc_ss_issue' => $additionalData->getCcSsIssue(),
-                'cc_ss_start_month' => $additionalData->getCcSsStartMonth(),
-                'cc_ss_start_year' => $additionalData->getCcSsStartYear()
+                'yp-data' => 'test OK'
             ]
         );
 
@@ -267,7 +242,16 @@ class Younited extends \Magento\Payment\Model\Method\AbstractMethod
      */
     public function isAvailable(\Magento\Quote\Api\Data\CartInterface $quote = null)
     {
+        if (!$quote) return false;
+
+        try {
+            $code = $this->storeManager->getStore($quote->getStoreId())->getCurrentCurrency()->getCode();
+            if ($code != 'EUR') return false;
+        } catch (\Exception $e) {
+            return false;
+        }
+
+        //        return $this->getConfigData('active', $quote ? $quote->getStoreId() : null) && parent::isAvailable($quote);
         return parent::isAvailable($quote);
-//        return $this->getConfigData('active', $quote ? $quote->getStoreId() : null) && parent::isAvailable($quote);
     }
 }

@@ -50,14 +50,17 @@
 
 }
 
+#payment_us_younited_maturities tbody tr,
 #payment_fr_younited_maturities tbody tr {
     position: relative;
 }
 
+#payment_us_younited_maturities tbody tr td,
 #payment_fr_younited_maturities tbody tr td {
     padding-bottom: 40px;
 }
 
+#payment_us_younited_maturities tbody tr .maturity-notice,
 #payment_fr_younited_maturities tbody tr .maturity-notice {
     position: absolute;
     bottom: 14px;
@@ -67,4 +70,17 @@
 #row_younited_setup_general_text_info_image img {
     margin: 0 auto;
     display: block;
+}
+
+.config-younited-comment .config-additional-comment-title {
+    margin: 40px 0;
+}
+
+.config-younited-comment .config-additional-comment-content p {
+    margin: 0 0 25px;
+}
+
+.config-younited-comment a.button {
+    float: right;
+    margin: 20px 0 0;
 }

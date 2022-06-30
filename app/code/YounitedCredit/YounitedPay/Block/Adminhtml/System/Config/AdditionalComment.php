@@ -30,7 +30,7 @@ class AdditionalComment extends \Magento\Config\Block\System\Config\Form\Field
      */
     public function render(\Magento\Framework\Data\Form\Element\AbstractElement $element)
     {
-        $html = '<div class="config-additional-comment-title">' . $element->getLabel() . '</div>';
+        $html = $element->getLabel() ? '<div class="config-additional-comment-title"><strong>' . $element->getLabel() . '</strong></div>' : '';
         $html .= '<div class="config-additional-comment-content">' . $element->getComment() . '</div>';
         return $this->decorateRowHtml($element, $html);
     }

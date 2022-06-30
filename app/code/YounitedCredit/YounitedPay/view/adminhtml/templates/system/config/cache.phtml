@@ -40,7 +40,12 @@
         });
 
         const addRowNotice = function (startObservers) {
-            $.each($('#payment_fr_younited_maturities').find('tr'), function () {
+            var elem = $('#payment_us_younited_maturities');
+            if ($('#payment_fr_younited_maturities').length > 0) {
+                elem = $('#payment_fr_younited_maturities');
+            }
+
+            $.each(elem.find('tr'), function () {
 
                 let row = $(this);
                 row.find('.maturity-notice').remove()
