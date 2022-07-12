@@ -137,8 +137,7 @@
             <group id="third" translate="label" type="text" sortOrder="1" showInDefault="1" showInWebsite="1" showInStore="1">
                 <label>What information should I add to my General Terms and Conditins (GTC) ?</label>
                 <field id="comment" translate="label comment" sortOrder="10" type="label" showInDefault="1" showInWebsite="1" showInStore="1">
-                    <comment><![CDATA[todo]]></comment>
-                    <frontend_model>YounitedCredit\YounitedPay\Block\Adminhtml\System\Config\AdditionalComment</frontend_model>
+                    <frontend_model>YounitedCredit\YounitedPay\Block\Adminhtml\System\Config\Gtc</frontend_model>
                 </field>
             </group>
             <group id="fourth" translate="label" type="text" sortOrder="1" showInDefault="1" showInWebsite="1" showInStore="1">
@@ -151,7 +150,7 @@
             <group id="fifth" translate="label" type="text" sortOrder="1" showInDefault="1" showInWebsite="1" showInStore="1">
                 <label>How are refunds processed ?</label>
                 <field id="comment" translate="label comment" sortOrder="10" type="label" showInDefault="1" showInWebsite="1" showInStore="1">
-                    <comment><![CDATA[todo]]></comment>
+                    <comment><![CDATA[There are two possibilities of refund: total and partial. These requests can be made directly from the back office of your Magento.<br />You have just to create a Credit Memo from the Order page.<br />Partial refund can be done too, but order need to be shipped before.]]></comment>
                     <frontend_model>YounitedCredit\YounitedPay\Block\Adminhtml\System\Config\AdditionalComment</frontend_model>
                 </field>
             </group>
@@ -166,31 +165,34 @@
         <section id="payment">
             <group id="younited" translate="label" type="text" sortOrder="33" showInDefault="1" showInWebsite="1" showInStore="1">
                 <label>Younited Credit</label>
-                <field id="active" translate="label" type="select" sortOrder="1" showInDefault="1" showInWebsite="1" canRestore="1" showInStore="1">
+                <field id="yp_note" translate="label" type="label" sortOrder="1" showInDefault="1" showInWebsite="0" showInStore="0">
+                    <comment><![CDATA[<span style='color:red'><b>Younited Credit</b> can only be configured in WEBSITE or STORE VIEW, please select in the top-left menu the WEBSITE or STORE VIEW that you want to configure.</span>]]></comment>
+                </field>
+                <field id="active" translate="label" type="select" sortOrder="1" showInDefault="0" showInWebsite="1" canRestore="1" showInStore="1">
                     <label>Enabled</label>
                     <source_model>Magento\Config\Model\Config\Source\Yesno</source_model>
                 </field>
-                <field id="order_status" translate="label" type="select" sortOrder="2" showInDefault="1" showInWebsite="1" canRestore="1" showInStore="1">
-                    <label>New Order Status</label>
-                    <source_model>Magento\Sales\Model\Config\Source\Order\Status\NewStatus</source_model>
+                <field id="title" translate="label" type="text" sortOrder="5" showInDefault="1" showInWebsite="1" showInStore="1" canRestore="1">
+                    <label>Title</label>
                 </field>
-                <field id="maturities" translate="label" sortOrder="3" showInDefault="1" showInWebsite="1" canRestore="1" showInStore="1">
+                <field id="maturities" translate="label" sortOrder="10" showInDefault="0" showInWebsite="1" canRestore="1" showInStore="1">
                     <label>Selected maturities</label>
                     <comment>To keep your site cluter free you should select a maximum of 3 maturities.</comment>
                     <frontend_model>YounitedCredit\YounitedPay\Block\Adminhtml\Form\Field\MaturitiesConfig</frontend_model>
                     <backend_model>YounitedCredit\YounitedPay\Model\System\Config\Backend\Maturities</backend_model>
                 </field>
-                <field id="credit_trigger_status" translate="label comment" type="multiselect" sortOrder="3" showInDefault="1" showInWebsite="1" canRestore="1">
+                <field id="order_status_processing" translate="label" type="select" sortOrder="15" showInDefault="1" showInWebsite="1" canRestore="1" showInStore="1">
+                    <label>New Order Status</label>
+                    <source_model>Magento\Sales\Model\Config\Source\Order\Status\Processing</source_model>
+                </field>
+                <field id="text_info_credit_trigger_status" translate="comment" type="text" sortOrder="20" showInDefault="1" showInWebsite="1" showInStore="1">
+                    <frontend_model>YounitedCredit\YounitedPay\Block\Adminhtml\System\Config\InfoTriggerStatus</frontend_model>
+                    <comment>By law you the credit must only be triggered once the products are shipped to the customer.</comment>
+                </field>
+                <field id="credit_trigger_status" translate="label comment" type="multiselect" sortOrder="21" showInDefault="1" showInWebsite="1" canRestore="1">
                     <label>Credit activation status</label>
                     <source_model>Magento\Sales\Model\Config\Source\Order\Status</source_model>
                     <comment>The credit will be activated when the order changes to the selected status.</comment>
-                </field>
-                <field id="sort_order" translate="label" type="text" sortOrder="100" showInDefault="1" showInWebsite="1">
-                    <label>Sort Order</label>
-                    <frontend_class>validate-number</frontend_class>
-                </field>
-                <field id="title" translate="label" type="text" sortOrder="1" showInDefault="1" showInWebsite="1" showInStore="1" canRestore="1">
-                    <label>Title</label>
                 </field>
                 <field id="allowspecific" translate="label" type="allowspecific" sortOrder="50" showInDefault="1" showInWebsite="1" canRestore="1">
                     <label>Payment from Applicable Countries</label>
@@ -201,13 +203,9 @@
                     <source_model>Magento\Directory\Model\Config\Source\Country</source_model>
                     <can_be_empty>1</can_be_empty>
                 </field>
-                <field id="min_order_total" translate="label" type="text" sortOrder="98" showInDefault="1" showInWebsite="1" showInStore="1">
-                    <label>Minimum Order Total</label>
-                    <validate>validate-number validate-zero-or-greater</validate>
-                </field>
-                <field id="max_order_total" translate="label" type="text" sortOrder="99" showInDefault="1" showInWebsite="1" showInStore="1">
-                    <label>Maximum Order Total</label>
-                    <validate>validate-number validate-zero-or-greater</validate>
+                <field id="sort_order" translate="label" type="text" sortOrder="100" showInDefault="1" showInWebsite="1">
+                    <label>Sort Order</label>
+                    <frontend_class>validate-number</frontend_class>
                 </field>
                 <field id="flush_cache" translate="label comment" type="button" sortOrder="200" showInDefault="1" showInWebsite="1" showInStore="1">
                     <frontend_model>YounitedCredit\YounitedPay\Block\System\Config\Cache</frontend_model>

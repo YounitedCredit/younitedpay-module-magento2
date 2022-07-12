@@ -19,11 +19,9 @@
 
 namespace YounitedCredit\YounitedPay\Controller\Ajax;
 
-use Magento\Catalog\Controller\Product;
 use Magento\Framework\App\Action\Context;
 use Magento\Framework\Controller\Result\JsonFactory;
 use Magento\Framework\View\LayoutFactory;
-use function str_replace;
 
 /**
  * Class Maturity
@@ -53,12 +51,13 @@ class Maturity extends \Magento\Framework\App\Action\Action
     protected $maturityHelper;
 
     /**
-     * Shop constructor.
+     * Maturity constructor.
      *
      * @param Context $context
      * @param JsonFactory $jsonResultFactory
      * @param LayoutFactory $layoutFactory
      * @param \Magento\Framework\View\Result\LayoutFactory $resultLayoutFactory
+     * @param \YounitedCredit\YounitedPay\Helper\Maturity $maturityHelper
      */
     public function __construct(
         Context $context,

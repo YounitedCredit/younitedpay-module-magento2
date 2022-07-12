@@ -17,23 +17,21 @@
  * @license   https://opensource.org/licenses/AFL-3.0  Academic Free License (AFL 3.0)
  */
 
-namespace YounitedCredit\YounitedPay\Model\ResourceModel\Maturity;
+namespace YounitedCredit\YounitedPay\Controller\Contract;
 
 /**
- * Class Collection
+ * Class Canceled
  *
- * @package YounitedCredit\YounitedPay\Model\ResourceModel\Maturity
+ * @package YounitedCredit\YounitedPay\Controller\Contract
  */
-class Collection extends \Magento\Framework\Model\ResourceModel\Db\Collection\AbstractCollection
+class Canceled extends \YounitedCredit\YounitedPay\Controller\Contract
 {
     /**
-     * @var string
+     * @return \Magento\Framework\App\ResponseInterface|\Magento\Framework\Controller\Result\Redirect|\Magento\Framework\Controller\ResultInterface
+     * @throws \Magento\Framework\Exception\NoSuchEntityException
      */
-    protected $_idFieldName = 'maturity_id';
-
-    protected function _construct()
+    public function execute()
     {
-        $this->_init('YounitedCredit\YounitedPay\Model\Maturity',
-            'YounitedCredit\YounitedPay\Model\ResourceModel\Maturity');
+        return $this->redirectToCart(__('Payment refused, or error occurs during validation. Please try again.'));
     }
 }

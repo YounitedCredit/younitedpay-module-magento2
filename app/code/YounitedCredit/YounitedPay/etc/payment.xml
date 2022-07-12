@@ -20,8 +20,8 @@
 -->
 <payment xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="urn:magento:module:Magento_Payment:etc/payment.xsd">
     <groups>
-        <group id="offline">
-            <label>Test Payment Methods</label>
+        <group id="younitedcredit">
+            <label>Younited Credit</label>
         </group>
     </groups>
     <methods>

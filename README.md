@@ -4,7 +4,7 @@ The **Younited Credit module for Magento 2** is a PHP module which allows you to
 
 ## Getting started
 
-- Install SDK using composer: `composer require 202ecommerce/younitedpay-sdk:dev-develop`
+- Install SDK using composer: `composer require 202ecommerce/younitedpay-sdk:dev-develop --with-all-dependencies`
 - Copy/Paste module files to your Magento root directory
 - Run: `php bin/magento setup:upgrade`
 - Run: `php bin/magento setup:static-content:deploy`

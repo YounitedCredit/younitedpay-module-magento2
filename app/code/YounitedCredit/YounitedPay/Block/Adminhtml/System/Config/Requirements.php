@@ -90,12 +90,13 @@ class Requirements extends \Magento\Config\Block\System\Config\Form\Field
             $format .= '<div class="config-younited-server">Please Check SDK installation: ' . $e->getMessage() . '</div>';
         }
 
-        $format .= '<div class="config-younited-server"><span class="invalid"></span> WebHook contacted</div>';
+        $isValid = $this->isWebhookConnected() ? 'valid' : 'invalid';
+        $format .= '<div class="config-younited-server"><span class="' . $isValid . '"></span> WebHook contacted</div>';
 
         if ($this->getRequest()->getParam('store')) {
-            $mode = $this->_scopeConfig->getValue("younited_setup/general/mode", 'store', $this->getRequest()->getParam('store'));
+            $mode = $this->_scopeConfig->getValue("younited_setup/general/mode", ScopeInterface::SCOPE_STORE, $this->getRequest()->getParam('store'));
         } else if ($this->getRequest()->getParam('website')) {
-            $mode = $this->_scopeConfig->getValue("younited_setup/general/mode", 'website', $this->getRequest()->getParam('website'));
+            $mode = $this->_scopeConfig->getValue("younited_setup/general/mode", ScopeInterface::SCOPE_WEBSITE, $this->getRequest()->getParam('website'));
         } else {
             $mode = $this->_scopeConfig->getValue("younited_setup/general/mode");
         }
@@ -109,6 +110,26 @@ class Requirements extends \Magento\Config\Block\System\Config\Form\Field
             $element->getHtmlId(),
             $html
         );
+    }
+
+    /**
+     * Check API connection
+     */
+    private function isWebhookConnected()
+    {
+        $storeId = $this->getRequest()->getParam('store');
+        $websiteId = $this->getRequest()->getParam('website');
+        if (!$storeId && !$websiteId) {
+            return false;
+        }
+
+        if ($storeId) {
+            $webHookValue = $this->_scopeConfig->getValue(Config::XML_PATH_API_SECRET_WEBHOOK, ScopeInterface::SCOPE_STORE, $storeId);
+        } else {
+            $webHookValue = $this->_scopeConfig->getValue(Config::XML_PATH_API_SECRET_WEBHOOK, ScopeInterface::SCOPE_WEBSITE, $websiteId);
+        }
+
+        return $webHookValue;
     }
 
     /**

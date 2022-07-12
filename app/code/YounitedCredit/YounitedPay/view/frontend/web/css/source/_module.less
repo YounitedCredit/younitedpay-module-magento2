@@ -47,8 +47,20 @@
         padding: 16px 0;
         background: #fff;
 
-        .younited_block img {
-            float: left;
+        #younited_block {
+            position: relative;
+
+            .loading-mask {
+                position: absolute;
+
+                img {
+                    position: absolute;
+                }
+            }
+
+            img {
+                float: left;
+            }
         }
 
         .maturity_installment {

@@ -63,8 +63,9 @@
 #payment_us_younited_maturities tbody tr .maturity-notice,
 #payment_fr_younited_maturities tbody tr .maturity-notice {
     position: absolute;
-    bottom: 14px;
+    bottom: 7px;
     left: 20px;
+    font-size: 12px;
 }
 
 #row_younited_setup_general_text_info_image img {
@@ -83,4 +84,8 @@
 .config-younited-comment a.button {
     float: right;
     margin: 20px 0 0;
+}
+
+.config-additional-info {
+
 }

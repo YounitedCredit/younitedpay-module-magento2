@@ -66,7 +66,11 @@
                     installment = parseInt(installment)
                     let from = (minAmount / installment).toFixed(2)
                     let to = (maxAmount / installment).toFixed(2)
-                    let html = `<div class="maturity-notice"><?= __('Installments from') ?> ${from} <?= __('€/month. And up to') ?> ${to} <?= __('€/month') ?>.</div>`
+                    let html = `<div class="maturity-notice">`
+                    html += `<?= __('Installments from') ?> ${from} <?= __('€/month. And up to') ?> ${to} <?= __('€/month') ?>.`
+                    html += `<br />`
+                    html += `<?= __('Reminder: the minimum monthly payment is 9.99 euros / month') ?>`
+                    html += `</div>`
                     row.append(html);
                 }
             });

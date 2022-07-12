@@ -8,20 +8,20 @@
 <page xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="urn:magento:framework:View/Layout/etc/page_configuration.xsd">
 <body>
     <attribute name="class" value="page-product-bundle"/>
-    <referenceContainer name="product.info.main">
-        <block class="YounitedCredit\YounitedPay\Block\Product\Widget" name="afterprice.younited.widget"
-               as="afterPriceWidget" template="YounitedCredit_YounitedPay::product/widget.phtml" before="customize.button">
+    <referenceBlock name="bundle.summary">
+        <block class="YounitedCredit\YounitedPay\Block\Product\Widget" name="bundle.afterprice.younited.widget"
+               as="afterPriceWidget" template="YounitedCredit_YounitedPay::product/widget.phtml" before="product.info.addto.bundle">
             <arguments>
                 <argument name="location" xsi:type="string">product_price_after</argument>
             </arguments>
         </block>
 
-        <block class="YounitedCredit\YounitedPay\Block\Product\Widget" name="afteraddto.younited.widget"
-               as="afterAddToCartWidget" template="YounitedCredit_YounitedPay::product/widget.phtml" after="customize.button">
+        <block class="YounitedCredit\YounitedPay\Block\Product\Widget" name="bundle.afteraddto.younited.widget"
+               as="afterAddToCartWidget" template="YounitedCredit_YounitedPay::product/widget.phtml" after="product.info.addto.bundle">
             <arguments>
                 <argument name="location" xsi:type="string">product_addtocart_after</argument>
             </arguments>
         </block>
-    </referenceContainer>
+    </referenceBlock>
 </body>
 </page>

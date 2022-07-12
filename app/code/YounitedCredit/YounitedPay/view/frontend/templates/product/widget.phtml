@@ -32,7 +32,7 @@
         <?php $defaultInstallment = 0 ?>
         <div class="younitedpay-widget-root" id="yp-widget" data-price="<?= $block->getProductPrice($product) ?>"
              data-type="<?= $product->getTypeId() ?>">
-            <div class="younited_block">
+            <div id="younited_block">
                 <img src="<?= $block->getImageSrc('logo-younitedpay-btn.png') ?>" alt="<?= __("Younited Pay") ?>">
                 <div id="yp-current-maturities">
                     <?php $i = 0;
@@ -150,6 +150,7 @@
                 "*": {
                     "ypwidget" : {
                         "url": "<?= $block->getUrl('younited/ajax/maturity') ?>",
+                        "loader": "<?= $block->escapeUrl($block->getViewFileUrl('images/loader-2.gif')); ?>",
                         "store": "<?= $block->getStoreCode() ?>"
                     }
                 }

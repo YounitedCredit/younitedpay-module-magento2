@@ -34,28 +34,28 @@ class Younited extends \Magento\Payment\Model\Method\AbstractMethod
      * @var \Magento\Store\Model\StoreManagerInterface
      */
     protected $storeManager;
-    /**
-     * @var string
-     */
-    protected $_formBlockType = \Magento\Payment\Block\Form\Cc::class;
 
     /**
      * @var string
      */
-    protected $_infoBlockType = \Magento\Payment\Block\Info\Cc::class;
+    protected $_formBlockType = \Magento\Payment\Block\Form::class;
 
+    /**
+     * @var string
+     */
+    protected $_infoBlockType = \YounitedCredit\YounitedPay\Block\Order\Info::class;
 
     protected $_isGateway = true;
     protected $_canCapture = true;
     protected $_canCapturePartial = true;
     protected $_canRefund = true;
     protected $_canRefundInvoicePartial = true;
+    protected $_canCancelInvoice = false;
     protected $_stripeApi = false;
     protected $_countryFactory;
     protected $_minAmount = null;
     protected $_maxAmount = null;
     protected $_supportedCurrencyCodes = array('EUR');
-    protected $_debugReplacePrivateDataKeys = ['number', 'exp_month', 'exp_year', 'cvc'];
 
     /**
      * @var string
@@ -115,39 +115,7 @@ class Younited extends \Magento\Payment\Model\Method\AbstractMethod
          */
         parent::validate();
 
-        $info = $this->getInfoInstance();
-
-//        $errorMsg = false;
-//        $errorMsg = __('Not a valid currency');
-
-        // remove credit card number delimiters such as "-" and space
-//        $ccNumber = $info->getCcNumber();
-//        $ccNumber = preg_replace('/[\-\s]+/', '', $ccNumber);
-//        $info->setCcNumber($ccNumber);
-
-//        if ($errorMsg) {
-//            throw new \Magento\Framework\Exception\LocalizedException($errorMsg);
-//        }
-
         return $this;
-    }
-
-
-    /**
-     * {@inheritdoc}
-     */
-    public function getConfig()
-    {
-        $config = [
-            'payment' => [
-                'younited' => [
-                    'test1' => $cards,
-                    'test2' => $cards
-                ]
-            ]
-        ];
-
-        return $config;
     }
 
     /**
@@ -251,7 +219,6 @@ class Younited extends \Magento\Payment\Model\Method\AbstractMethod
             return false;
         }
 
-        //        return $this->getConfigData('active', $quote ? $quote->getStoreId() : null) && parent::isAvailable($quote);
         return parent::isAvailable($quote);
     }
 }

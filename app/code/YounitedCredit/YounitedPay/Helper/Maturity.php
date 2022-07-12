@@ -20,6 +20,7 @@
 namespace YounitedCredit\YounitedPay\Helper;
 
 use Magento\Framework\App\ObjectManager;
+use Magento\Framework\Exception\LocalizedException;
 use Magento\Framework\Serialize\Serializer\Json;
 use Magento\Store\Model\ScopeInterface;
 use Magento\Store\Model\Store;
@@ -47,27 +48,40 @@ class Maturity
     /**
      * @var Json
      */
-    private $serializer;
+    protected $serializer;
+
+    /**
+     * @var \Magento\Store\Model\StoreManagerInterface
+     */
+    protected $storeManager;
+
+    /**
+     * @var \Magento\Store\Model\Store
+     */
+    protected $store;
 
     /**
      * @var array
      */
-    private $maturityCache = [];
+    protected $maturityCache = [];
 
     /**
      * Maturity constructor.
      *
      * @param \Magento\Framework\App\Config\ScopeConfigInterface $scopeConfig
      * @param \Magento\Framework\Math\Random $mathRandom
+     * @param \Magento\Store\Model\StoreManagerInterface $storeManager
      * @param Json|null $serializer
      */
     public function __construct(
         \Magento\Framework\App\Config\ScopeConfigInterface $scopeConfig,
         \Magento\Framework\Math\Random $mathRandom,
+        \Magento\Store\Model\StoreManagerInterface $storeManager,
         Json $serializer = null
     ) {
         $this->scopeConfig = $scopeConfig;
         $this->mathRandom = $mathRandom;
+        $this->storeManager = $storeManager;
         $this->serializer = $serializer ?: ObjectManager::getInstance()->get(Json::class);
     }
 
@@ -280,6 +294,57 @@ class Maturity
     }
 
     /**
+     * @return \Magento\Store\Api\Data\StoreInterface|Store
+     * @throws \Magento\Framework\Exception\NoSuchEntityException
+     */
+    public function getStore()
+    {
+        if (!$this->store) {
+            $this->store = $this->storeManager->getStore();
+        }
+
+        return $this->store;
+    }
+
+    /**
+     * @param false $storeId
+     *
+     * @return array|false
+     * @throws LocalizedException
+     * @throws \Magento\Framework\Exception\NoSuchEntityException
+     */
+    public function getApiCredentials($storeId = false, $website = false) {
+
+        if ($storeId === false) {
+            $storeId = $this->getStore()->getId();
+        }
+
+        if ($website) {
+            $mode = $this->scopeConfig->getValue(Config::XML_PATH_API_DEV_MODE, ScopeInterface::SCOPE_WEBSITE, $storeId);
+            $clientId = $this->scopeConfig->getValue(Config::XML_PATH_API_CLIENT_ID, ScopeInterface::SCOPE_WEBSITE, $storeId);
+            $clientSecret = $this->scopeConfig->getValue(Config::XML_PATH_API_CLIENT_SECRET, ScopeInterface::SCOPE_WEBSITE, $storeId);
+        } else {
+            $mode = $this->getConfig(Config::XML_PATH_API_DEV_MODE, $storeId);
+            $clientId = $this->getConfig(Config::XML_PATH_API_CLIENT_ID, $storeId);
+            $clientSecret = $this->getConfig(Config::XML_PATH_API_CLIENT_SECRET, $storeId);
+        }
+
+        if (!$clientId || !$clientSecret) {
+            if ($mode == 'dev') {
+                throw new LocalizedException(__('Please check your Magento configuration client_id and client_secret to enable Younited Credit.'));
+            } else {
+                return false;
+            }
+        }
+
+        return [
+            'mode' => $mode,
+            'clientId' => $clientId,
+            'clientSecret' => $clientSecret,
+        ];
+    }
+
+    /**
      * Get installments for spécified price
      *
      * @param $price float
@@ -287,36 +352,34 @@ class Maturity
      * @return array|null
      * @throws \Magento\Framework\Exception\NoSuchEntityException
      */
-    public function getInstallments(float $price, $storeCode)
+    public function getInstallments(float $price, $storeId)
     {
         $maturities = [];
-        $apiMode = $this->getConfig(Config::XML_PATH_API_DEV_MODE, $storeCode);
-        $clientId = $this->getConfig(Config::XML_PATH_API_CLIENT_ID, $storeCode);
-        $clientSecret = $this->getConfig(Config::XML_PATH_API_CLIENT_SECRET, $storeCode);
+        $credentials = $this->getApiCredentials($storeId);
 
-        if (!$clientId || !$clientSecret) {
-            return __('Please check your Magento configuration client_id and client_secret to enable Younited Credit.');
+        if ($credentials === false) {
+            return $maturities;
         }
 
         $client = new Client();
         $body = new BestPrice();
         $body->setBorrowedAmount($price);
 
-        $request = ($apiMode === 'dev')
+        $request = ($credentials['mode'] === 'dev')
             ? (new BestPriceRequest())->enableSandbox()->setModel($body)
             : (new BestPriceRequest())->setModel($body);
 
         try {
-            $response = $client->setCredential($clientId, $clientSecret)->sendRequest($request);
+            $response = $client->setCredential($credentials['clientId'], $credentials['clientSecret'])->sendRequest($request);
             if ($response->getStatusCode() !== 200) {
-                return __('Cannot contact Younited Credit API. Status code: %s - %s', $response->getStatusCode(),
+                return __('Cannot contact Younited Credit API. Status code: %1 - %2.', $response->getStatusCode(),
                     $response->getReasonPhrase());
             }
         } catch (Exception $e) {
             return __('Exception: ') . $e->getMessage() . $e->getFile() . ':' . $e->getLine() . $e->getTraceAsString();
         }
 
-        $maturityConfig = $this->getConfigValue($price, $storeCode);
+        $maturityConfig = $this->getConfigValue($price, $storeId);
 
         /** @var \YounitedPaySDK\Model\OfferItem $offers */
         foreach ($response->getModel() as $offers) {
@@ -343,9 +406,13 @@ class Maturity
      *
      * @return mixed
      */
-    public function getConfig($path, $storeCode)
+    public function getConfig($path, $storeId = false)
     {
-        return $this->scopeConfig->getValue($path, ScopeInterface::SCOPE_STORE, $storeCode);
+        if ($storeId === false) {
+            $storeId = $this->getStore()->getId();
+        }
+
+        return $this->scopeConfig->getValue($path, ScopeInterface::SCOPE_STORE, $storeId);
     }
 
     /**

@@ -1,3 +1,4 @@
+<?php
 /**
  * Copyright since 2022 Younited Credit
  *
@@ -15,17 +16,22 @@
  * @copyright 2022 Younited Credit
  * @license   https://opensource.org/licenses/AFL-3.0  Academic Free License (AFL 3.0)
  */
-var config = {
-    map: {
-        '*': {
-            ypwidget: 'YounitedCredit_YounitedPay/js/ypwidget',
-        }
-    },
-    config: {
-        mixins: {
-            'Magento_Checkout/js/view/shipping': {
-                'YounitedCredit_YounitedPay/js/view/shipping': true
-            }
-        }
+
+namespace YounitedCredit\YounitedPay\Controller\Contract;
+
+/**
+ * Class Failed
+ *
+ * @package YounitedCredit\YounitedPay\Controller\Contract
+ */
+class Failed extends \YounitedCredit\YounitedPay\Controller\Contract
+{
+    /**
+     * @return \Magento\Framework\App\ResponseInterface|\Magento\Framework\Controller\Result\Redirect|\Magento\Framework\Controller\ResultInterface
+     * @throws \Magento\Framework\Exception\NoSuchEntityException
+     */
+    public function execute()
+    {
+        return $this->redirectToCart(__('Payment refused, or error occurs during validation. Please try again.'));
     }
-};
+}

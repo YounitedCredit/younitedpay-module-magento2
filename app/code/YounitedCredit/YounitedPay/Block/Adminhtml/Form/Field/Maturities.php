@@ -19,32 +19,57 @@
 
 namespace YounitedCredit\YounitedPay\Block\Adminhtml\Form\Field;
 
+use Magento\Framework\View\Element\Context;
+use YounitedCredit\YounitedPay\Helper\Maturity;
+use YounitedPaySDK\Client;
+use YounitedPaySDK\Request\AvailableMaturitiesRequest;
+
 /**
  * HTML select element block with maturity options
  */
 class Maturities extends \Magento\Framework\View\Element\Html\Select
 {
     /**
+     * @var Maturity
+     */
+    protected $maturityHelper;
+
+    /**
      * @var string[]
      */
     private $_maturities;
 
     /**
-     * @var int maximum of maturities
-     */
-    private $maxMaturity = 84;
-
-    /**
      * Maturities constructor.
      *
-     * @param \Magento\Framework\View\Element\Context $context
+     * @param Context $context
+     * @param Maturity $maturityHelper
      * @param array $data
      */
     public function __construct(
-        \Magento\Framework\View\Element\Context $context,
+        Context $context,
+        Maturity $maturityHelper,
         array $data = []
     ) {
         parent::__construct($context, $data);
+        $this->maturityHelper = $maturityHelper;
+
+        $this->setData('cache_key', $this->getCacheKey());
+        $this->setData('cache_lifetime', 31536000);
+    }
+
+    /**
+     * Get cache key informative items
+     *
+     * Provide string array key to share specific info item with FPC placeholder
+     *
+     * @return string[]
+     */
+    public function getCacheKeyInfo()
+    {
+        $key = parent::getCacheKeyInfo();
+        $key[] = "Maturities_Config";
+        return $key;
     }
 
     /**
@@ -59,9 +84,28 @@ class Maturities extends \Magento\Framework\View\Element\Html\Select
         if ($this->_maturities === null) {
             $this->_maturities = [];
             $i = 1;
-            while ($i <= $this->maxMaturity) {
-                $this->_maturities[$i] = $i . 'x';
-                $i++;
+
+            if ($storeId = $this->getRequest()->getParam('store')) {
+                $credentials = $this->maturityHelper->getApiCredentials($storeId);
+            } elseif ($websiteId = $this->getRequest()->getParam('website')) {
+                $credentials = $this->maturityHelper->getApiCredentials(false, $websiteId);
+            }
+
+            $client = new Client();
+            $request = new AvailableMaturitiesRequest();
+            if ($credentials['mode'] === 'dev') {
+                $request = $request->enableSandbox();
+            }
+            try {
+                $response = $client->setCredential($credentials['clientId'], $credentials['clientSecret'])->sendRequest($request);
+
+                if ($response->getStatusCode() == 200) {
+                    foreach ($response->getModel() as $val) {
+                        $this->_maturities[$val] = $val . 'x';
+                    }
+                }
+            } catch (Exception $e) {
+                // Do nothing
             }
         }
 

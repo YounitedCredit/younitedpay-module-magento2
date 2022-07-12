@@ -57,6 +57,11 @@ class ConfigProvider implements ConfigProviderInterface
     protected $cartTotalRepository;
 
     /**
+     * @var \Magento\Framework\UrlInterface
+     */
+    protected $urlInterface;
+
+    /**
      * @var \YounitedCredit\YounitedPay\Helper\Maturity
      */
     protected $maturityHelper;
@@ -68,11 +73,13 @@ class ConfigProvider implements ConfigProviderInterface
         CheckoutSession $checkoutSession,
         CartTotalRepositoryInterface $cartTotalRepository,
         \Magento\Store\Model\StoreManagerInterface $storeManager,
+        \Magento\Framework\UrlInterface $urlInterface,
         \YounitedCredit\YounitedPay\Helper\Maturity $maturityHelper
     ) {
         $this->checkoutSession = $checkoutSession;
         $this->cartTotalRepository = $cartTotalRepository;
         $this->storeManager = $storeManager;
+        $this->urlInterface = $urlInterface;
         $this->maturityHelper = $maturityHelper;
     }
 
@@ -83,17 +90,17 @@ class ConfigProvider implements ConfigProviderInterface
      */
     public function getConfig(): array
     {
-        $grandTotal = $this->getTotalsData()['base_grand_total'];
+        $totals = $this->getTotalsData();
+        $grandTotal = (float)$totals['grand_total'];
+//        $grandTotal = (float)$totals['grand_total'] - (float)$totals['shipping_amount'];
         return [
             'payment' => [
                 'younited' => [
-                    'isActive' => 'yesy',
-                    'maturities' => $this->maturityHelper->getInstallments($grandTotal, $this->getStoreCode()),
-//                    'style' => [
-//                        'shape' => $this->config->getButtonShape(Config::BUTTON_AREA_CHECKOUT),
-//                        'size' => $this->config->getButtonSize(Config::BUTTON_AREA_CHECKOUT),
-//                        'color' => $this->config->getButtonColor(Config::BUTTON_AREA_CHECKOUT)
-//                    ]
+                    'contractUrl' => $this->urlInterface->getUrl('younited/order/contract'),
+                    'url' => $this->urlInterface->getUrl('younited/ajax/maturity'),
+                    'store' => $this->getStore()->getId(),
+                    'total' => $grandTotal,
+                    'maturities' => $this->maturityHelper->getInstallments($grandTotal, $this->getStoreCode())
                 ]
             ]
         ];

@@ -1,4 +1,5 @@
-<?php
+<?xml version="1.0"?>
+<!--
 /**
  * Copyright since 2022 Younited Credit
  *
@@ -16,18 +17,12 @@
  * @copyright 2022 Younited Credit
  * @license   https://opensource.org/licenses/AFL-3.0  Academic Free License (AFL 3.0)
  */
-
-namespace YounitedCredit\YounitedPay\Model\ResourceModel;
-
-/**
- * Class Maturity
- *
- * @package YounitedCredit\YounitedPay\Model\ResourceModel
- */
-class Maturity extends \Magento\Framework\Model\ResourceModel\Db\AbstractDb
-{
-    protected function _construct()
-    {
-        $this->_init('younitedcredit_younitedpay_maturity', 'maturity_id');
-    }
-}
+-->
+<config xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="urn:magento:framework:Event/etc/events.xsd">
+    <event name="sales_order_save_before">
+        <observer name="validate_younited_credit_on_shipped_order" instance="YounitedCredit\YounitedPay\Observer\ValidateCredit" />
+    </event>
+    <event name="sales_order_creditmemo_save_before">
+        <observer name="withdraw_younited_credit" instance="YounitedCredit\YounitedPay\Observer\WithdrawCredit" />
+    </event>
+</config>
