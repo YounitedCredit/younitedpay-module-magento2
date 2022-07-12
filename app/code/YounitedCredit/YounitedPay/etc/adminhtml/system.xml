@@ -36,7 +36,7 @@
                 </field>
                 <field id="text_info_image" translate="label" type="text" sortOrder="10" showInDefault="1" showInWebsite="1" showInStore="1">
                     <frontend_model>YounitedCredit\YounitedPay\Block\Adminhtml\System\Config\Image</frontend_model>
-                    <label>/media/younitedpay/image-marketing-en.png</label>
+                    <label>image-marketing-en.png</label>
                 </field>
                 <field id="text_info_requirments" translate="label comment" type="text" sortOrder="10" showInDefault="1" showInWebsite="1" showInStore="1">
                     <frontend_model>YounitedCredit\YounitedPay\Block\Adminhtml\System\Config\Requirements</frontend_model>

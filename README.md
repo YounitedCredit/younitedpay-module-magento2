@@ -4,11 +4,50 @@ The **Younited Credit module for Magento 2** is a PHP module which allows you to
 
 ## Getting started
 
-- Install SDK using composer: `composer require 202ecommerce/younitedpay-sdk:dev-develop --with-all-dependencies`
-- Copy/Paste module files to your Magento root directory
+### Composer installation
+
+- Install module and dependencies using Composer: `composer require 202ecommerce/younitedpay-magento`
+- Run: `php bin/magento module:enable YounitedCredit_YounitedPay`
 - Run: `php bin/magento setup:upgrade`
 - Run: `php bin/magento setup:static-content:deploy`
 - Flush caches with: `php bin/magento cache:flush`
+
+## Update with Composer
+
+To update the extension to the latest available version (depending on your `composer.json`), run these commands in your terminal:
+
+```
+composer update 202ecommerce/younitedpay-magento --with-dependencies
+php bin/magento setup:di:compile
+php bin/magento setup:upgrade
+php bin/magento setup:static-content:deploy
+php bin/magento cache:flush
+```
+
+### Manual installation
+
+- Install SDK using Composer: `composer require 202ecommerce/younitedpay-sdk:dev-develop`
+- Copy/Paste module files to your Magento root directory
+- Run: `php bin/magento module:enable YounitedCredit_YounitedPay`
+- Run: `php bin/magento setup:upgrade`
+- Run: `php bin/magento setup:static-content:deploy`
+- Flush caches with: `php bin/magento cache:flush`
+
+## Maintenance mode
+
+You may want to enable the maintenance mode when installing or updating the module, __especially when working on a production website__. To do so, run the two commands below before and after running the other setup commands:
+
+```
+php bin/magento maintenance:enable
+# Other setup commands
+php bin/magento maintenance:disable
+```
+********
+## Compatibility
+
+| Branch  | Magento versions  |
+| ------- | ----------------- |
+| `0.x`   | **>=** `2.2.x`    |
 
 ## Resources
 

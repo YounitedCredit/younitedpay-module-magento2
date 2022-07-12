@@ -19,8 +19,14 @@
 
 namespace YounitedCredit\YounitedPay\Block\Adminhtml\System\Config;
 
+use Magento\Backend\Block\Template\Context;
+use Magento\Framework\App\ObjectManager;
+use Magento\Framework\View\Helper\SecureHtmlRenderer;
+
 /**
- * Provides field with additional information
+ * Class Image
+ *
+ * @package YounitedCredit\YounitedPay\Block\Adminhtml\System\Config
  */
 class Image extends \Magento\Config\Block\System\Config\Form\Field
 {
@@ -30,7 +36,8 @@ class Image extends \Magento\Config\Block\System\Config\Form\Field
      */
     public function render(\Magento\Framework\Data\Form\Element\AbstractElement $element)
     {
-        $html = '<img src="' . $element->getLabel() . '" alt="Younited Marketing Image" />';
+        $asset = $this->_assetRepo->createAsset('YounitedCredit_YounitedPay::images/' . $element->getLabel());
+        $html = '<img src="' . $asset->getUrl() . '" alt="Younited Marketing Image" />';
         return $this->decorateRowHtml($element, $html);
     }
 

@@ -21,7 +21,11 @@ namespace YounitedCredit\YounitedPay\Model\Config;
 
 use Magento\Checkout\Model\ConfigProviderInterface;
 use Magento\Checkout\Model\Session as CheckoutSession;
+use Magento\Framework\UrlInterface;
+use Magento\Framework\View\Asset\Repository;
 use Magento\Quote\Api\CartTotalRepositoryInterface;
+use Magento\Store\Model\StoreManagerInterface;
+use YounitedCredit\YounitedPay\Helper\Maturity;
 
 /**
  * Class ConfigProvider
@@ -32,7 +36,7 @@ class ConfigProvider implements ConfigProviderInterface
 {
 
     /**
-     * @var \Magento\Store\Model\StoreManagerInterface
+     * @var StoreManagerInterface
      */
     protected $storeManager;
 
@@ -57,30 +61,44 @@ class ConfigProvider implements ConfigProviderInterface
     protected $cartTotalRepository;
 
     /**
-     * @var \Magento\Framework\UrlInterface
+     * @var UrlInterface
      */
     protected $urlInterface;
 
     /**
-     * @var \YounitedCredit\YounitedPay\Helper\Maturity
+     * @var Maturity
      */
     protected $maturityHelper;
 
     /**
+     * @var Repository
+     */
+    protected $assetRepository;
+
+    /**
      * ConfigProvider constructor.
+     *
+     * @param CheckoutSession $checkoutSession
+     * @param CartTotalRepositoryInterface $cartTotalRepository
+     * @param StoreManagerInterface $storeManager
+     * @param UrlInterface $urlInterface
+     * @param Maturity $maturityHelper
+     * @param Repository $assetRepository
      */
     public function __construct(
         CheckoutSession $checkoutSession,
         CartTotalRepositoryInterface $cartTotalRepository,
-        \Magento\Store\Model\StoreManagerInterface $storeManager,
-        \Magento\Framework\UrlInterface $urlInterface,
-        \YounitedCredit\YounitedPay\Helper\Maturity $maturityHelper
+        StoreManagerInterface $storeManager,
+        UrlInterface $urlInterface,
+        Maturity $maturityHelper,
+        Repository $assetRepository
     ) {
         $this->checkoutSession = $checkoutSession;
         $this->cartTotalRepository = $cartTotalRepository;
         $this->storeManager = $storeManager;
         $this->urlInterface = $urlInterface;
         $this->maturityHelper = $maturityHelper;
+        $this->assetRepository = $assetRepository;
     }
 
     /**
@@ -100,6 +118,9 @@ class ConfigProvider implements ConfigProviderInterface
                     'url' => $this->urlInterface->getUrl('younited/ajax/maturity'),
                     'store' => $this->getStore()->getId(),
                     'total' => $grandTotal,
+                    'logo' => $this->assetRepository
+                        ->createAsset('YounitedCredit_YounitedPay::images/logo-younitedpay-payment.png')
+                        ->getUrl(),
                     'maturities' => $this->maturityHelper->getInstallments($grandTotal, $this->getStoreCode())
                 ]
             ]

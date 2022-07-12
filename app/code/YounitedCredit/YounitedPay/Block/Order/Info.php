@@ -73,8 +73,8 @@ class Info extends \Magento\Framework\View\Element\Template
      */
     public function getYpImage()
     {
-        $mediaUrl = $this->_urlBuilder->getBaseUrl(['_type' => \Magento\Framework\UrlInterface::URL_TYPE_MEDIA]);
-        return $mediaUrl . 'younitedpay/logo-younitedpay.png';
+        $asset = $this->_assetRepo->createAsset('YounitedCredit_YounitedPay::images/logo-younitedpay.png');
+        return $asset->getUrl();
     }
 
     /**

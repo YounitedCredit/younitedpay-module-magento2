@@ -80,10 +80,10 @@ class Widget extends \Magento\Catalog\Block\Product\View
         \YounitedCredit\YounitedPay\Helper\Maturity $maturityHelper,
         array $data = []
     ) {
-        $this->maturityHelper = $maturityHelper;
-
         parent::__construct($context, $urlEncoder, $jsonEncoder, $string, $productHelper, $productTypeConfig,
             $localeFormat, $customerSession, $productRepository, $priceCurrency, $data);
+
+        $this->maturityHelper = $maturityHelper;
     }
 
     /**
@@ -182,7 +182,8 @@ class Widget extends \Magento\Catalog\Block\Product\View
      */
     public function getImageSrc(string $file)
     {
-        return $this->getStore()->getBaseUrl(\Magento\Framework\UrlInterface::URL_TYPE_MEDIA) . 'younitedpay/' . $file;
+        $asset = $this->_assetRepo->createAsset('YounitedCredit_YounitedPay::images/' . $file);
+        return $asset->getUrl();
     }
 
     /**

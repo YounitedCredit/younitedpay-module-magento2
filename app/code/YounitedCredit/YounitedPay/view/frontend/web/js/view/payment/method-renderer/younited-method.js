@@ -102,7 +102,7 @@ define([
                                 $.mage.__('Pay in %1 times without fees (for %2€/month) with')
                                     .replace('%1', installment).replace('%2', monthlyInstallmentAmount) +
                                 `</span>` +
-                                `<img src="/media/younitedpay/logo-younitedpay-payment.png" alt="Younited Pay">`;
+                                `<img src="${window.checkoutConfig.payment.younited.logo}" alt="Younited Pay">`;
 
                             _this.maturities.push(maturity)
                         }

@@ -68,22 +68,19 @@
                         </div>
                         <div class="yp-link">
                             <?= __("Have a question? Visit our") ?> <a
-                                href="https://www.younited-credit.com/questions-reponses"
-                                target="_blank"><?= __("dedicated page") ?></a>
+                                    href="https://www.younited-credit.com/questions-reponses"
+                                    target="_blank"><?= __("dedicated page") ?></a>
                         </div>
                         <div class="logo-cards">
-                            <img class="yp-h-8 lazyloaded" src="<?= $block->getImageSrc('cb.png') ?>"
-                                 alt="<?= __("Bank Card") ?>">
-                            <img class="yp-h-8 lazyloaded" src="<?= $block->getImageSrc('visa.png') ?>"
-                                 alt="<?= __("Visa") ?>">
-                            <img class="yp-h-8 lazyloaded" src="<?= $block->getImageSrc('mastercard.png') ?>"
-                                 alt="<?= __("Mastercard") ?>">
+                            <img src="<?= $block->getImageSrc('cb.png') ?>" alt="<?= __("Bank Card") ?>">
+                            <img src="<?= $block->getImageSrc('visa.png') ?>" alt="<?= __("Visa") ?>">
+                            <img src="<?= $block->getImageSrc('mastercard.png') ?>" alt="<?= __("Mastercard") ?>">
                         </div>
                     </div>
                     <div class="yp-right">
                         <h4>
                             <?= __("Your purchase for") ?> <span
-                                id="popup-maturity"><?= $defaultMaturity ?></span>€<?= __("/month with") ?><br>
+                                    id="popup-maturity"><?= $defaultMaturity ?></span>€<?= __("/month with") ?><br>
                             <span class="yp-purple"><?= __("Younited Pay") ?></span>
                         </h4>
                         <ul id="yp-popup-maturities">
@@ -118,9 +115,9 @@
                             </div>
                             <div>
                                 <p class="yp-dark-purple">+ <span
-                                        class="yp-font-normal"><?= __("Payment cost") ?></span></p>
+                                            class="yp-font-normal"><?= __("Payment cost") ?></span></p>
                                 <p class="yp-dark-purple"><span
-                                        id="yp-cost"><?= $amount['interestsTotalAmount'] ?></span> €</p>
+                                            id="yp-cost"><?= $amount['interestsTotalAmount'] ?></span> €</p>
                             </div>
                             <hr/>
                             <div>
@@ -132,10 +129,10 @@
 
                         <div class="yp-tax">
                             <div><span class="yp-dark-purple"><?= __("Fixed APR") ?>:&nbsp;&nbsp;<span
-                                        id="yp-percent"><?= $amount['annualPercentageRate'] * 100 ?></span> %</span>
+                                            id="yp-percent"><?= $amount['annualPercentageRate'] * 100 ?></span> %</span>
                             </div>
                             <div><span class="yp-dark-purple"><?= __("Fixed borrowing rate") ?>:&nbsp;&nbsp;<span
-                                        id="yp-debit"><?= $amount['annualDebitRate'] * 100 ?></span> %</span></div>
+                                            id="yp-debit"><?= $amount['annualDebitRate'] * 100 ?></span> %</span></div>
                         </div>
 
                         <div class="yp-engagement">
@@ -155,7 +152,6 @@
                     }
                 }
             }
-
         </script>
     <?php endif; ?>
 <?php endif; ?>
