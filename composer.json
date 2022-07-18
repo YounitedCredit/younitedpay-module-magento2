@@ -1,5 +1,5 @@
 {
-    "name": "younitedcredit/younitedpay",
+    "name": "younitedcredit/younitedpay-module-magento2",
     "type": "magento2-module",
     "version": "0.4.1",
     "license": "AFL-3.0",
