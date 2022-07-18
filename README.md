@@ -1,12 +1,12 @@
-# Younited Credit module for Magento 2
+# Younited Pay module for Magento 2
 
-The **Younited Credit module for Magento 2** is a PHP module which allows you to accept payments in your Magento 2 online store. It offers innovative features to reduce shopping cart abandonment rates, optimize success rates and enhance the purchasing process on merchants’ sites in order to significantly increase business volumes without additional investments in the Magento 2 e-commerce CMS solution.
+The **Younited Pay module for Magento 2** is a PHP module which allows you to accept payments in your Magento 2 online store. It offers innovative features to reduce shopping cart abandonment rates, optimize success rates and enhance the purchasing process on merchants sites in order to significantly increase business volumes without additional investments in the Magento 2 e-commerce CMS solution.
 
 ## Getting started
 
 ### Composer installation
 
-- Install module and dependencies using Composer: `composer require 202ecommerce/younitedpay-magento`
+- Install module and dependencies using Composer: `composer require younitedcredit/younitedpay-module-magento2`
 - Run: `php bin/magento module:enable YounitedCredit_YounitedPay`
 - Run: `php bin/magento setup:upgrade`
 - Run: `php bin/magento setup:static-content:deploy`
@@ -17,7 +17,7 @@ The **Younited Credit module for Magento 2** is a PHP module which allows you to
 To update the extension to the latest available version (depending on your `composer.json`), run these commands in your terminal:
 
 ```
-composer update 202ecommerce/younitedpay-magento --with-dependencies
+composer update younitedcredit/younitedpay-module-magento2 --with-dependencies
 php bin/magento setup:di:compile
 php bin/magento setup:upgrade
 php bin/magento setup:static-content:deploy
@@ -26,7 +26,7 @@ php bin/magento cache:flush
 
 ### Manual installation
 
-- Install SDK using Composer: `composer require 202ecommerce/younitedpay-sdk:dev-develop`
+- Install SDK using Composer: `composer require 202ecommerce/younitedpay-sdk:1.0.0`
 - Copy/Paste module files to your Magento root directory
 - Run: `php bin/magento module:enable YounitedCredit_YounitedPay`
 - Run: `php bin/magento setup:upgrade`
