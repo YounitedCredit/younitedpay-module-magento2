@@ -3,7 +3,7 @@
     "type": "magento2-module",
     "version": "0.4.1",
     "license": "AFL-3.0",
-    "description": "Official module for Younited Credit integration.",
+    "description": "Official module for Younited Pay integration.",
     "require": {
         "202ecommerce/younitedpay-sdk": "dev-develop"
     },
