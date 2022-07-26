@@ -156,10 +156,23 @@ class Contract extends \Magento\Checkout\Controller\Onepage implements HttpGetAc
         $order = $this->orderRepository->get($orderId);
 
         $items = [];
+        $simplePrice = 0;
         foreach ($order->getItems() as $item) {
+
             $apiItem = new BasketItem();
             $qty = $item->getQtyOrdered();
-            $price = round($item->getPriceInclTax(), 2);
+
+            if ($simplePrice) {
+                $price = $simplePrice;
+                $simplePrice = 0;
+            } else {
+                $price = round($item->getPriceInclTax(), 2);
+            }
+
+            if ($item->getProductType() == 'configurable') {
+                $simplePrice = $price;
+                continue;
+            }
 
             if ((int)$qty == $qty) {
                 // Quantity is an integer
