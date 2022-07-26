@@ -18,8 +18,8 @@ To update the extension to the latest available version (depending on your `comp
 
 ```
 composer update younitedcredit/younitedpay-module-magento2 --with-dependencies
-php bin/magento setup:di:compile
 php bin/magento setup:upgrade
+php bin/magento setup:di:compile
 php bin/magento setup:static-content:deploy
 php bin/magento cache:flush
 ```

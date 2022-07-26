@@ -41,12 +41,12 @@
 }
 
 .config-younited-server .invalid {
-    background: url("../img/invalid.png") no-repeat;
+    background: url("../images/invalid.png") no-repeat;
 
 }
 
 .config-younited-server .valid {
-    background: url("../img/valid.png") no-repeat;
+    background: url("../images/valid.png") no-repeat;
 
 }
 
