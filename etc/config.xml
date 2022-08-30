@@ -32,8 +32,8 @@
         </younited_appearance>
         <payment>
             <younited>
-                <label>Younited Credit</label>
-                <title>Younited Credit</title>
+                <label>YounitedPay</label>
+                <title>YounitedPay</title>
                 <model>YounitedCredit\YounitedPay\Model\Payment\Younited</model>
                 <order_status>pending</order_status>
                 <order_status_processing>processing</order_status_processing>
