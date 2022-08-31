@@ -20,7 +20,6 @@
 namespace YounitedCredit\YounitedPay\Controller;
 
 use Magento\Framework\App\Action\Context;
-use Magento\Framework\App\Action\HttpGetActionInterface as HttpGetActionInterface;
 use Magento\Customer\Api\AccountManagementInterface;
 use Magento\Customer\Api\CustomerRepositoryInterface;
 
@@ -29,7 +28,7 @@ use Magento\Customer\Api\CustomerRepositoryInterface;
  *
  * @package YounitedCredit\YounitedPay\Controller
  */
-abstract class Contract extends \Magento\Checkout\Controller\Onepage implements HttpGetActionInterface
+abstract class Contract extends \Magento\Checkout\Controller\Onepage
 {
     /**
      * @var \Magento\Sales\Api\OrderRepositoryInterface

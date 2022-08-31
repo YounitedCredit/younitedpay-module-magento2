@@ -22,7 +22,6 @@ namespace YounitedCredit\YounitedPay\Controller\Contract;
 use Magento\Customer\Api\AccountManagementInterface;
 use Magento\Customer\Api\CustomerRepositoryInterface;
 use Magento\Framework\App\Action\Context;
-use Magento\Framework\App\Action\HttpGetActionInterface as HttpGetActionInterface;
 use Magento\Framework\DB\Transaction;
 use Magento\Sales\Model\Order\Email\Sender\InvoiceSender;
 use Magento\Sales\Model\Service\InvoiceService;
@@ -32,7 +31,7 @@ use Magento\Sales\Model\Service\InvoiceService;
  *
  * @package YounitedCredit\YounitedPay\Controller\Contract
  */
-class Success extends \Magento\Checkout\Controller\Onepage implements HttpGetActionInterface
+class Success extends \Magento\Checkout\Controller\Onepage
 {
     /**
      * @var \Magento\Sales\Api\OrderRepositoryInterface

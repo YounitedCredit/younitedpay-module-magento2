@@ -21,11 +21,13 @@ namespace YounitedCredit\YounitedPay\Model\Config;
 
 use Magento\Checkout\Model\ConfigProviderInterface;
 use Magento\Checkout\Model\Session as CheckoutSession;
+use Magento\Framework\App\ProductMetadataInterface;
 use Magento\Framework\UrlInterface;
 use Magento\Framework\View\Asset\Repository;
 use Magento\Quote\Api\CartTotalRepositoryInterface;
 use Magento\Store\Model\StoreManagerInterface;
 use YounitedCredit\YounitedPay\Helper\Maturity;
+use function explode;
 
 /**
  * Class ConfigProvider
@@ -76,6 +78,11 @@ class ConfigProvider implements ConfigProviderInterface
     protected $assetRepository;
 
     /**
+     * @var ProductMetadataInterface
+     */
+    protected $productMetadata;
+
+    /**
      * ConfigProvider constructor.
      *
      * @param CheckoutSession $checkoutSession
@@ -91,7 +98,8 @@ class ConfigProvider implements ConfigProviderInterface
         StoreManagerInterface $storeManager,
         UrlInterface $urlInterface,
         Maturity $maturityHelper,
-        Repository $assetRepository
+        Repository $assetRepository,
+        ProductMetadataInterface $productMetadata
     ) {
         $this->checkoutSession = $checkoutSession;
         $this->cartTotalRepository = $cartTotalRepository;
@@ -99,6 +107,7 @@ class ConfigProvider implements ConfigProviderInterface
         $this->urlInterface = $urlInterface;
         $this->maturityHelper = $maturityHelper;
         $this->assetRepository = $assetRepository;
+        $this->productMetadata = $productMetadata;
     }
 
     /**
@@ -110,10 +119,12 @@ class ConfigProvider implements ConfigProviderInterface
     {
         $totals = $this->getTotalsData();
         $grandTotal = (float)$totals['grand_total'];
-//        $grandTotal = (float)$totals['grand_total'] - (float)$totals['shipping_amount'];
+        $version = explode('.', $this->productMetadata->getVersion());
+
         return [
             'payment' => [
                 'younited' => [
+                    'magento2Version' => $version[1],
                     'contractUrl' => $this->urlInterface->getUrl('younited/order/contract'),
                     'url' => $this->urlInterface->getUrl('younited/ajax/maturity'),
                     'store' => $this->getStore()->getId(),

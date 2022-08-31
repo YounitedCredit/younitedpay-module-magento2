@@ -1,7 +1,7 @@
 {
     "name": "younitedcredit/younitedpay-module-magento2",
     "type": "magento2-module",
-    "version": "0.4.1",
+    "version": "0.5.0",
     "license": "AFL-3.0",
     "description": "Official module for Younited Pay integration.",
     "require": {

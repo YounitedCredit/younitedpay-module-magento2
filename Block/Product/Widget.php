@@ -196,7 +196,7 @@ class Widget extends \Magento\Catalog\Block\Product\View
      */
     public function getInstallments($product)
     {
-        return $this->maturityHelper->getInstallments($this->getProductPrice($product), $this->getStoreCode());
+        return $this->maturityHelper->getInstallments($this->getWidgetProductPrice($product), $this->getStoreCode());
     }
 
     /**
@@ -204,7 +204,7 @@ class Widget extends \Magento\Catalog\Block\Product\View
      *
      * @return float
      */
-    public function getProductPrice($product)
+    public function getWidgetProductPrice($product)
     {
         if (!$this->productPrice) {
             if ($product->getTypeId() == 'configurable') {

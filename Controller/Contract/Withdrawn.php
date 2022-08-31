@@ -21,7 +21,6 @@ namespace YounitedCredit\YounitedPay\Controller\Contract;
 
 use Magento\Customer\Api\AccountManagementInterface;
 use Magento\Customer\Api\CustomerRepositoryInterface;
-use Magento\Framework\App\Action\HttpGetActionInterface;
 use Magento\Framework\Controller\Result\JsonFactory;
 
 /**

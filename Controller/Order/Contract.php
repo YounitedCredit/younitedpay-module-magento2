@@ -21,7 +21,7 @@ namespace YounitedCredit\YounitedPay\Controller\Order;
 
 use Magento\Customer\Api\AccountManagementInterface;
 use Magento\Customer\Api\CustomerRepositoryInterface;
-use Magento\Framework\App\Action\HttpGetActionInterface as HttpGetActionInterface;
+use Magento\Framework\UrlInterface;
 use Magento\Store\Model\Information;
 use YounitedCredit\YounitedPay\Helper\Config;
 use YounitedPaySDK\Client;
@@ -39,7 +39,7 @@ use YounitedPaySDK\Request\InitializeContractRequest;
  *
  * @package YounitedCredit\YounitedPay\Controller\Ajax
  */
-class Contract extends \Magento\Checkout\Controller\Onepage implements HttpGetActionInterface
+class Contract extends \Magento\Checkout\Controller\Onepage
 {
     /**
      * @var \Magento\Sales\Api\OrderRepositoryInterface
@@ -65,6 +65,11 @@ class Contract extends \Magento\Checkout\Controller\Onepage implements HttpGetAc
      * @var \Magento\Framework\Stdlib\DateTime\DateTime
      */
     protected $date;
+
+    /**
+     * @var UrlInterface
+     */
+    protected $urlBuilder;
 
     /**
      * @var \Psr\Log\LoggerInterface
@@ -93,6 +98,7 @@ class Contract extends \Magento\Checkout\Controller\Onepage implements HttpGetAc
      * @param \Magento\Sales\Api\OrderManagementInterface $orderManagement
      * @param \Magento\Quote\Api\CartRepositoryInterface $cartRepository
      * @param \Magento\Framework\Stdlib\DateTime\DateTime $date
+     * @param UrlInterface $urlBuilder
      * @param \Psr\Log\LoggerInterface $logger
      */
     public function __construct(
@@ -115,12 +121,14 @@ class Contract extends \Magento\Checkout\Controller\Onepage implements HttpGetAc
         \Magento\Sales\Api\OrderManagementInterface $orderManagement,
         \Magento\Quote\Api\CartRepositoryInterface $cartRepository,
         \Magento\Framework\Stdlib\DateTime\DateTime $date,
+        UrlInterface $urlBuilder,
         \Psr\Log\LoggerInterface $logger
     ) {
         $this->orderRepository = $orderRepository;
         $this->maturityHelper = $maturityHelper;
         $this->orderManagement = $orderManagement;
         $this->cartRepository = $cartRepository;
+        $this->urlBuilder = $urlBuilder;
         $this->date = $date;
         $this->logger = $logger;
 
@@ -287,7 +295,7 @@ class Contract extends \Magento\Checkout\Controller\Onepage implements HttpGetAc
 //        die('ok');
 
         return $this->resultRedirectFactory->create()
-            ->setRefererUrl("https://antoine244.magento.202-dev.com/younited/contract/cancel/")
+            ->setRefererUrl($this->urlBuilder->getUrl('younited/contract/cancel'))
             ->setUrl($result["redirectUrl"]);
     }
 

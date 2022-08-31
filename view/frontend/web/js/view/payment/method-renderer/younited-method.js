@@ -66,54 +66,74 @@ define([
          */
         getMaturities: function () {
             var _this = this;
-            // console.log("getMaturities : " + totals.totals().grand_total)
 
-            if (this.currentTotal != totals.totals().grand_total) {
-                this.currentTotal = totals.totals().grand_total
-                // console.log("Load on change")
+            // > Magento 2.2
+            if (parseInt(window.checkoutConfig.payment.younited.magento2Version) > 2) {
+                if (this.currentTotal != totals.totals().grand_total) {
+                    this.currentTotal = totals.totals().grand_total
 
-                var url = window.checkoutConfig.payment.younited.url
-                    + 'amount/' + this.currentTotal + '/store/'
-                    + window.checkoutConfig.payment.younited.store + '/'
+                    var url = window.checkoutConfig.payment.younited.url
+                        + 'amount/' + this.currentTotal + '/store/'
+                        + window.checkoutConfig.payment.younited.store + '/'
 
-                $.ajax({
-                    'url': url,
-                    'type': 'POST',
-                    'success': function (data) {
-                        window.checkoutConfig.payment.younited.maturities = {}
-                        for (const installment in data) {
-                            window.checkoutConfig.payment.younited.maturities[installment] = data[installment];
-                        }
+                    $.ajax({
+                        'url': url,
+                        'type': 'POST',
+                        'success': function (data) {
+                            window.checkoutConfig.payment.younited.maturities = {}
+                            for (const installment in data) {
+                                window.checkoutConfig.payment.younited.maturities[installment] = data[installment];
+                            }
 
-                        if (Object.keys(window.checkoutConfig.payment.younited.maturities).length > 0) {
-                            $('#yp-method').show();
-                        } else {
+                            if (Object.keys(window.checkoutConfig.payment.younited.maturities).length > 0) {
+                                $('#yp-method').show();
+                            } else {
+                                $('#yp-method').hide();
+                            }
+
+                            _this.maturities = [];
+                            for (const installment in window.checkoutConfig.payment.younited.maturities) {
+                                var maturity = window.checkoutConfig.payment.younited.maturities[installment];
+                                var monthlyInstallmentAmount = maturity.monthlyInstallmentAmount.toFixed(2);
+                                maturity.installment = parseInt(installment);
+                                maturity.annualDebitRate = parseFloat(maturity.annualDebitRate) * 100;
+                                maturity.annualPercentageRate = parseFloat(maturity.annualPercentageRate) * 100;
+                                maturity.subTitle = `<span>` +
+                                    $.mage.__('Pay in %1 times without fees (for %2€/month) with')
+                                        .replace('%1', installment).replace('%2', monthlyInstallmentAmount) +
+                                    `</span>` +
+                                    `<img src="${window.checkoutConfig.payment.younited.logo}" alt="Younited Pay">`;
+
+                                _this.maturities.push(maturity)
+                            }
+
+                            return _this.maturities;
+                        }, 'error': function (request, error) {
+                            console.log("Request error: " + JSON.stringify(request));
                             $('#yp-method').hide();
                         }
-
-                        _this.maturities = [];
-                        for (const installment in window.checkoutConfig.payment.younited.maturities) {
-                            var maturity = window.checkoutConfig.payment.younited.maturities[installment];
-                            var monthlyInstallmentAmount = maturity.monthlyInstallmentAmount.toFixed(2);
-                            maturity.installment = parseInt(installment);
-                            maturity.annualDebitRate = parseFloat(maturity.annualDebitRate) * 100;
-                            maturity.annualPercentageRate = parseFloat(maturity.annualPercentageRate) * 100;
-                            maturity.subTitle = `<span>` +
-                                $.mage.__('Pay in %1 times without fees (for %2€/month) with')
-                                    .replace('%1', installment).replace('%2', monthlyInstallmentAmount) +
-                                `</span>` +
-                                `<img src="${window.checkoutConfig.payment.younited.logo}" alt="Younited Pay">`;
-
-                            _this.maturities.push(maturity)
-                        }
-                        return _this.maturities;
-                    }, 'error': function (request, error) {
-                        console.log("Request error: " + JSON.stringify(request));
-                        $('#yp-method').hide();
-                    }
-                });
+                    });
+                } else {
+                    return this.maturities;
+                }
             } else {
-                return this.maturities;
+                _this.maturities = [];
+                for (const installment in window.checkoutConfig.payment.younited.maturities) {
+                    var maturity = window.checkoutConfig.payment.younited.maturities[installment];
+                    var monthlyInstallmentAmount = maturity.monthlyInstallmentAmount.toFixed(2);
+                    maturity.installment = parseInt(installment);
+                    maturity.annualDebitRate = parseFloat(maturity.annualDebitRate) * 100;
+                    maturity.annualPercentageRate = parseFloat(maturity.annualPercentageRate) * 100;
+                    maturity.subTitle = `<span>` +
+                        $.mage.__('Pay in %1 times without fees (for %2€/month) with')
+                            .replace('%1', installment).replace('%2', monthlyInstallmentAmount) +
+                        `</span>` +
+                        `<img src="${window.checkoutConfig.payment.younited.logo}" alt="Younited Pay">`;
+
+                    _this.maturities.push(maturity)
+                }
+
+                return _this.maturities;
             }
         },
 

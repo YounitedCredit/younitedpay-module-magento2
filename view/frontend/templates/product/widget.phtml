@@ -30,7 +30,7 @@
     <?php elseif (!empty($installments)) : ?>
         <?php $defaultMaturity = 0 ?>
         <?php $defaultInstallment = 0 ?>
-        <div class="younitedpay-widget-root" id="yp-widget" data-price="<?= $block->getProductPrice($product) ?>"
+        <div class="younitedpay-widget-root" id="yp-widget" data-price="<?= $block->getWidgetProductPrice($product) ?>"
              data-type="<?= $product->getTypeId() ?>">
             <div id="younited_block">
                 <img src="<?= $block->getImageSrc('logo-younitedpay-btn.png') ?>" alt="<?= __("Younited Pay") ?>">
