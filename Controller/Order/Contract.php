@@ -215,8 +215,8 @@ class Contract extends \Magento\Checkout\Controller\Onepage
         $merchantUrls = new MerchantUrls();
         $merchantUrls->setOnApplicationFailedRedirectUrl($this->getContractUrl('failed'));
         $merchantUrls->setOnApplicationSucceededRedirectUrl($this->getContractUrl('success'));
-        $merchantUrls->setOnCanceledWebhookUrl($this->getContractUrl('canceled'));
-        $merchantUrls->setOnWithdrawnWebhookUrl($this->getContractUrl('withdrawn'));
+        $merchantUrls->setOnCanceledWebhookUrl($this->getContractUrl('cancelwebhook'));
+        $merchantUrls->setOnWithdrawnWebhookUrl($this->getContractUrl('withdrawnwebhook'));
 
         $address = $order->getBillingAddress();
         $street = implode(', ', $order->getBillingAddress()->getStreet());

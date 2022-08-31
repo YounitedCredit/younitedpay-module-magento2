@@ -126,13 +126,6 @@ abstract class RequestHandler implements ObserverInterface
                     $response->getStatusCode(),
                     $response->getReasonPhrase()
                 ));
-
-                // @todo remove once API fixed
-                if ($body instanceof \YounitedPaySDK\Model\CancelContract) {
-                    $informations['Payment Status'] = $status;
-                    $informations['Payment Status updated on'] = $this->date->date();
-                    return $informations;
-                }
             }
         } catch (Exception $e) {
             $this->logger->critical('Younited Credit confirmation failed. Younited API Error',
