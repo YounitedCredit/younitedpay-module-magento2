@@ -45,11 +45,19 @@ class ModeTest extends \PHPUnit\Framework\TestCase
 
     public function testToOptionArray()
     {
-        $this->assertIsArray($this->model->toOptionArray());
+        if (method_exists($this, 'assertIsArray')) {
+            $this->assertIsArray($this->model->toOptionArray());
+        } else {
+            $this->assertEquals(true, is_array($this->model->toOptionArray()));
+        }
     }
 
     public function testToArray()
     {
-        $this->assertIsArray($this->model->toArray());
+        if (method_exists($this, 'assertIsArray')) {
+            $this->assertIsArray($this->model->toArray());
+        } else {
+            $this->assertEquals(true, is_array($this->model->toArray()));
+        }
     }
 }

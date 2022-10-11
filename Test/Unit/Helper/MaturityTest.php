@@ -44,7 +44,11 @@ class MaturityTest extends \PHPUnit\Framework\TestCase
 
     public function testFixAmount()
     {
-        $this->assertIsFloat($this->helper->fixAmount("3.5"));
+        if (method_exists($this, 'assertIsFloat')) {
+            $this->assertIsFloat($this->helper->fixAmount("3.5"));
+        } else {
+            $this->assertEquals(3.5, $this->helper->fixAmount("3.5"));
+        }
     }
 
     public function testGetDefaultMaturity()
