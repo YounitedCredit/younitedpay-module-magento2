@@ -75,13 +75,13 @@
                     <label>Enable IP Whitelist</label>
                     <source_model>Magento\Config\Model\Config\Source\Yesno</source_model>
                     <comment>
-                        <![CDATA[This option defines in whitch environment your module is configured.]]>
+                        <![CDATA[When enabled, only the listed IPs will see the module’s components on the site.]]>
                     </comment>
                 </field>
                 <field id="ip_whitelist" translate="label" sortOrder="60" type="text" showInDefault="1" showInWebsite="1" showInStore="1">
                     <label>IP Whitelist</label>
                     <comment>
-                        <![CDATA[Comma separated IP list.<br />When enabled, only the listed IPs will see the module’s components on the site.]]>
+                        <![CDATA[Comma separated IP list.]]>
                     </comment>
                 </field>
             </group>

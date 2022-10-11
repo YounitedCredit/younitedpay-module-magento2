@@ -28,6 +28,7 @@ define([
     'use strict';
 
     return Component.extend({
+        isCalculated: false,
         redirectAfterPlaceOrder: false,
         maturities: null,
         currentTotal: null,
@@ -66,6 +67,8 @@ define([
          */
         getMaturities: function () {
             var _this = this;
+            var feesMessage = $.mage.__('Pay in %1 times (for %2€/month) with');
+            var feesWithoutMessage = $.mage.__('Pay in %1 times without fees (for %2€/month) with');
 
             // > Magento 2.2
             if (parseInt(window.checkoutConfig.payment.younited.magento2Version) > 2) {
@@ -96,16 +99,22 @@ define([
                                 var maturity = window.checkoutConfig.payment.younited.maturities[installment];
                                 var monthlyInstallmentAmount = maturity.monthlyInstallmentAmount.toFixed(2);
                                 maturity.installment = parseInt(installment);
-                                maturity.annualDebitRate = parseFloat(maturity.annualDebitRate) * 100;
-                                maturity.annualPercentageRate = parseFloat(maturity.annualPercentageRate) * 100;
+
+                                if (!this.isCalculated) {
+                                    maturity.annualDebitRate = parseFloat(maturity.annualDebitRate) * 100;
+                                    maturity.annualPercentageRate = parseFloat(maturity.annualPercentageRate) * 100;
+                                }
+
+                                var feesTxt = maturity.annualDebitRate ? feesMessage : feesWithoutMessage;
                                 maturity.subTitle = `<span>` +
-                                    $.mage.__('Pay in %1 times without fees (for %2€/month) with')
-                                        .replace('%1', installment).replace('%2', monthlyInstallmentAmount) +
+                                    feesTxt.replace('%1', installment).replace('%2', monthlyInstallmentAmount) +
                                     `</span>` +
                                     `<img src="${window.checkoutConfig.payment.younited.logo}" alt="Younited Pay">`;
 
                                 _this.maturities.push(maturity)
                             }
+
+                            this.isCalculated = true;
 
                             return _this.maturities;
                         }, 'error': function (request, error) {
@@ -122,16 +131,22 @@ define([
                     var maturity = window.checkoutConfig.payment.younited.maturities[installment];
                     var monthlyInstallmentAmount = maturity.monthlyInstallmentAmount.toFixed(2);
                     maturity.installment = parseInt(installment);
-                    maturity.annualDebitRate = parseFloat(maturity.annualDebitRate) * 100;
-                    maturity.annualPercentageRate = parseFloat(maturity.annualPercentageRate) * 100;
+
+                    if (!this.isCalculated) {
+                        maturity.annualDebitRate = parseFloat(maturity.annualDebitRate) * 100;
+                        maturity.annualPercentageRate = parseFloat(maturity.annualPercentageRate) * 100;
+                    }
+
+                    var feesTxt = maturity.annualDebitRate ? feesMessage : feesWithoutMessage;
                     maturity.subTitle = `<span>` +
-                        $.mage.__('Pay in %1 times without fees (for %2€/month) with')
-                            .replace('%1', installment).replace('%2', monthlyInstallmentAmount) +
+                        feesTxt.replace('%1', installment).replace('%2', monthlyInstallmentAmount) +
                         `</span>` +
                         `<img src="${window.checkoutConfig.payment.younited.logo}" alt="Younited Pay">`;
 
                     _this.maturities.push(maturity)
                 }
+
+                this.isCalculated = true;
 
                 return _this.maturities;
             }

@@ -18,8 +18,7 @@
 define([
     'jquery',
     'loader',
-    'mage/translate',
-    'jquery-ui-modules/widget'
+    'mage/translate'
 ], function ($, $t) {
     'use strict';
 

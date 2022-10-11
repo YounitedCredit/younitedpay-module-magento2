@@ -19,9 +19,11 @@
 
 namespace YounitedCredit\YounitedPay\Model\Payment;
 
+use Exception;
 use Magento\Directory\Helper\Data as DirectoryHelper;
 use Magento\Framework\DataObject;
 use Magento\Quote\Api\Data\PaymentInterface;
+use YounitedCredit\YounitedPay\Helper\Maturity;
 
 /**
  * Class Younited
@@ -34,6 +36,11 @@ class Younited extends \Magento\Payment\Model\Method\AbstractMethod
      * @var \Magento\Store\Model\StoreManagerInterface
      */
     protected $storeManager;
+
+    /**
+     * @var Maturity
+     */
+    protected $maturityHelper;
 
     /**
      * @var string
@@ -73,6 +80,7 @@ class Younited extends \Magento\Payment\Model\Method\AbstractMethod
      * @param \Magento\Framework\App\Config\ScopeConfigInterface $scopeConfig
      * @param \Magento\Payment\Model\Method\Logger $logger
      * @param \Magento\Store\Model\StoreManagerInterface $storeManager
+     * @param Maturity $maturityHelper
      * @param array $data
      * @param DirectoryHelper|null $directory
      */
@@ -85,6 +93,7 @@ class Younited extends \Magento\Payment\Model\Method\AbstractMethod
         \Magento\Framework\App\Config\ScopeConfigInterface $scopeConfig,
         \Magento\Payment\Model\Method\Logger $logger,
         \Magento\Store\Model\StoreManagerInterface $storeManager,
+        Maturity $maturityHelper,
         array $data = [],
         DirectoryHelper $directory = null
     ) {
@@ -94,6 +103,7 @@ class Younited extends \Magento\Payment\Model\Method\AbstractMethod
         );
 
         $this->storeManager = $storeManager;
+        $this->maturityHelper = $maturityHelper;
 
         $this->_minAmount = $this->getConfigData('min_order_total');
         $this->_maxAmount = $this->getConfigData('max_order_total');
@@ -216,6 +226,11 @@ class Younited extends \Magento\Payment\Model\Method\AbstractMethod
             $code = $this->storeManager->getStore($quote->getStoreId())->getCurrentCurrency()->getCode();
             if ($code != 'EUR') return false;
         } catch (\Exception $e) {
+            return false;
+        }
+
+        $maturities = $this->maturityHelper->getInstallments($quote->getData('grand_total'), $quote->getStoreId());
+        if (!$maturities || empty($maturities)) {
             return false;
         }
 

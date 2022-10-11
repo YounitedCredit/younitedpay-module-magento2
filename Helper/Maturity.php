@@ -92,7 +92,7 @@ class Maturity
      *
      * @return float|null
      */
-    protected function fixAmount($amount)
+    public function fixAmount($amount)
     {
         return !empty($amount) ? (float)$amount : null;
     }
@@ -420,7 +420,7 @@ class Maturity
      *
      * @return int
      */
-    protected function getDefaultMaturity()
+    public function getDefaultMaturity()
     {
         return 1;
     }

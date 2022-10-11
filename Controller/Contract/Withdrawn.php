@@ -83,6 +83,6 @@ class Withdrawn extends \Magento\Framework\App\Action\Action
         $this->logger->info('Withdrawn');
         $this->logger->info(json_encode($params));
         $resultJson = $this->resultJsonFactory->create();
-        return $resultJson->setData(['response_code' => 202]);
+        return $resultJson->setData(['response_code' => 200]);
     }
 }

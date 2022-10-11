@@ -164,12 +164,12 @@ class Widget extends \Magento\Catalog\Block\Product\View
     }
 
     /**
-     * @return int|string
+     * @return int|string|null
      */
     public function getStoreCode()
     {
         if (!$this->storeCode) {
-            $this->storeCode = $this->getStore()->getCode();
+            $this->storeCode = ($this->getStore()) ? $this->getStore()->getCode() : null;
         }
         return $this->storeCode;
     }
@@ -215,7 +215,7 @@ class Widget extends \Magento\Catalog\Block\Product\View
                 $priceInfo = $product->getPriceInfo()->getPrice('regular_price');
                 $this->productPrice = (float)$priceInfo->getMinimalPrice()->getValue();
             } else {
-                $this->productPrice = (float)$product->getPrice();
+                $this->productPrice = (float)$product->getFinalPrice();
             }
         }
         return $this->productPrice;

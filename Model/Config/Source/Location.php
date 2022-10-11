@@ -52,7 +52,7 @@ class Location implements \Magento\Framework\Option\ArrayInterface
             'product_price_after' => __('After products prices'),
             'product_addtocart_after' => __('After Add To Cart button'),
             'product_informations' => __('Product Information'),
-            'custom' => __('Custom')
+            'disabled' => __('Disabled')
         ];
     }
 }
