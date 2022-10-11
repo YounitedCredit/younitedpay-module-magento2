@@ -27,9 +27,7 @@ namespace YounitedCredit\YounitedPay\Model\System\Config\Backend;
 class Maturities extends \Magento\Framework\App\Config\Value
 {
     /**
-     * Catalog inventory minsaleqty
-     *
-     * @var \YounitedCredit\YounitedPay\Helper\Maturity
+     * @var \YounitedCredit\YounitedPay\Helper\Maturity|null
      */
     protected $maturityHelper = null;
 

@@ -19,8 +19,6 @@
 
 namespace YounitedCredit\YounitedPay\Controller\Contract;
 
-use Magento\Customer\Api\AccountManagementInterface;
-use Magento\Customer\Api\CustomerRepositoryInterface;
 use Magento\Framework\Controller\Result\JsonFactory;
 
 /**
@@ -51,7 +49,7 @@ class Withdrawnwebhook extends \Magento\Framework\App\Action\Action
     private $resultJsonFactory;
 
     /**
-     * Withdrawn constructor.
+     * Withdrawnwebhook constructor.
      *
      * @param JsonFactory $resultJsonFactory
      * @param \YounitedCredit\YounitedPay\Helper\Maturity $maturityHelper

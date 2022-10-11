@@ -20,7 +20,6 @@
 namespace YounitedCredit\YounitedPay\Controller\Contract;
 
 use Magento\Framework\Controller\Result\JsonFactory;
-use function json_encode;
 
 /**
  * Class Cancelwebhook

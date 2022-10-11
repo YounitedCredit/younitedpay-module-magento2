@@ -31,7 +31,6 @@ use Magento\Sales\Api\Data\OrderPaymentInterface;
 use Psr\Log\LoggerInterface;
 use YounitedCredit\YounitedPay\Helper\Config;
 use YounitedCredit\YounitedPay\Helper\Maturity;
-use YounitedPaySDK\Client;
 use YounitedPaySDK\Model\CancelContract;
 use YounitedPaySDK\Model\WithdrawContract;
 use YounitedPaySDK\Request\CancelContractRequest;
@@ -88,14 +87,20 @@ class WithdrawCredit extends RequestHandler
         $creditmemo = $observer->getEvent()->getCreditmemo();
 
         // Check only new credit memo
-        if ($creditmemo->getIncrementId() !== null) return $this;
+        if ($creditmemo->getIncrementId() !== null) {
+            return $this;
+        }
 
         $order = $creditmemo->getOrder();
         $payment = $order->getPayment();
 
         // Check only younited credit orders
-        if (!$payment instanceof DataObject && !$payment instanceof OrderPaymentInterface) return $this;
-        if ($payment->getMethod() != "younited") return $this;
+        if (!$payment instanceof DataObject && !$payment instanceof OrderPaymentInterface) {
+            return $this;
+        }
+        if ($payment->getMethod() != "younited") {
+            return $this;
+        }
 
         $credentials = $this->maturityHelper->getApiCredentials($order->getStoreId());
         $informations = $payment->getAdditionalInformation();

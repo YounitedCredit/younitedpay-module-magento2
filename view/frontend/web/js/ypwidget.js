@@ -193,7 +193,7 @@ define([
                         this.requestId++;
                         var currentId = this.requestId;
 
-                        setTimeout(function(){
+                        setTimeout(function () {
                             if (currentId == _this.requestId) {
                                 _this.ld.loader('show');
                                 $.ajax({

@@ -19,7 +19,6 @@
 
 namespace YounitedCredit\YounitedPay\Controller;
 
-use Magento\Framework\App\Action\Context;
 use Magento\Customer\Api\AccountManagementInterface;
 use Magento\Customer\Api\CustomerRepositoryInterface;
 

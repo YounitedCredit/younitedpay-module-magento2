@@ -19,7 +19,6 @@
 
 namespace YounitedCredit\YounitedPay\Model\Payment;
 
-use Exception;
 use Magento\Directory\Helper\Data as DirectoryHelper;
 use Magento\Framework\DataObject;
 use Magento\Quote\Api\Data\PaymentInterface;
@@ -220,11 +219,15 @@ class Younited extends \Magento\Payment\Model\Method\AbstractMethod
      */
     public function isAvailable(\Magento\Quote\Api\Data\CartInterface $quote = null)
     {
-        if (!$quote) return false;
+        if (!$quote) {
+            return false;
+        }
 
         try {
             $code = $this->storeManager->getStore($quote->getStoreId())->getCurrentCurrency()->getCode();
-            if ($code != 'EUR') return false;
+            if ($code != 'EUR') {
+                return false;
+            }
         } catch (\Exception $e) {
             return false;
         }

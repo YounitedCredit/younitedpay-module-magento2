@@ -38,7 +38,7 @@ define([
 
         /**
          * Select maturity
-         * 
+         *
          * @param installment
          */
         selectMaturity: function (installment) {

@@ -26,12 +26,15 @@ use YounitedPaySDK\Model\BestPrice;
 use YounitedPaySDK\Request\BestPriceRequest;
 
 /**
- * Provides field with additional information
+ * Class Requirements
+ *
+ * @package YounitedCredit\YounitedPay\Block\Adminhtml\System\Config
  */
 class Requirements extends \Magento\Config\Block\System\Config\Form\Field
 {
     /**
      * @param \Magento\Framework\Data\Form\Element\AbstractElement $element
+     *
      * @return string
      */
     public function render(\Magento\Framework\Data\Form\Element\AbstractElement $element)
@@ -44,6 +47,7 @@ class Requirements extends \Magento\Config\Block\System\Config\Form\Field
     /**
      * @param \Magento\Framework\Data\Form\Element\AbstractElement $element
      * @param string $html
+     *
      * @return string
      */
     private function decorateRowHtml(\Magento\Framework\Data\Form\Element\AbstractElement $element, $html)
@@ -94,11 +98,15 @@ class Requirements extends \Magento\Config\Block\System\Config\Form\Field
         $format .= '<div class="config-younited-server"><span class="' . $isValid . '"></span> WebHook contacted</div>';
 
         if ($this->getRequest()->getParam('store')) {
-            $mode = $this->_scopeConfig->getValue("younited_setup/general/mode", ScopeInterface::SCOPE_STORE, $this->getRequest()->getParam('store'));
-        } else if ($this->getRequest()->getParam('website')) {
-            $mode = $this->_scopeConfig->getValue("younited_setup/general/mode", ScopeInterface::SCOPE_WEBSITE, $this->getRequest()->getParam('website'));
+            $mode = $this->_scopeConfig->getValue("younited_setup/general/mode", ScopeInterface::SCOPE_STORE,
+                $this->getRequest()->getParam('store'));
         } else {
-            $mode = $this->_scopeConfig->getValue("younited_setup/general/mode");
+            if ($this->getRequest()->getParam('website')) {
+                $mode = $this->_scopeConfig->getValue("younited_setup/general/mode", ScopeInterface::SCOPE_WEBSITE,
+                    $this->getRequest()->getParam('website'));
+            } else {
+                $mode = $this->_scopeConfig->getValue("younited_setup/general/mode");
+            }
         }
         $isValid = $mode == 'prod' ? 'valid' : 'invalid';
         $format .= '<div class="config-younited-server"><span class="' . $isValid . '"></span> Production enviroment</div>';
@@ -124,9 +132,11 @@ class Requirements extends \Magento\Config\Block\System\Config\Form\Field
         }
 
         if ($storeId) {
-            $webHookValue = $this->_scopeConfig->getValue(Config::XML_PATH_API_SECRET_WEBHOOK, ScopeInterface::SCOPE_STORE, $storeId);
+            $webHookValue = $this->_scopeConfig->getValue(Config::XML_PATH_API_SECRET_WEBHOOK,
+                ScopeInterface::SCOPE_STORE, $storeId);
         } else {
-            $webHookValue = $this->_scopeConfig->getValue(Config::XML_PATH_API_SECRET_WEBHOOK, ScopeInterface::SCOPE_WEBSITE, $websiteId);
+            $webHookValue = $this->_scopeConfig->getValue(Config::XML_PATH_API_SECRET_WEBHOOK,
+                ScopeInterface::SCOPE_WEBSITE, $websiteId);
         }
 
         return $webHookValue;
@@ -144,13 +154,19 @@ class Requirements extends \Magento\Config\Block\System\Config\Form\Field
         }
 
         if ($storeId) {
-            $apiMode = $this->_scopeConfig->getValue(Config::XML_PATH_API_DEV_MODE, ScopeInterface::SCOPE_STORE, $storeId);
-            $clientId = $this->_scopeConfig->getValue(Config::XML_PATH_API_CLIENT_ID, ScopeInterface::SCOPE_STORE, $storeId);
-            $clientSecret = $this->_scopeConfig->getValue(Config::XML_PATH_API_CLIENT_SECRET, ScopeInterface::SCOPE_STORE, $storeId);
+            $apiMode = $this->_scopeConfig->getValue(Config::XML_PATH_API_DEV_MODE, ScopeInterface::SCOPE_STORE,
+                $storeId);
+            $clientId = $this->_scopeConfig->getValue(Config::XML_PATH_API_CLIENT_ID, ScopeInterface::SCOPE_STORE,
+                $storeId);
+            $clientSecret = $this->_scopeConfig->getValue(Config::XML_PATH_API_CLIENT_SECRET,
+                ScopeInterface::SCOPE_STORE, $storeId);
         } else {
-            $apiMode = $this->_scopeConfig->getValue(Config::XML_PATH_API_DEV_MODE, ScopeInterface::SCOPE_WEBSITE, $websiteId);
-            $clientId = $this->_scopeConfig->getValue(Config::XML_PATH_API_CLIENT_ID, ScopeInterface::SCOPE_WEBSITE, $websiteId);
-            $clientSecret = $this->_scopeConfig->getValue(Config::XML_PATH_API_CLIENT_SECRET, ScopeInterface::SCOPE_WEBSITE, $websiteId);
+            $apiMode = $this->_scopeConfig->getValue(Config::XML_PATH_API_DEV_MODE, ScopeInterface::SCOPE_WEBSITE,
+                $websiteId);
+            $clientId = $this->_scopeConfig->getValue(Config::XML_PATH_API_CLIENT_ID, ScopeInterface::SCOPE_WEBSITE,
+                $websiteId);
+            $clientSecret = $this->_scopeConfig->getValue(Config::XML_PATH_API_CLIENT_SECRET,
+                ScopeInterface::SCOPE_WEBSITE, $websiteId);
         }
 
         if (!$clientId || !$clientSecret) {

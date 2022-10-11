@@ -29,7 +29,9 @@ use YounitedPaySDK\Model\BestPrice;
 use YounitedPaySDK\Request\BestPriceRequest;
 
 /**
- * MinSaleQty value manipulation helper
+ * Class Maturity
+ *
+ * @package YounitedCredit\YounitedPay\Helper
  */
 class Maturity
 {
@@ -313,16 +315,20 @@ class Maturity
      * @throws LocalizedException
      * @throws \Magento\Framework\Exception\NoSuchEntityException
      */
-    public function getApiCredentials($storeId = false, $website = false) {
+    public function getApiCredentials($storeId = false, $website = false)
+    {
 
         if ($storeId === false) {
             $storeId = $this->getStore()->getId();
         }
 
         if ($website) {
-            $mode = $this->scopeConfig->getValue(Config::XML_PATH_API_DEV_MODE, ScopeInterface::SCOPE_WEBSITE, $storeId);
-            $clientId = $this->scopeConfig->getValue(Config::XML_PATH_API_CLIENT_ID, ScopeInterface::SCOPE_WEBSITE, $storeId);
-            $clientSecret = $this->scopeConfig->getValue(Config::XML_PATH_API_CLIENT_SECRET, ScopeInterface::SCOPE_WEBSITE, $storeId);
+            $mode = $this->scopeConfig->getValue(Config::XML_PATH_API_DEV_MODE, ScopeInterface::SCOPE_WEBSITE,
+                $storeId);
+            $clientId = $this->scopeConfig->getValue(Config::XML_PATH_API_CLIENT_ID, ScopeInterface::SCOPE_WEBSITE,
+                $storeId);
+            $clientSecret = $this->scopeConfig->getValue(Config::XML_PATH_API_CLIENT_SECRET,
+                ScopeInterface::SCOPE_WEBSITE, $storeId);
         } else {
             $mode = $this->getConfig(Config::XML_PATH_API_DEV_MODE, $storeId);
             $clientId = $this->getConfig(Config::XML_PATH_API_CLIENT_ID, $storeId);
@@ -370,7 +376,8 @@ class Maturity
             : (new BestPriceRequest())->setModel($body);
 
         try {
-            $response = $client->setCredential($credentials['clientId'], $credentials['clientSecret'])->sendRequest($request);
+            $response = $client->setCredential($credentials['clientId'],
+                $credentials['clientSecret'])->sendRequest($request);
             if ($response->getStatusCode() !== 200) {
                 return __('Cannot contact Younited Credit API. Status code: %1 - %2.', $response->getStatusCode(),
                     $response->getReasonPhrase());

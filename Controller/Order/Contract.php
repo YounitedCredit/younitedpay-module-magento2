@@ -255,7 +255,8 @@ class Contract extends \Magento\Checkout\Controller\Onepage
         }
 
         try {
-            $response = $client->setCredential($credentials['clientId'], $credentials['clientSecret'])->sendRequest($request);
+            $response = $client->setCredential($credentials['clientId'],
+                $credentials['clientSecret'])->sendRequest($request);
 
             if ($response->getStatusCode() !== 200) {
                 return $this->redirectOnError($order, __(

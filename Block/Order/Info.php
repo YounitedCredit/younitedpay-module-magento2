@@ -79,6 +79,7 @@ class Info extends \Magento\Framework\View\Element\Template
 
     /**
      * Render as PDF
+     *
      * @return string
      */
     public function toPdf()
@@ -92,6 +93,7 @@ class Info extends \Magento\Framework\View\Element\Template
      *
      * Children must have toPdf() callable
      * Known issue: not sorted
+     *
      * @return array
      */
     public function getChildPdfAsArray()
@@ -120,6 +122,7 @@ class Info extends \Magento\Framework\View\Element\Template
      *
      * @param mixed $value
      * @param bool $escapeHtml
+     *
      * @return array
      */
     public function getValueAsArray($value, $escapeHtml = false)
@@ -170,6 +173,7 @@ class Info extends \Magento\Framework\View\Element\Template
      * Prepare information specific to current payment method
      *
      * @param null|\Magento\Framework\DataObject|array $transport
+     *
      * @return \Magento\Framework\DataObject
      */
     protected function _prepareSpecificInformation($transport = null)

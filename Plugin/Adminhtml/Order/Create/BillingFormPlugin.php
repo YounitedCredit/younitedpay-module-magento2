@@ -2,17 +2,23 @@
 
 namespace YounitedCredit\YounitedPay\Plugin\Adminhtml\Order\Create;
 
-use Magento\Catalog\Helper\Data;
-use Magento\Framework\App\Config\ScopeConfigInterface;
-use Magento\Framework\Escaper;
-use Magento\Framework\Exception\NoSuchEntityException;
-use Magento\Framework\Serialize\Serializer\JsonHexTag;
-use Magento\Store\Model\ScopeInterface;
-
+/**
+ * Class BillingFormPlugin
+ *
+ * @package YounitedCredit\YounitedPay\Plugin\Adminhtml\Order\Create
+ */
 class BillingFormPlugin
 {
-    public function aroundGetMethods(\Magento\Sales\Block\Adminhtml\Order\Create\Billing\Method\Form $subject, callable $proceed)
-    {
+    /**
+     * @param \Magento\Sales\Block\Adminhtml\Order\Create\Billing\Method\Form $subject
+     * @param callable $proceed
+     *
+     * @return mixed
+     */
+    public function aroundGetMethods(
+        \Magento\Sales\Block\Adminhtml\Order\Create\Billing\Method\Form $subject,
+        callable $proceed
+    ) {
         $methods = $proceed();
 
         /** @var \Magento\Payment\Model\MethodInterface $method */
@@ -23,6 +29,5 @@ class BillingFormPlugin
         }
 
         return $methods;
-
     }
 }

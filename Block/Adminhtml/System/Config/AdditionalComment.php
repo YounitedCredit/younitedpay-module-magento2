@@ -20,7 +20,9 @@
 namespace YounitedCredit\YounitedPay\Block\Adminhtml\System\Config;
 
 /**
- * Provides field with additional information
+ * Class AdditionalComment
+ *
+ * @package YounitedCredit\YounitedPay\Block\Adminhtml\System\Config
  */
 class AdditionalComment extends \Magento\Config\Block\System\Config\Form\Field
 {

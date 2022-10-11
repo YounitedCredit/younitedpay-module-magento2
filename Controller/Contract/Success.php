@@ -118,6 +118,10 @@ class Success extends \Magento\Checkout\Controller\Onepage
         );
     }
 
+    /**
+     * @return \Magento\Framework\App\ResponseInterface|\Magento\Framework\Controller\Result\Redirect|\Magento\Framework\Controller\ResultInterface
+     * @throws \Magento\Framework\Exception\LocalizedException
+     */
     public function execute()
     {
         // Mettre la commande en processing

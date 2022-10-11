@@ -105,7 +105,8 @@ class Widget extends \Magento\Catalog\Block\Product\View
      *
      * @return bool
      */
-    public function isDevMode() {
+    public function isDevMode()
+    {
         return $this->getConfig(Config::XML_PATH_API_DEV_MODE);
     }
 
@@ -210,12 +211,14 @@ class Widget extends \Magento\Catalog\Block\Product\View
             if ($product->getTypeId() == 'configurable') {
                 $this->productPrice = (float)$product->getPriceInfo()->getPrice('regular_price')
                     ->getMinRegularAmount()->getValue();
-            } else if ($product->getTypeId() == 'bundle') {
-                /** @var \Magento\Bundle\Pricing\Price\BundleRegularPrice $priceInfo */
-                $priceInfo = $product->getPriceInfo()->getPrice('regular_price');
-                $this->productPrice = (float)$priceInfo->getMinimalPrice()->getValue();
             } else {
-                $this->productPrice = (float)$product->getFinalPrice();
+                if ($product->getTypeId() == 'bundle') {
+                    /** @var \Magento\Bundle\Pricing\Price\BundleRegularPrice $priceInfo */
+                    $priceInfo = $product->getPriceInfo()->getPrice('regular_price');
+                    $this->productPrice = (float)$priceInfo->getMinimalPrice()->getValue();
+                } else {
+                    $this->productPrice = (float)$product->getFinalPrice();
+                }
             }
         }
         return $this->productPrice;

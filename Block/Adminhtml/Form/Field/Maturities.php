@@ -25,7 +25,9 @@ use YounitedPaySDK\Client;
 use YounitedPaySDK\Request\AvailableMaturitiesRequest;
 
 /**
- * HTML select element block with maturity options
+ * Class Maturities
+ *
+ * @package YounitedCredit\YounitedPay\Block\Adminhtml\Form\Field
  */
 class Maturities extends \Magento\Framework\View\Element\Html\Select
 {
@@ -97,7 +99,8 @@ class Maturities extends \Magento\Framework\View\Element\Html\Select
                 $request = $request->enableSandbox();
             }
             try {
-                $response = $client->setCredential($credentials['clientId'], $credentials['clientSecret'])->sendRequest($request);
+                $response = $client->setCredential($credentials['clientId'],
+                    $credentials['clientSecret'])->sendRequest($request);
 
                 if ($response->getStatusCode() == 200) {
                     foreach ($response->getModel() as $val) {

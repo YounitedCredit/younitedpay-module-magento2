@@ -27,7 +27,6 @@ use Magento\Framework\View\Asset\Repository;
 use Magento\Quote\Api\CartTotalRepositoryInterface;
 use Magento\Store\Model\StoreManagerInterface;
 use YounitedCredit\YounitedPay\Helper\Maturity;
-use function explode;
 
 /**
  * Class ConfigProvider

@@ -26,10 +26,9 @@ use Magento\Framework\Stdlib\DateTime\DateTime;
 use Psr\Log\LoggerInterface;
 use YounitedCredit\YounitedPay\Helper\Maturity;
 use YounitedPaySDK\Client;
-use function __;
 
 /**
- * Class ValidateCredit
+ * Class RequestHandler
  *
  * @package YounitedCredit\YounitedPay\Observer
  */
@@ -90,8 +89,15 @@ abstract class RequestHandler implements ObserverInterface
      *
      * @return false|string[]
      */
-    protected function sendRequest($body, $request, $informations, $storeId, $status = false, string $errorMessage = '', string $successMessage = '')
-    {
+    protected function sendRequest(
+        $body,
+        $request,
+        $informations,
+        $storeId,
+        $status = false,
+        string $errorMessage = '',
+        string $successMessage = ''
+    ) {
         $client = new Client();
         $credentials = $this->maturityHelper->getApiCredentials($storeId);
 

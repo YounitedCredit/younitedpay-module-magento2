@@ -20,12 +20,15 @@
 namespace YounitedCredit\YounitedPay\Block\Adminhtml\System\Config;
 
 /**
- * Provides field with additional information
+ * Class InfoTriggerStatus
+ *
+ * @package YounitedCredit\YounitedPay\Block\Adminhtml\System\Config
  */
 class InfoTriggerStatus extends \Magento\Config\Block\System\Config\Form\Field
 {
     /**
      * @param \Magento\Framework\Data\Form\Element\AbstractElement $element
+     *
      * @return string
      */
     public function render(\Magento\Framework\Data\Form\Element\AbstractElement $element)
@@ -37,6 +40,7 @@ class InfoTriggerStatus extends \Magento\Config\Block\System\Config\Form\Field
     /**
      * @param \Magento\Framework\Data\Form\Element\AbstractElement $element
      * @param string $html
+     *
      * @return string
      */
     private function decorateRowHtml(\Magento\Framework\Data\Form\Element\AbstractElement $element, $html)

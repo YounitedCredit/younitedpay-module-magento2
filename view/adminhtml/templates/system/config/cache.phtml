@@ -61,7 +61,7 @@
                         if (startObservers === true) $(this).on('input', addRowNotice);
                     });
 
-                    if (startObservers === true) $(document).on('change',row.find('select'), addRowNotice);
+                    if (startObservers === true) $(document).on('change', row.find('select'), addRowNotice);
 
                     installment = parseInt(installment)
                     let from = (minAmount / installment).toFixed(2)
