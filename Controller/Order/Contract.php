@@ -215,8 +215,8 @@ class Contract extends \Magento\Checkout\Controller\Onepage
         $merchantUrls = new MerchantUrls();
         $merchantUrls->setOnApplicationFailedRedirectUrl($this->getContractUrl('failed'));
         $merchantUrls->setOnApplicationSucceededRedirectUrl($this->getContractUrl('success'));
-        $merchantUrls->setOnCanceledWebhookUrl($this->getContractUrl('cancelwebhook'));
-        $merchantUrls->setOnWithdrawnWebhookUrl($this->getContractUrl('withdrawnwebhook'));
+        $merchantUrls->setOnCanceledWebhookUrl($this->getContractUrl('webhook', ['action' => 'cancel', 'order' => $orderId]));
+        $merchantUrls->setOnWithdrawnWebhookUrl($this->getContractUrl('webhook', ['action' => 'withdrawn', 'order' => $orderId]));
 
         $address = $order->getBillingAddress();
         $street = implode(', ', $order->getBillingAddress()->getStreet());
@@ -302,13 +302,14 @@ class Contract extends \Magento\Checkout\Controller\Onepage
 
     /**
      * @param string $controller
+     * @param array $params
      *
      * @return string
      * @throws \Magento\Framework\Exception\NoSuchEntityException
      */
-    public function getContractUrl($controller)
+    public function getContractUrl($controller, $params = [])
     {
-        return $this->maturityHelper->getStore()->getUrl('younited/contract/' . $controller);
+        return $this->maturityHelper->getStore()->getUrl('younited/contract/' . $controller, $params);
     }
 
     /**

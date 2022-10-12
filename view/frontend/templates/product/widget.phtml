@@ -25,124 +25,130 @@
 <?php $product = $block->getProduct() ?>
 <?php if ($block->isEnabled() && $product && $product->getId() && $product->getTypeId() != 'grouped') : ?>
     <?php $installments = $block->getInstallments($product) ?>
-    <?php if (!is_array($installments) && $block->isDevMode()) : ?>
-        <div class="yp-error-notice"><?= $installments ?></div>
-    <?php elseif (!empty($installments)) : ?>
-        <?php $defaultMaturity = 0 ?>
-        <?php $defaultInstallment = 0 ?>
-        <div class="younitedpay-widget-root" id="yp-widget" data-price="<?= $block->getWidgetProductPrice($product) ?>"
-             data-type="<?= $product->getTypeId() ?>">
-            <div id="younited_block">
-                <img src="<?= $block->getImageSrc('logo-younitedpay-btn.png') ?>" alt="<?= __("Younited Pay") ?>">
-                <div id="yp-current-maturities">
-                    <?php $i = 0;
-                    foreach ($installments as $installment => $amount) : ?>
-                        <?php $defaultMaturity = ($i == 0) ? $amount['monthlyInstallmentAmount'] : $defaultMaturity; ?>
-                        <?php $defaultInstallment = ($i == 0) ? $installment : $defaultInstallment; ?>
-                        <div class="maturity_installment <?= ($i == 0) ? 'selected' : '' ?>"
-                             id="maturity_installment<?= $installment ?>" data-key="<?= $installment ?>"
-                             data-maturity="<?= $amount['monthlyInstallmentAmount'] ?>">
-                            <span><?= $installment ?>x</span>
-                        </div>
-                        <?php $i++; endforeach; ?>
-                </div>
-                <div class="yp-current-installment">
-                    <b><span><span id="yp-maturity"><?= $defaultMaturity ?></span>€</span></b>
-                    <span id="yp-installment">x<?= $defaultInstallment ?></span>
-                </div>
+    <?php $defaultMaturity = 0 ?>
+    <?php $defaultInstallment = 0 ?>
+    <div class="younitedpay-widget-root" id="yp-widget" data-price="<?= $block->getWidgetProductPrice($product) ?>"
+         data-type="<?= $product->getTypeId() ?>"<?php if (empty($installments)) : ?> style="display: none"<?php endif ?>>
+        <div id="younited_block">
+            <img src="<?= $block->getImageSrc('logo-younitedpay-btn.png') ?>" alt="<?= __("Younited Pay") ?>">
+            <div id="yp-current-maturities">
+                <?php $i = 0;
+                foreach ($installments as $installment => $amount) : ?>
+                    <?php $defaultMaturity = ($i == 0) ? $amount['monthlyInstallmentAmount'] : $defaultMaturity; ?>
+                    <?php $defaultInstallment = ($i == 0) ? $installment : $defaultInstallment; ?>
+                    <div class="maturity_installment <?= ($i == 0) ? 'selected' : '' ?>"
+                         id="maturity_installment<?= $installment ?>" data-key="<?= $installment ?>"
+                         data-maturity="<?= $amount['monthlyInstallmentAmount'] ?>">
+                        <span><?= $installment ?>x</span>
+                    </div>
+                    <?php $i++; endforeach; ?>
             </div>
-            <div id="younited_popupzone" style="display:none;">
-                <div class="popup-content">
-                    <button id="yp-close-popup">x</button>
-                    <div class="yp-left">
-                        <img class="yp-popup-logo" src="<?= $block->getImageSrc('logo-younitedpay.png') ?>"
-                             alt="youpay">
-                        <div class="yp-left-title">
-                            <h3><?= __("Simple") ?>.</h3>
-                            <h3><?= __("Instant") ?>.</h3>
-                            <h3><?= __("Secured") ?>.</h3>
+            <div class="yp-current-installment">
+                <b><span><span id="yp-maturity"><?= $defaultMaturity ?></span>€</span></b>
+                <span id="yp-installment">x<?= $defaultInstallment ?></span>
+            </div>
+        </div>
+        <div id="younited_popupzone" style="display:none;">
+            <div class="popup-content">
+                <button id="yp-close-popup">x</button>
+                <div class="yp-left">
+                    <img class="yp-popup-logo" src="<?= $block->getImageSrc('logo-younitedpay.png') ?>"
+                         alt="youpay">
+                    <div class="yp-left-title">
+                        <h3><?= __("Simple") ?>.</h3>
+                        <h3><?= __("Instant") ?>.</h3>
+                        <h3><?= __("Secured") ?>.</h3>
+                    </div>
+                    <div class="yp-text">
+                        <?= __("Younited, it's never been easier") ?><br>
+                        <?= __("to pay in several times.") ?>
+                    </div>
+                    <div class="yp-link">
+                        <?= __("Have a question? Visit our") ?> <a
+                                href="https://www.younited-credit.com/questions-reponses"
+                                target="_blank"><?= __("dedicated page") ?></a>
+                    </div>
+                    <div class="logo-cards">
+                        <img src="<?= $block->getImageSrc('cb.png') ?>" alt="<?= __("Bank Card") ?>">
+                        <img src="<?= $block->getImageSrc('visa.png') ?>" alt="<?= __("Visa") ?>">
+                        <img src="<?= $block->getImageSrc('mastercard.png') ?>" alt="<?= __("Mastercard") ?>">
+                    </div>
+                </div>
+                <div class="yp-right">
+                    <h4>
+                        <?= __("Your purchase for") ?> <span
+                                id="popup-maturity"><?= $defaultMaturity ?></span>€<?= __("/month with") ?><br>
+                        <span class="yp-purple"><?= __("Younited Pay") ?></span>
+                    </h4>
+                    <ul id="yp-popup-maturities">
+                        <?php $i = 0; ?>
+                        <?php $defautAmount = [
+                            'requestedAmount' => 0,
+                            'interestsTotalAmount' => 0,
+                            'creditTotalAmount' => 0,
+                            'annualPercentageRate' => 0,
+                            'annualDebitRate' => 0
+                        ]; ?>
+                        <?php foreach ($installments as $installment => $amount) : ?>
+                            <?php $defautAmount = ($i == 0) ? $amount : $defautAmount ?>
+                            <li class="blocks_maturities_popup <?= ($i == 0) ? 'selected' : '' ?>"
+                                id="blocks_maturities_popup<?= $installment ?>"
+                                data-key="<?= $installment ?>"
+                                data-maturity="<?= $amount['monthlyInstallmentAmount'] ?>"
+                                data-amount="<?= $amount['requestedAmount'] ?>"
+                                data-percent="<?= $amount['annualPercentageRate'] ?>"
+                                data-debit="<?= $amount['annualDebitRate'] ?>"
+                                data-total="<?= $amount['creditTotalAmount'] ?>"
+                                data-interests="<?= $amount['interestsTotalAmount'] ?>">
+                                <span class=""><?= $installment ?> <?= __("months") ?></span>
+                            </li>
+                            <?php $i++; endforeach; ?>
+                    </ul>
+
+                    <p class="info-text">
+                        <span class="yp-dark-purple"><?= __("Buy today and start paying") ?></span><br>
+                        <span class="yp-purple"><?= __("in just 30 days!") ?></span>
+                    </p>
+
+                    <div class="yp-finance">
+                        <div>
+                            <p class="yp-dark-purple yp-font-normal"><?= __("Amount of financing") ?></p>
+                            <p class="yp-dark-purple"><span
+                                        id="yp-amount"><?= $defautAmount['requestedAmount'] ?></span>
+                                €</p>
                         </div>
-                        <div class="yp-text">
-                            <?= __("Younited, it's never been easier") ?><br>
-                            <?= __("to pay in several times.") ?>
+                        <div>
+                            <p class="yp-dark-purple">+ <span
+                                        class="yp-font-normal"><?= __("Payment cost") ?></span></p>
+                            <p class="yp-dark-purple"><span
+                                        id="yp-cost"><?= $defautAmount['interestsTotalAmount'] ?></span> €</p>
                         </div>
-                        <div class="yp-link">
-                            <?= __("Have a question? Visit our") ?> <a
-                                    href="https://www.younited-credit.com/questions-reponses"
-                                    target="_blank"><?= __("dedicated page") ?></a>
-                        </div>
-                        <div class="logo-cards">
-                            <img src="<?= $block->getImageSrc('cb.png') ?>" alt="<?= __("Bank Card") ?>">
-                            <img src="<?= $block->getImageSrc('visa.png') ?>" alt="<?= __("Visa") ?>">
-                            <img src="<?= $block->getImageSrc('mastercard.png') ?>" alt="<?= __("Mastercard") ?>">
+                        <hr/>
+                        <div>
+                            <p class="yp-dark-purple">= <?= __("Total amount owed") ?></p>
+                            <p class="yp-dark-purple"><span
+                                        id="yp-total"><?= $defautAmount['creditTotalAmount'] ?></span>
+                                €</p>
                         </div>
                     </div>
-                    <div class="yp-right">
-                        <h4>
-                            <?= __("Your purchase for") ?> <span
-                                    id="popup-maturity"><?= $defaultMaturity ?></span>€<?= __("/month with") ?><br>
-                            <span class="yp-purple"><?= __("Younited Pay") ?></span>
-                        </h4>
-                        <ul id="yp-popup-maturities">
-                            <?php $i = 0; ?>
-                            <?php $defautAmount = []; ?>
-                            <?php foreach ($installments as $installment => $amount) : ?>
-                                <?php $defautAmount = ($i == 0) ? $amount : $defautAmount ?>
-                                <li class="blocks_maturities_popup <?= ($i == 0) ? 'selected' : '' ?>"
-                                    id="blocks_maturities_popup<?= $installment ?>"
-                                    data-key="<?= $installment ?>"
-                                    data-maturity="<?= $amount['monthlyInstallmentAmount'] ?>"
-                                    data-amount="<?= $amount['requestedAmount'] ?>"
-                                    data-percent="<?= $amount['annualPercentageRate'] ?>"
-                                    data-debit="<?= $amount['annualDebitRate'] ?>"
-                                    data-total="<?= $amount['creditTotalAmount'] ?>"
-                                    data-interests="<?= $amount['interestsTotalAmount'] ?>">
-                                    <span class=""><?= $installment ?> <?= __("months") ?></span>
-                                </li>
-                                <?php $i++; endforeach; ?>
-                        </ul>
 
-                        <p class="info-text">
-                            <span class="yp-dark-purple"><?= __("Buy today and start paying") ?></span><br>
-                            <span class="yp-purple"><?= __("in just 30 days!") ?></span>
-                        </p>
-
-                        <div class="yp-finance">
-                            <div>
-                                <p class="yp-dark-purple yp-font-normal"><?= __("Amount of financing") ?></p>
-                                <p class="yp-dark-purple"><span id="yp-amount"><?= $amount['requestedAmount'] ?></span>
-                                    €</p>
-                            </div>
-                            <div>
-                                <p class="yp-dark-purple">+ <span
-                                            class="yp-font-normal"><?= __("Payment cost") ?></span></p>
-                                <p class="yp-dark-purple"><span
-                                            id="yp-cost"><?= $amount['interestsTotalAmount'] ?></span> €</p>
-                            </div>
-                            <hr/>
-                            <div>
-                                <p class="yp-dark-purple">= <?= __("Total amount owed") ?></p>
-                                <p class="yp-dark-purple"><span id="yp-total"><?= $amount['creditTotalAmount'] ?></span>
-                                    €</p>
-                            </div>
+                    <div class="yp-tax">
+                        <div><span class="yp-dark-purple"><?= __("Fixed APR") ?>:&nbsp;&nbsp;<span
+                                        id="yp-percent"><?= $defautAmount['annualPercentageRate'] * 100 ?></span> %</span>
                         </div>
-
-                        <div class="yp-tax">
-                            <div><span class="yp-dark-purple"><?= __("Fixed APR") ?>:&nbsp;&nbsp;<span
-                                            id="yp-percent"><?= $amount['annualPercentageRate'] * 100 ?></span> %</span>
-                            </div>
-                            <div><span class="yp-dark-purple"><?= __("Fixed borrowing rate") ?>:&nbsp;&nbsp;<span
-                                            id="yp-debit"><?= $amount['annualDebitRate'] * 100 ?></span> %</span></div>
+                        <div><span class="yp-dark-purple"><?= __("Fixed borrowing rate") ?>:&nbsp;&nbsp;<span
+                                        id="yp-debit"><?= $defautAmount['annualDebitRate'] * 100 ?></span> %</span>
                         </div>
+                    </div>
 
-                        <div class="yp-engagement">
-                            <?= __("Taking out a loan is a commitment with an<br>obligation of repayment. Verify your ability<br>to repay the loan before committing.") ?>
-                        </div>
+                    <div class="yp-engagement">
+                        <?= __("Taking out a loan is a commitment with an<br>obligation of repayment. Verify your ability<br>to repay the loan before committing.") ?>
                     </div>
                 </div>
             </div>
         </div>
-        <script type="text/x-magento-init">
+    </div>
+    <script type="text/x-magento-init">
             {
                 "*": {
                     "ypwidget" : {
@@ -152,8 +158,8 @@
                     }
                 }
             }
-        </script>
-    <?php endif; ?>
+
+    </script>
 <?php endif; ?>
 
 

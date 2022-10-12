@@ -117,10 +117,22 @@ define([
                     installementBlock.data('maturity', maturities[installment].monthlyInstallmentAmount);
                 } else {
                     // Doesn't exists, create
-                    $(`<div class="maturity_installment" id="maturity_installment${installment}" data-key="${installment}"
+                    var elem = $(`<div class="maturity_installment" id="maturity_installment${installment}" data-key="${installment}"
                             data-maturity="${maturities[installment].monthlyInstallmentAmount}">
                                 <span>${installment}x</span>
-                       </div>`).appendTo("#yp-current-maturities");
+                       </div>`);
+
+                    var placed = false;
+                    $( ".maturity_installment" ).each(function( index ) {
+                        if ($(this).data('key') > installment && placed === false) {
+                            $(this).before(elem)
+                            placed = true;
+                        }
+                    });
+
+                    if (!placed) {
+                        elem.appendTo("#yp-current-maturities");
+                    }
                 }
 
                 var installementPopupBlock = $('#blocks_maturities_popup' + installment);
@@ -150,8 +162,10 @@ define([
 
             if (count === 0) {
                 _this.ld.hide();
+                $('#yp-widget').hide();
             } else {
                 _this.ld.show();
+                $('#yp-widget').show();
             }
 
             // Loop existing objetcs to remove useless ones

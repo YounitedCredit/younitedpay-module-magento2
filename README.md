@@ -49,6 +49,14 @@ php bin/magento maintenance:disable
 | ------- | ----------------- |
 | `0.x`   | **>=** `2.2.x`    |
 
+## Unit testing
+
+You can run unit tests with the following commands :
+
+- **Composer installation :** php ./vendor/bin/phpunit -c dev/tests/unit/phpunit.xml.dist vendor/younitedcredit/younitedpay-module-magento2/Test/Unit
+  
+- **Manual installation :** php ./vendor/bin/phpunit -c dev/tests/unit/phpunit.xml.dist app/code/YounitedCredit/YounitedPay/Test/Unit
+
 ## Resources
 
 - [Issues][project-issues] — To report issues, submit pull requests and get involved (see [Academic Free License][project-license])

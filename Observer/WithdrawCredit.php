@@ -116,12 +116,21 @@ class WithdrawCredit extends RequestHandler
             $refundTotal += (float)$memo->getGrandTotal();
         }
 
-        if ($refundTotal >= $orderTotal) {
+        $allowCall = true;
+        if ($informations["Payment Status"] == Config::CREDIT_STATUS_CANCELED) {
+            $allowCall = false;
+        }
+
+        if (
+            $refundTotal >= $orderTotal
+            && $informations["Payment Status"] != Config::CREDIT_STATUS_CANCELED
+            && $informations["Payment Status"] != Config::CREDIT_STATUS_ACTIVATED
+        ) {
             // Total refund
             $status = Config::CREDIT_STATUS_CANCELED;
             $request = new CancelContractRequest();
             $body = new CancelContract();
-        } else {
+        } else if ($allowCall) {
             // Partial refund
             if ($informations["Payment Status"] != Config::CREDIT_STATUS_ACTIVATED) {
                 throw new LocalizedException(__('Younited Pay : please consider either make a total refund, or make a partial refund AFTER you ship the order.'));
@@ -133,11 +142,13 @@ class WithdrawCredit extends RequestHandler
 
         $order->setDisableYounitedCall(true);
 
-        $informations = $this->sendRequest(
-            $body, $request, $informations, $order->getStoreId(), $status,
-            'An error occured with Younited Payment refund. Please do it manually from Younited Payment dashboard.',
-            'Younited Payment contract successfully updated.'
-        );
+        if ($allowCall) {
+            $informations = $this->sendRequest(
+                $body, $request, $informations, $order->getStoreId(), $status,
+                'An error occured with Younited Payment refund. Please do it manually from Younited Payment dashboard.',
+                'Younited Payment contract successfully updated.'
+            );
+        }
 
         if ($informations) {
             $order->getPayment()->setAdditionalInformation($informations);
