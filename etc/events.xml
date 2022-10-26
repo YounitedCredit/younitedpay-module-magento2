@@ -1,0 +1,28 @@
+<?xml version="1.0"?>
+<!--
+/**
+ * Copyright since 2022 Younited Credit
+ *
+ * NOTICE OF LICENSE
+ *
+ * This source file is subject to the Academic Free License (AFL 3.0)
+ * that is bundled with this package in the file LICENSE.md.
+ * It is also available through the world-wide-web at this URL:
+ * https://opensource.org/licenses/AFL-3.0
+ * If you did not receive a copy of the license and are unable to
+ * obtain it through the world-wide-web, please send an email
+ * to tech@202-ecommerce.com so we can send you a copy immediately.
+ *
+ * @author     202 ecommerce <tech@202-ecommerce.com>
+ * @copyright 2022 Younited Credit
+ * @license   https://opensource.org/licenses/AFL-3.0  Academic Free License (AFL 3.0)
+ */
+-->
+<config xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="urn:magento:framework:Event/etc/events.xsd">
+    <event name="sales_order_save_before">
+        <observer name="validate_younited_credit_on_shipped_order" instance="YounitedCredit\YounitedPay\Observer\ValidateCredit" />
+    </event>
+    <event name="sales_order_creditmemo_save_before">
+        <observer name="withdraw_younited_credit" instance="YounitedCredit\YounitedPay\Observer\WithdrawCredit" />
+    </event>
+</config>

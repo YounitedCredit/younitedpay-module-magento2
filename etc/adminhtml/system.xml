@@ -1,0 +1,218 @@
+<?xml version="1.0" ?>
+<!--
+/**
+ * Copyright since 2022 Younited Credit
+ *
+ * NOTICE OF LICENSE
+ *
+ * This source file is subject to the Academic Free License (AFL 3.0)
+ * that is bundled with this package in the file LICENSE.md.
+ * It is also available through the world-wide-web at this URL:
+ * https://opensource.org/licenses/AFL-3.0
+ * If you did not receive a copy of the license and are unable to
+ * obtain it through the world-wide-web, please send an email
+ * to tech@202-ecommerce.com so we can send you a copy immediately.
+ *
+ * @author     202 ecommerce <tech@202-ecommerce.com>
+ * @copyright 2022 Younited Credit
+ * @license   https://opensource.org/licenses/AFL-3.0  Academic Free License (AFL 3.0)
+ */
+-->
+<config xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="urn:magento:module:Magento_Config:etc/system_file.xsd">
+    <system>
+        <tab id="younited" translate="label" sortOrder="310">
+            <label>Younited Pay</label>
+        </tab>
+        <section id="younited_setup" translate="label" type="text" sortOrder="10" showInDefault="1" showInWebsite="1" showInStore="1">
+            <class>separator-top</class>
+            <label>Setting up</label>
+            <tab>younited</tab>
+            <resource>YounitedCredit_YounitedPay::general_settings</resource>
+            <group id="general" translate="label" type="text" sortOrder="1" showInDefault="1" showInWebsite="1" showInStore="1" >
+                <label>Setting up</label>
+                <field id="text_info_help" translate="label" type="text" sortOrder="10" showInDefault="1" showInWebsite="1" showInStore="1">
+                    <frontend_model>YounitedCredit\YounitedPay\Block\Adminhtml\System\Config\Help</frontend_model>
+                    <label>Need Help ?</label>
+                </field>
+                <field id="text_info_image" translate="label" type="text" sortOrder="10" showInDefault="1" showInWebsite="1" showInStore="1">
+                    <frontend_model>YounitedCredit\YounitedPay\Block\Adminhtml\System\Config\Image</frontend_model>
+                    <label>image-marketing-en.png</label>
+                </field>
+                <field id="text_info_requirments" translate="label comment" type="text" sortOrder="10" showInDefault="1" showInWebsite="1" showInStore="1">
+                    <frontend_model>YounitedCredit\YounitedPay\Block\Adminhtml\System\Config\Requirements</frontend_model>
+                    <label><![CDATA[<strong>Module Requirements</strong>]]></label>
+                    <comment><![CDATA[To insure your module works accurately, please correct the following technical requirements]]></comment>
+                </field>
+                <field id="note" translate="label" type="label" sortOrder="11" showInDefault="1" showInWebsite="0" showInStore="0">
+                    <comment><![CDATA[<span style='color:red'><b>Younited Credit</b> can only be configured in WEBSITE or STORE VIEW, please select in the top-left menu the WEBSITE or STORE VIEW that you want to configure.</span>]]></comment>
+                </field>
+                <field id="mode" translate="label comment" type="select" sortOrder="15" showInDefault="0" showInStore="1" showInWebsite="1">
+                    <label>Environment</label>
+                    <source_model>YounitedCredit\YounitedPay\Model\Config\Source\Mode</source_model>
+                    <comment>
+                        <![CDATA[This option defines in whitch environment your module is configured.]]>
+                    </comment>
+                </field>
+                <field id="client_id" translate="label comment" sortOrder="20" type="text" showInDefault="0" showInWebsite="1" showInStore="1">
+                    <label>Client ID</label>
+                    <comment>
+                        <![CDATA[This information is located in your dashboard: 'Settings' > 'General settings'.]]>
+                    </comment>
+                </field>
+                <field id="client_secret" translate="label comment" sortOrder="30" type="text" showInDefault="0" showInWebsite="1" showInStore="1">
+                    <label>Client Secret</label>
+                    <comment>
+                        <![CDATA[This information is located in your dashboard: 'Settings' > 'General settings'.]]>
+                    </comment>
+                </field>
+                <field id="secret_webhook" translate="label" sortOrder="40" type="text" showInDefault="0" showInWebsite="1" showInStore="1">
+                    <label>WebHook Secret</label>
+                    <comment>
+                        <![CDATA[This information is located in your dashboard: 'Settings' > 'General settings'.]]>
+                    </comment>
+                </field>
+                <field id="enable_ip_whitelist" translate="label" type="select" sortOrder="50" showInDefault="1" showInStore="1" showInWebsite="1">
+                    <label>Enable IP Whitelist</label>
+                    <source_model>Magento\Config\Model\Config\Source\Yesno</source_model>
+                    <comment>
+                        <![CDATA[When enabled, only the listed IPs will see the module’s components on the site.]]>
+                    </comment>
+                </field>
+                <field id="ip_whitelist" translate="label" sortOrder="60" type="text" showInDefault="1" showInWebsite="1" showInStore="1">
+                    <label>IP Whitelist</label>
+                    <comment>
+                        <![CDATA[Comma separated IP list.]]>
+                    </comment>
+                </field>
+            </group>
+        </section>
+        <section id="younited_appearance" translate="label" type="text" sortOrder="20" showInDefault="1" showInWebsite="1" showInStore="1">
+            <class>separator-top</class>
+            <label>Display</label>
+            <tab>younited</tab>
+            <resource>YounitedCredit_YounitedPay::general_settings</resource>
+            <group id="general" translate="label" type="text" sortOrder="1" showInDefault="1" showInWebsite="1" showInStore="1">
+                <label>General</label>
+                <field id="display_on_product_page" translate="label comment" type="select" sortOrder="10" showInDefault="1" showInStore="1" showInWebsite="1">
+                    <label>Show monthly installments</label>
+                    <source_model>Magento\Config\Model\Config\Source\Yesno</source_model>
+                    <comment>
+                        <![CDATA[If you wish only have theses informations on the cart you can select 'No' to hide it on product pages. This also disables the widget codes.]]>
+                    </comment>
+                </field>
+                <field id="product_page_location" translate="label comment" type="select" sortOrder="20" showInDefault="1" showInStore="1" showInWebsite="1">
+                    <label>Monthly installments location</label>
+                    <source_model>YounitedCredit\YounitedPay\Model\Config\Source\Location</source_model>
+                    <comment>
+                        <![CDATA[These values are locations registered by your current theme, you can choose any of them to place the block where it looks the best.]]>
+                    </comment>
+                </field>
+                <field id="product_block" translate="label comment" sortOrder="30" type="label" showInDefault="1" showInWebsite="1" showInStore="1">
+                    <label><![CDATA[Monthly installments widget]]></label>
+                    <comment>
+                        <![CDATA[<input type="text" value='&lt;block class="YounitedCredit\YounitedPay\Block\Product\Widget" name="younited.widget" template="YounitedCredit_YounitedPay::product/widget.phtml" / /&gt;' disabled>]]>
+                    </comment>
+                </field>
+            </group>
+        </section>
+        <section id="younited_faq" translate="label" type="text" sortOrder="30" showInDefault="1" showInWebsite="1" showInStore="1">
+            <class>separator-top</class>
+            <label>FAQ</label>
+            <tab>younited</tab>
+            <resource>YounitedCredit_YounitedPay::general_settings</resource>
+            <group id="first" translate="label" type="text" sortOrder="1" showInDefault="1" showInWebsite="1" showInStore="1">
+                <label>What is YounitedPay ?</label>
+                <field id="comment" translate="label comment" sortOrder="10" type="label" showInDefault="1" showInWebsite="1" showInStore="1">
+                    <comment>Younited Pay is an instant credit offer from Younited. With Younited Pay, your customers can pay for their purchases in installments, with maturities ranging from 1x to 84x. This solution is available for baskets between 100€ and 50 000€. You will be paid for the entire order and we take care of any outstanding payments. We are paid by taking a commission on the transactions that are made through our payment solution. There are no additional costs. For more information: https://www.younited-pay.com</comment>
+                    <frontend_model>YounitedCredit\YounitedPay\Block\Adminhtml\System\Config\AdditionalComment</frontend_model>
+                </field>
+            </group>
+            <group id="second" translate="label" type="text" sortOrder="1" showInDefault="1" showInWebsite="1" showInStore="1">
+                <label>How does YounitedPay ?</label>
+                <field id="comment" translate="label comment" sortOrder="10" type="label" showInDefault="1" showInWebsite="1" showInStore="1">
+                    <comment>Once the customer has completed his order on your website, and has selected the type of payment in installments that suits him, he will be redirected to our subscription path. During this process, he will be asked to verify his identity, to provide his credit card information for the monthly payments and to fill out a form declaring his solvency. These steps allow the YounitedPay solution to be regulated and responsible, in line with the legislation.</comment>
+                    <frontend_model>YounitedCredit\YounitedPay\Block\Adminhtml\System\Config\AdditionalComment</frontend_model>
+                </field>
+            </group>
+            <group id="third" translate="label" type="text" sortOrder="1" showInDefault="1" showInWebsite="1" showInStore="1">
+                <label>What information should I add to my General Terms and Conditins (GTC) ?</label>
+                <field id="comment" translate="label comment" sortOrder="10" type="label" showInDefault="1" showInWebsite="1" showInStore="1">
+                    <frontend_model>YounitedCredit\YounitedPay\Block\Adminhtml\System\Config\Gtc</frontend_model>
+                </field>
+            </group>
+            <group id="fourth" translate="label" type="text" sortOrder="1" showInDefault="1" showInWebsite="1" showInStore="1">
+                <label>How do I display YounitedPay on my product page ?</label>
+                <field id="comment" translate="label comment" sortOrder="10" type="label" showInDefault="1" showInWebsite="1" showInStore="1">
+                    <comment>To optimize your conversion rate and ensure that your customers are aware of the YounitedPay offer, you can display the eligible offers on your product page. To do so, activate the 'Show monthly installments' function in the 'Display' section of the module. If the display is not optimal, make sure you have downloaded the latest version of the module.</comment>
+                    <frontend_model>YounitedCredit\YounitedPay\Block\Adminhtml\System\Config\AdditionalComment</frontend_model>
+                </field>
+            </group>
+            <group id="fifth" translate="label" type="text" sortOrder="1" showInDefault="1" showInWebsite="1" showInStore="1">
+                <label>How are refunds processed ?</label>
+                <field id="comment" translate="label comment" sortOrder="10" type="label" showInDefault="1" showInWebsite="1" showInStore="1">
+                    <comment><![CDATA[There are two possibilities of refund: total and partial. These requests can be made directly from the back office of your Magento.<br />You have just to create a Credit Memo from the Order page.<br />Partial refund can be done too, but order need to be shipped before.]]></comment>
+                    <frontend_model>YounitedCredit\YounitedPay\Block\Adminhtml\System\Config\AdditionalComment</frontend_model>
+                </field>
+            </group>
+            <group id="sixth" translate="label" type="text" sortOrder="1" showInDefault="1" showInWebsite="1" showInStore="1">
+                <label>How can I test the module if I don't have a staging environment for my website ?</label>
+                <field id="comment" translate="label comment" sortOrder="10" type="label" showInDefault="1" showInWebsite="1" showInStore="1">
+                    <comment>You have the possibility to whitelist IP addresses, allowing a test of the module on your production environment without display to all clients.</comment>
+                    <frontend_model>YounitedCredit\YounitedPay\Block\Adminhtml\System\Config\AdditionalComment</frontend_model>
+                </field>
+            </group>
+        </section>
+        <section id="payment">
+            <group id="younited" translate="label" type="text" sortOrder="33" showInDefault="1" showInWebsite="1" showInStore="1">
+                <label>Younited Credit</label>
+                <field id="yp_note" translate="label" type="label" sortOrder="1" showInDefault="1" showInWebsite="0" showInStore="0">
+                    <comment><![CDATA[<span style='color:red'><b>Younited Credit</b> can only be configured in WEBSITE or STORE VIEW, please select in the top-left menu the WEBSITE or STORE VIEW that you want to configure.</span>]]></comment>
+                </field>
+                <field id="active" translate="label" type="select" sortOrder="1" showInDefault="0" showInWebsite="1" canRestore="1" showInStore="1">
+                    <label>Enabled</label>
+                    <source_model>Magento\Config\Model\Config\Source\Yesno</source_model>
+                </field>
+                <field id="title" translate="label" type="text" sortOrder="5" showInDefault="1" showInWebsite="1" showInStore="1" canRestore="1">
+                    <label>Title</label>
+                </field>
+                <field id="maturities" translate="label" sortOrder="10" showInDefault="0" showInWebsite="1" canRestore="1" showInStore="1">
+                    <label>Selected maturities</label>
+                    <comment>To keep your site cluter free you should select a maximum of 3 maturities.</comment>
+                    <frontend_model>YounitedCredit\YounitedPay\Block\Adminhtml\Form\Field\MaturitiesConfig</frontend_model>
+                    <backend_model>YounitedCredit\YounitedPay\Model\System\Config\Backend\Maturities</backend_model>
+                </field>
+                <field id="order_status_processing" translate="label" type="select" sortOrder="15" showInDefault="1" showInWebsite="1" canRestore="1" showInStore="1">
+                    <label>New Order Status</label>
+                    <source_model>Magento\Sales\Model\Config\Source\Order\Status\Processing</source_model>
+                </field>
+                <field id="text_info_credit_trigger_status" translate="comment" type="text" sortOrder="20" showInDefault="1" showInWebsite="1" showInStore="1">
+                    <frontend_model>YounitedCredit\YounitedPay\Block\Adminhtml\System\Config\InfoTriggerStatus</frontend_model>
+                    <comment>By law you the credit must only be triggered once the products are shipped to the customer.</comment>
+                </field>
+                <field id="credit_trigger_status" translate="label comment" type="multiselect" sortOrder="21" showInDefault="1" showInWebsite="1" canRestore="1">
+                    <label>Credit activation status</label>
+                    <source_model>Magento\Sales\Model\Config\Source\Order\Status</source_model>
+                    <comment>The credit will be activated when the order changes to the selected status.</comment>
+                </field>
+                <field id="allowspecific" translate="label" type="allowspecific" sortOrder="50" showInDefault="1" showInWebsite="1" canRestore="1">
+                    <label>Payment from Applicable Countries</label>
+                    <source_model>Magento\Payment\Model\Config\Source\Allspecificcountries</source_model>
+                </field>
+                <field id="specificcountry" translate="label" type="multiselect" sortOrder="51" showInDefault="1" showInWebsite="1">
+                    <label>Payment from Specific Countries</label>
+                    <source_model>Magento\Directory\Model\Config\Source\Country</source_model>
+                    <can_be_empty>1</can_be_empty>
+                </field>
+                <field id="sort_order" translate="label" type="text" sortOrder="100" showInDefault="1" showInWebsite="1">
+                    <label>Sort Order</label>
+                    <frontend_class>validate-number</frontend_class>
+                </field>
+                <field id="flush_cache" translate="label comment" type="button" sortOrder="200" showInDefault="1" showInWebsite="1" showInStore="1">
+                    <frontend_model>YounitedCredit\YounitedPay\Block\System\Config\Cache</frontend_model>
+                    <label>Cache</label>
+                    <comment>If you have any problem or the informations in the module aren't up to date you can empty the cache, new data will be fetched automatically.</comment>
+                </field>
+            </group>
+        </section>
+    </system>
+</config>

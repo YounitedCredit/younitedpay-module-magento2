@@ -1,0 +1,91 @@
+/**
+ * Copyright since 2022 Younited Credit
+ *
+ * NOTICE OF LICENSE
+ *
+ * This source file is subject to the Academic Free License (AFL 3.0)
+ * that is bundled with this package in the file LICENSE.md.
+ * It is also available through the world-wide-web at this URL:
+ * https://opensource.org/licenses/AFL-3.0
+ * If you did not receive a copy of the license and are unable to
+ * obtain it through the world-wide-web, please send an email
+ * to tech@202-ecommerce.com so we can send you a copy immediately.
+ *
+ * @author     202 ecommerce <tech@202-ecommerce.com>
+ * @copyright 2022 Younited Credit
+ * @license   https://opensource.org/licenses/AFL-3.0  Academic Free License (AFL 3.0)
+ */
+
+.col3-config-blocks {
+    width: 31%;
+    float: left;
+}
+
+.col3-config-blocks.first {
+    margin-right: 3%;
+}
+
+.col3-config-blocks.last {
+    margin-left: 3%;
+}
+
+.config-younited-server {
+    margin: 12px 0;
+}
+
+.config-younited-server span {
+    width: 18px;
+    display: inline-block;
+    height: 16px;
+    vertical-align: middle;
+}
+
+.config-younited-server .invalid {
+    background: url("../images/invalid.png") no-repeat;
+
+}
+
+.config-younited-server .valid {
+    background: url("../images/valid.png") no-repeat;
+
+}
+
+#payment_us_younited_maturities tbody tr,
+#payment_fr_younited_maturities tbody tr {
+    position: relative;
+}
+
+#payment_us_younited_maturities tbody tr td,
+#payment_fr_younited_maturities tbody tr td {
+    padding-bottom: 40px;
+}
+
+#payment_us_younited_maturities tbody tr .maturity-notice,
+#payment_fr_younited_maturities tbody tr .maturity-notice {
+    position: absolute;
+    bottom: 7px;
+    left: 20px;
+    font-size: 12px;
+}
+
+#row_younited_setup_general_text_info_image img {
+    margin: 0 auto;
+    display: block;
+}
+
+.config-younited-comment .config-additional-comment-title {
+    margin: 40px 0;
+}
+
+.config-younited-comment .config-additional-comment-content p {
+    margin: 0 0 25px;
+}
+
+.config-younited-comment a.button {
+    float: right;
+    margin: 20px 0 0;
+}
+
+.config-additional-info {
+
+}

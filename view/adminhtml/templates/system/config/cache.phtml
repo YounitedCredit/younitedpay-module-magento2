@@ -1,0 +1,83 @@
+<?php
+/**
+ * Copyright since 2022 Younited Credit
+ *
+ * NOTICE OF LICENSE
+ *
+ * This source file is subject to the Academic Free License (AFL 3.0)
+ * that is bundled with this package in the file LICENSE.md.
+ * It is also available through the world-wide-web at this URL:
+ * https://opensource.org/licenses/AFL-3.0
+ * If you did not receive a copy of the license and are unable to
+ * obtain it through the world-wide-web, please send an email
+ * to tech@202-ecommerce.com so we can send you a copy immediately.
+ *
+ * @author     202 ecommerce <tech@202-ecommerce.com>
+ * @copyright 2022 Younited Credit
+ * @license   https://opensource.org/licenses/AFL-3.0  Academic Free License (AFL 3.0)
+ */
+?>
+<?php /* @var $block \YounitedCredit\YounitedPay\Block\System\Config\Cache */ ?>
+<?= $block->getButtonHtml() ?>
+<span class="sandbox-indicator" id="younited_span">
+    <img class="processing" hidden="hidden" alt="processing" style="margin:0 5px"
+         src="<?= $block->getViewFileUrl('images/process_spinner.gif') ?>"/>
+    <img class="url-fail" hidden="hidden" alt="url-fail" style="margin:0 5px"
+         src="<?= $block->getViewFileUrl('images/rule_component_remove.gif') ?>"/>
+    <img class="url-success" hidden="hidden" alt="url-success" style="margin:-3px 5px"
+         src="<?= $block->getViewFileUrl('images/rule_component_apply.gif') ?>"/>
+    <span id="younited_message_span"></span>
+</span>
+
+<script>
+    require([
+        'jquery'
+    ], function ($) {
+        var cleanCacheUrl = '<?= $block->getCleanCacheUrl() ?>';
+
+        $('#younited_flush_cache').click(function () {
+            window.location.href = cleanCacheUrl;
+        });
+
+        const addRowNotice = function (startObservers) {
+            var elem = $('#payment_us_younited_maturities');
+            if ($('#payment_fr_younited_maturities').length > 0) {
+                elem = $('#payment_fr_younited_maturities');
+            }
+
+            $.each(elem.find('tr'), function () {
+
+                let row = $(this);
+                row.find('.maturity-notice').remove()
+
+                let installment = row.find('select').val()
+                if (typeof installment != 'undefined') {
+                    let minAmount = 0
+                    let maxAmount = 0
+
+                    $.each(row.find('input'), function () {
+                        minAmount = minAmount !== 0 ? minAmount : parseInt($(this).val())
+                        maxAmount = $(this).val()
+                        if (startObservers === true) $(this).on('input', addRowNotice);
+                    });
+
+                    if (startObservers === true) $(document).on('change', row.find('select'), addRowNotice);
+
+                    installment = parseInt(installment)
+                    let from = (minAmount / installment).toFixed(2)
+                    let to = (maxAmount / installment).toFixed(2)
+                    let html = `<div class="maturity-notice">`
+                    html += `<?= __('Reminder: the minimum monthly payment is 9.99 euros / month') ?>`
+                    html += `<br />`
+                    html += `<?= __('Installments from') ?> ${from} <?= __('€/month') ?>.`
+                    if (maxAmount) {
+                        html += `<?= __(' And up to') ?> ${to} <?= __('€/month') ?>.`
+                    }
+                    html += `</div>`
+                    row.append(html);
+                }
+            });
+        }
+        addRowNotice(true);
+    });
+</script>
