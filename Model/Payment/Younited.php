@@ -24,11 +24,6 @@ use Magento\Framework\DataObject;
 use Magento\Quote\Api\Data\PaymentInterface;
 use YounitedCredit\YounitedPay\Helper\Maturity;
 
-/**
- * Class Younited
- *
- * @package YounitedCredit\YounitedPay\Model\Payment
- */
 class Younited extends \Magento\Payment\Model\Method\AbstractMethod
 {
     /**

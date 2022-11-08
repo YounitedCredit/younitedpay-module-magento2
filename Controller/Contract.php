@@ -22,11 +22,6 @@ namespace YounitedCredit\YounitedPay\Controller;
 use Magento\Customer\Api\AccountManagementInterface;
 use Magento\Customer\Api\CustomerRepositoryInterface;
 
-/**
- * Class Contract
- *
- * @package YounitedCredit\YounitedPay\Controller
- */
 abstract class Contract extends \Magento\Checkout\Controller\Onepage
 {
     /**

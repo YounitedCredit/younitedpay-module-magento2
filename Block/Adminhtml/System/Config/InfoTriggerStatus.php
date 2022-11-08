@@ -19,11 +19,6 @@
 
 namespace YounitedCredit\YounitedPay\Block\Adminhtml\System\Config;
 
-/**
- * Class InfoTriggerStatus
- *
- * @package YounitedCredit\YounitedPay\Block\Adminhtml\System\Config
- */
 class InfoTriggerStatus extends \Magento\Config\Block\System\Config\Form\Field
 {
     /**

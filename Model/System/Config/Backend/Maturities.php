@@ -19,11 +19,6 @@
 
 namespace YounitedCredit\YounitedPay\Model\System\Config\Backend;
 
-/**
- * Class Maturities
- *
- * @package YounitedCredit\YounitedPay\Model\System\Config\Backend
- */
 class Maturities extends \Magento\Framework\App\Config\Value
 {
     /**

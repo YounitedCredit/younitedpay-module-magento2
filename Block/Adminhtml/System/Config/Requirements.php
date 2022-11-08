@@ -25,11 +25,6 @@ use YounitedPaySDK\Client;
 use YounitedPaySDK\Model\BestPrice;
 use YounitedPaySDK\Request\BestPriceRequest;
 
-/**
- * Class Requirements
- *
- * @package YounitedCredit\YounitedPay\Block\Adminhtml\System\Config
- */
 class Requirements extends \Magento\Config\Block\System\Config\Form\Field
 {
     /**

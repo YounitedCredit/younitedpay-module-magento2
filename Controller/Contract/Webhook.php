@@ -27,11 +27,6 @@ use YounitedPaySDK\Client;
 use YounitedPaySDK\Model\LoadContract;
 use YounitedPaySDK\Request\LoadContractRequest;
 
-/**
- * Class Webhook
- *
- * @package YounitedCredit\YounitedPay\Controller\Contract
- */
 class Webhook extends AbstractWebhook
 {
     /**

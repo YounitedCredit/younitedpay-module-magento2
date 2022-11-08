@@ -26,11 +26,6 @@ use Magento\Framework\DB\Transaction;
 use Magento\Sales\Model\Order\Email\Sender\InvoiceSender;
 use Magento\Sales\Model\Service\InvoiceService;
 
-/**
- * Class Success
- *
- * @package YounitedCredit\YounitedPay\Controller\Contract
- */
 class Success extends \Magento\Checkout\Controller\Onepage
 {
     /**

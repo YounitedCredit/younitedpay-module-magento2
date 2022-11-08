@@ -19,11 +19,6 @@
 
 namespace YounitedCredit\YounitedPay\Block\Adminhtml\System\Config;
 
-/**
- * Class Help
- *
- * @package YounitedCredit\YounitedPay\Block\Adminhtml\System\Config
- */
 class Help extends \Magento\Config\Block\System\Config\Form\Field
 {
     /**

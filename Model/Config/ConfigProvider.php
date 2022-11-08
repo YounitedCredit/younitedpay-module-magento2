@@ -28,11 +28,6 @@ use Magento\Quote\Api\CartTotalRepositoryInterface;
 use Magento\Store\Model\StoreManagerInterface;
 use YounitedCredit\YounitedPay\Helper\Maturity;
 
-/**
- * Class ConfigProvider
- *
- * @package YounitedCredit\YounitedPay\Model\Config
- */
 class ConfigProvider implements ConfigProviderInterface
 {
 

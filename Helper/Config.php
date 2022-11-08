@@ -19,11 +19,6 @@
 
 namespace YounitedCredit\YounitedPay\Helper;
 
-/**
- * Class Config
- *
- * @package YounitedCredit\YounitedPay\Helper
- */
 class Config
 {
     /**

@@ -22,11 +22,6 @@ namespace YounitedCredit\YounitedPay\Test\Unit\Block\Adminhtml\Form\Field;
 use Magento\Framework\TestFramework\Unit\Helper\ObjectManager;
 use YounitedCredit\YounitedPay\Block\Adminhtml\Form\Field\Maturities;
 
-/**
- * Class MaturitiesTest
- *
- * @package YounitedCredit\YounitedPay\Test\Unit\Block\Adminhtml\Form\Field
- */
 class MaturitiesTest extends \PHPUnit\Framework\TestCase
 {
     /**

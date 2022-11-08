@@ -23,20 +23,10 @@ $objectManager = \Magento\Framework\App\ObjectManager::getInstance();
 $productMetadata = $objectManager->get('\Magento\Framework\App\ProductMetadataInterface');
 
 if (version_compare($productMetadata->getVersion(), "2.3.0", '>=')) {
-    /**
-     * Class AbstractWebhook
-     *
-     * @package YounitedCredit\YounitedPay\Controller\Contract
-     */
     abstract class AbstractWebhook extends \Magento\Framework\App\Action\Action implements \Magento\Framework\App\CsrfAwareActionInterface
     {
     }
 } else {
-    /**
-     * Class AbstractWebhook
-     *
-     * @package YounitedCredit\YounitedPay\Controller\Contract
-     */
     abstract class AbstractWebhook extends \Magento\Framework\App\Action\Action
     {
     }

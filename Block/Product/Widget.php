@@ -23,11 +23,6 @@ use Magento\Catalog\Api\ProductRepositoryInterface;
 use Magento\Store\Model\ScopeInterface;
 use YounitedCredit\YounitedPay\Helper\Config;
 
-/**
- * Class Widget
- *
- * @package YounitedCredit\YounitedPay\Block\Product
- */
 class Widget extends \Magento\Catalog\Block\Product\View
 {
     /**

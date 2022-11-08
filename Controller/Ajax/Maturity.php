@@ -23,11 +23,6 @@ use Magento\Framework\App\Action\Context;
 use Magento\Framework\Controller\Result\JsonFactory;
 use Magento\Framework\View\LayoutFactory;
 
-/**
- * Class Maturity
- *
- * @package YounitedCredit\YounitedPay\Controller\Ajax
- */
 class Maturity extends \Magento\Framework\App\Action\Action
 {
     /**

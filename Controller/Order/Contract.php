@@ -34,11 +34,6 @@ use YounitedPaySDK\Model\MerchantUrls;
 use YounitedPaySDK\Model\PersonalInformation;
 use YounitedPaySDK\Request\InitializeContractRequest;
 
-/**
- * Class Contract
- *
- * @package YounitedCredit\YounitedPay\Controller\Ajax
- */
 class Contract extends \Magento\Checkout\Controller\Onepage
 {
     /**

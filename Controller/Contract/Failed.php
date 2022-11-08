@@ -19,11 +19,6 @@
 
 namespace YounitedCredit\YounitedPay\Controller\Contract;
 
-/**
- * Class Failed
- *
- * @package YounitedCredit\YounitedPay\Controller\Contract
- */
 class Failed extends \YounitedCredit\YounitedPay\Controller\Contract
 {
     /**

@@ -19,11 +19,6 @@
 
 namespace YounitedCredit\YounitedPay\Controller\Contract;
 
-/**
- * Class Canceled
- *
- * @package YounitedCredit\YounitedPay\Controller\Contract
- */
 class Canceled extends \YounitedCredit\YounitedPay\Controller\Contract
 {
     /**

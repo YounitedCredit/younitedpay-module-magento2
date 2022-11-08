@@ -24,11 +24,6 @@ use YounitedCredit\YounitedPay\Helper\Maturity;
 use YounitedPaySDK\Client;
 use YounitedPaySDK\Request\AvailableMaturitiesRequest;
 
-/**
- * Class Maturities
- *
- * @package YounitedCredit\YounitedPay\Block\Adminhtml\Form\Field
- */
 class Maturities extends \Magento\Framework\View\Element\Html\Select
 {
     /**

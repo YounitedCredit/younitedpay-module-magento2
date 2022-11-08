@@ -21,11 +21,6 @@ declare(strict_types=1);
 
 namespace YounitedCredit\YounitedPay\Block\Adminhtml\Form\Field;
 
-/**
- * Class MaturitiesConfig
- *
- * @package YounitedCredit\YounitedPay\Block\Adminhtml\Form\Field
- */
 class MaturitiesConfig extends \Magento\Config\Block\System\Config\Form\Field\FieldArray\AbstractFieldArray
 {
     /**

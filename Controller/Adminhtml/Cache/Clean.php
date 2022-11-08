@@ -22,11 +22,6 @@ namespace YounitedCredit\YounitedPay\Controller\Adminhtml\Cache;
 use Magento\Backend\App\Action;
 use Magento\Framework\Controller\ResultFactory;
 
-/**
- * Class Clean
- *
- * @package YounitedCredit\YounitedPay\Controller\Adminhtml\Cache
- */
 class Clean extends Action
 {
     /**

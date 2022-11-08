@@ -19,11 +19,6 @@
 
 namespace YounitedCredit\YounitedPay\Block\Adminhtml\System\Config;
 
-/**
- * Class Gtc
- *
- * @package YounitedCredit\YounitedPay\Block\Adminhtml\System\Config
- */
 class Gtc extends \Magento\Config\Block\System\Config\Form\Field
 {
     /**

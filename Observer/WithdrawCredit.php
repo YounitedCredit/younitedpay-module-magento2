@@ -36,11 +36,6 @@ use YounitedPaySDK\Model\WithdrawContract;
 use YounitedPaySDK\Request\CancelContractRequest;
 use YounitedPaySDK\Request\WithdrawContractRequest;
 
-/**
- * Class WithdrawCredit
- *
- * @package YounitedCredit\YounitedPay\Observer
- */
 class WithdrawCredit extends RequestHandler
 {
     /**

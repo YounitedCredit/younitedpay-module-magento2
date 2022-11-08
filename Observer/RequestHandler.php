@@ -27,11 +27,6 @@ use Psr\Log\LoggerInterface;
 use YounitedCredit\YounitedPay\Helper\Maturity;
 use YounitedPaySDK\Client;
 
-/**
- * Class RequestHandler
- *
- * @package YounitedCredit\YounitedPay\Observer
- */
 abstract class RequestHandler implements ObserverInterface
 {
     /**

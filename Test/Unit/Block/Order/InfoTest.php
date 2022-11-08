@@ -22,11 +22,6 @@ namespace YounitedCredit\YounitedPay\Test\Unit\Block\Order;
 use Magento\Framework\TestFramework\Unit\Helper\ObjectManager;
 use YounitedCredit\YounitedPay\Block\Order\Info;
 
-/**
- * Class InfoTest
- *
- * @package YounitedCredit\YounitedPay\Test\Unit\Block\Order
- */
 class InfoTest extends \PHPUnit\Framework\TestCase
 {
     /**

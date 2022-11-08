@@ -28,11 +28,6 @@ use YounitedPaySDK\Client;
 use YounitedPaySDK\Model\BestPrice;
 use YounitedPaySDK\Request\BestPriceRequest;
 
-/**
- * Class Maturity
- *
- * @package YounitedCredit\YounitedPay\Helper
- */
 class Maturity
 {
     /**

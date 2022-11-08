@@ -35,11 +35,6 @@ use YounitedPaySDK\Model\ConfirmContract;
 use YounitedPaySDK\Request\ActivateContractRequest;
 use YounitedPaySDK\Request\ConfirmContractRequest;
 
-/**
- * Class ValidateCredit
- *
- * @package YounitedCredit\YounitedPay\Observer
- */
 class ValidateCredit extends RequestHandler
 {
     /**
