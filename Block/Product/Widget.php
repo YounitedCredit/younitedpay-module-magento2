@@ -75,8 +75,19 @@ class Widget extends \Magento\Catalog\Block\Product\View
         \YounitedCredit\YounitedPay\Helper\Maturity $maturityHelper,
         array $data = []
     ) {
-        parent::__construct($context, $urlEncoder, $jsonEncoder, $string, $productHelper, $productTypeConfig,
-            $localeFormat, $customerSession, $productRepository, $priceCurrency, $data);
+        parent::__construct(
+            $context,
+            $urlEncoder,
+            $jsonEncoder,
+            $string,
+            $productHelper,
+            $productTypeConfig,
+            $localeFormat,
+            $customerSession,
+            $productRepository,
+            $priceCurrency,
+            $data
+        );
 
         $this->maturityHelper = $maturityHelper;
     }
@@ -119,10 +130,8 @@ class Widget extends \Magento\Catalog\Block\Product\View
         if (!$this->getConfig(Config::XML_PATH_IS_ACTIVE) || !$this->getConfig(Config::XML_PATH_IS_ON_PRODUCT_PAGE)) {
             return false;
         }
-        if (
-            $this->getData('location') &&
-            $this->getConfig(Config::XML_PATH_PRODUCT_PAGE_LOCATION) != $this->getData('location')
-        ) {
+        if ($this->getData('location')
+            && $this->getConfig(Config::XML_PATH_PRODUCT_PAGE_LOCATION) != $this->getData('location')) {
             return false;
         }
 
@@ -132,7 +141,9 @@ class Widget extends \Magento\Catalog\Block\Product\View
             /**
              * Check HTTP_X_FORWARDED_FOR in case of CDN
              */
-            $ip = (isset($_SERVER['HTTP_X_FORWARDED_FOR'])) ? $_SERVER['HTTP_X_FORWARDED_FOR'] : $_SERVER['REMOTE_ADDR'];
+            $ip = $this->_request->getServer('HTTP_X_FORWARDED_FOR')
+                ? $this->_request->getServer('HTTP_X_FORWARDED_FOR')
+                : $this->_request->getServer('REMOTE_ADDR');
             $ip = explode(', ', $ip);
             $ip = $ip[0];
 
@@ -145,6 +156,8 @@ class Widget extends \Magento\Catalog\Block\Product\View
     }
 
     /**
+     * Get current store
+     *
      * @return \Magento\Store\Api\Data\StoreInterface
      */
     public function getStore()
@@ -160,6 +173,8 @@ class Widget extends \Magento\Catalog\Block\Product\View
     }
 
     /**
+     * Get current store code
+     *
      * @return int|string|null
      */
     public function getStoreCode()
@@ -171,10 +186,12 @@ class Widget extends \Magento\Catalog\Block\Product\View
     }
 
     /**
-     * @param $file string
+     * Get image src field
+     *
+     * @param string $file
      *
      * @return string
-     * @throws \Magento\Framework\Exception\NoSuchEntityException
+     * @throws \Magento\Framework\Exception\LocalizedException
      */
     public function getImageSrc(string $file)
     {
@@ -196,6 +213,8 @@ class Widget extends \Magento\Catalog\Block\Product\View
     }
 
     /**
+     * Get Widget Product Price
+     *
      * @param \Magento\Catalog\Model\Product $product
      *
      * @return float
@@ -220,14 +239,18 @@ class Widget extends \Magento\Catalog\Block\Product\View
     }
 
     /**
-     * @param $path
+     * Get config value
+     *
+     * @param string $path
      *
      * @return mixed
      */
-    public function getConfig($path)
+    public function getConfig(string $path)
     {
         return $this->_scopeConfig->getValue(
-            $path, ScopeInterface::SCOPE_STORE, $this->getStoreCode()
+            $path,
+            ScopeInterface::SCOPE_STORE,
+            $this->getStoreCode()
         );
     }
 }

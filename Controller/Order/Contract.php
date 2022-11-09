@@ -146,6 +146,8 @@ class Contract extends \Magento\Checkout\Controller\Onepage
     }
 
     /**
+     * Execute method
+     *
      * @return \Magento\Framework\App\ResponseInterface|\Magento\Framework\Controller\Result\Json|\Magento\Framework\Controller\ResultInterface
      */
     public function execute()
@@ -210,8 +212,12 @@ class Contract extends \Magento\Checkout\Controller\Onepage
         $merchantUrls = new MerchantUrls();
         $merchantUrls->setOnApplicationFailedRedirectUrl($this->getContractUrl('failed'));
         $merchantUrls->setOnApplicationSucceededRedirectUrl($this->getContractUrl('success'));
-        $merchantUrls->setOnCanceledWebhookUrl($this->getContractUrl('webhook', ['action' => 'cancel', 'order' => $orderId]));
-        $merchantUrls->setOnWithdrawnWebhookUrl($this->getContractUrl('webhook', ['action' => 'withdrawn', 'order' => $orderId]));
+        $merchantUrls->setOnCanceledWebhookUrl(
+            $this->getContractUrl('webhook', ['action' => 'cancel', 'order' => $orderId])
+        );
+        $merchantUrls->setOnWithdrawnWebhookUrl(
+            $this->getContractUrl('webhook', ['action' => 'withdrawn', 'order' => $orderId])
+        );
 
         $address = $order->getBillingAddress();
         $street = implode(', ', $order->getBillingAddress()->getStreet());
@@ -250,8 +256,10 @@ class Contract extends \Magento\Checkout\Controller\Onepage
         }
 
         try {
-            $response = $client->setCredential($credentials['clientId'],
-                $credentials['clientSecret'])->sendRequest($request);
+            $response = $client->setCredential(
+                $credentials['clientId'],
+                $credentials['clientSecret']
+            )->sendRequest($request);
 
             if ($response->getStatusCode() !== 200) {
                 return $this->redirectOnError($order, __(
@@ -281,14 +289,15 @@ class Contract extends \Magento\Checkout\Controller\Onepage
 
         $order->getPayment()->setAdditionalInformation($informations)->save();
 
-        $order->addStatusHistoryComment(__('Younited Credit transaction started. Reference: %1',
-            $informations['Payment ID']))
+        $order
+            ->addStatusHistoryComment(
+                __(
+                    'Younited Credit transaction started. Reference: %1',
+                    $informations['Payment ID']
+                )
+            )
             ->setIsCustomerNotified(false)
             ->save();
-
-//        \Zend_Debug::dump($result["contractReference"]);
-//        \Zend_Debug::dump($result["redirectUrl"]);
-//        die('ok');
 
         return $this->resultRedirectFactory->create()
             ->setRefererUrl($this->urlBuilder->getUrl('younited/contract/cancel'))
@@ -296,6 +305,8 @@ class Contract extends \Magento\Checkout\Controller\Onepage
     }
 
     /**
+     * Get contract URL
+     *
      * @param string $controller
      * @param array $params
      *
@@ -308,6 +319,8 @@ class Contract extends \Magento\Checkout\Controller\Onepage
     }
 
     /**
+     * Redirection on error
+     *
      * @param \Magento\Sales\Api\Data\OrderInterface $order
      * @param \Magento\Framework\Phrase $message
      */
@@ -323,6 +336,7 @@ class Contract extends \Magento\Checkout\Controller\Onepage
             $this->orderManagement->cancel($orderId);
         } catch (\Exception $e) {
             // Do nothing
+            $this->messageManager->addErrorMessage(__('Cannot cancel order.'));
         }
 
         return $this->resultRedirectFactory->create()->setPath('checkout/cart');

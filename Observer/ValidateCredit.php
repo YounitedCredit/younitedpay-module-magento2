@@ -64,6 +64,8 @@ class ValidateCredit extends RequestHandler
     }
 
     /**
+     * Execute method
+     *
      * @param Observer $observer
      */
     public function execute(Observer $observer)
@@ -97,26 +99,34 @@ class ValidateCredit extends RequestHandler
 
         $informations = $payment->getAdditionalInformation();
 
-        if ($order->getState() == 'processing' && $informations['Payment Status'] == Config::CREDIT_STATUS_TO_CONFIRME) {
+        if ($order->getState() == 'processing'
+            && $informations['Payment Status'] == Config::CREDIT_STATUS_TO_CONFIRME) {
             $this->checkInfos($informations);
             $request = new ConfirmContractRequest();
             $body = new ConfirmContract();
             $body->setMerchantOrderId($order->getIncrementId());
 
-            $informations = $this->sendRequest($body, $request, $informations, $order->getStoreId(),
-                Config::CREDIT_STATUS_CONFIRMED);
+            $informations = $this->sendRequest(
+                $body,
+                $request,
+                $informations,
+                $order->getStoreId(),
+                Config::CREDIT_STATUS_CONFIRMED
+            );
         }
 
-        if (
-            in_array($order->getStatus(), $triggerStatus) &&
-            $informations['Payment Status'] == Config::CREDIT_STATUS_CONFIRMED
-        ) {
+        if (in_array($order->getStatus(), $triggerStatus) &&
+            $informations['Payment Status'] == Config::CREDIT_STATUS_CONFIRMED) {
             $this->checkInfos($informations);
             $request = new ActivateContractRequest();
             $body = new ActivateContract();
 
             $informations = $this->sendRequest(
-                $body, $request, $informations, $order->getStoreId(), Config::CREDIT_STATUS_ACTIVATED,
+                $body,
+                $request,
+                $informations,
+                $order->getStoreId(),
+                Config::CREDIT_STATUS_ACTIVATED,
                 'Younited Credit activation failed.'
             );
         }

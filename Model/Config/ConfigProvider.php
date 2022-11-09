@@ -30,7 +30,6 @@ use YounitedCredit\YounitedPay\Helper\Maturity;
 
 class ConfigProvider implements ConfigProviderInterface
 {
-
     /**
      * @var StoreManagerInterface
      */
@@ -85,6 +84,7 @@ class ConfigProvider implements ConfigProviderInterface
      * @param UrlInterface $urlInterface
      * @param Maturity $maturityHelper
      * @param Repository $assetRepository
+     * @param ProductMetadataInterface $productMetadata
      */
     public function __construct(
         CheckoutSession $checkoutSession,
@@ -165,6 +165,8 @@ class ConfigProvider implements ConfigProviderInterface
     }
 
     /**
+     * Get current Store
+     *
      * @return \Magento\Store\Api\Data\StoreInterface
      */
     public function getStore()
@@ -180,6 +182,8 @@ class ConfigProvider implements ConfigProviderInterface
     }
 
     /**
+     * Get current store code
+     *
      * @return int|string
      */
     public function getStoreCode()

@@ -22,6 +22,8 @@ namespace YounitedCredit\YounitedPay\Block\Adminhtml\System\Config;
 class Help extends \Magento\Config\Block\System\Config\Form\Field
 {
     /**
+     * Render method
+     *
      * @param \Magento\Framework\Data\Form\Element\AbstractElement $element
      *
      * @return string
@@ -33,8 +35,10 @@ class Help extends \Magento\Config\Block\System\Config\Form\Field
         $html = '<div class="config-additional-comment-title"><strong>' . $element->getLabel() . '</strong></div>';
         $html .= '<div class="config-additional-comment-content">
 <p>' . __('Have a question about') . ' <a href="mailto:contact@younited-pay.fr">' . __('Younited Pay') . '</a> ?</p>
-<p>' . __('You can reach a technical team or your account manager from your back office via our ticketing system.') . '</p>
-<p>' . __('If your question concerns technical difficulties with the module, please refer to') . ' <a href="' . $urlSupport . '" target="_blank">' . __('our support team') . '</a></p>
+<p>' . __('You can reach a technical team or your account manager from your back office via our ticketing system.')
+            . '</p>
+<p>' . __('If your question concerns technical difficulties with the module, please refer to') . ' <a 
+href="' . $urlSupport . '" target="_blank">' . __('our support team') . '</a></p>
         </div>';
         $html .= '<a class="button action-default" target="_blank" href="' . $urlBtn . '">' .
             __('More informations') . '</a>';
@@ -42,6 +46,8 @@ class Help extends \Magento\Config\Block\System\Config\Form\Field
     }
 
     /**
+     * Decorate row
+     *
      * @param \Magento\Framework\Data\Form\Element\AbstractElement $element
      * @param string $html
      *

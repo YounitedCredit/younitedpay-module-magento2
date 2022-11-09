@@ -22,29 +22,41 @@ namespace YounitedCredit\YounitedPay\Block\Adminhtml\System\Config;
 class Gtc extends \Magento\Config\Block\System\Config\Form\Field
 {
     /**
+     * Render method
+     *
      * @param \Magento\Framework\Data\Form\Element\AbstractElement $element
      *
      * @return string
      */
     public function render(\Magento\Framework\Data\Form\Element\AbstractElement $element)
     {
-        $text = __('In order to comply with the legislation, please add to your General Terms and Conditions (GTC) with the hyperlinks and replace [the Seller] with your company name:');
+        $text = __('In order to comply with the legislation, please add to your General Terms and Conditions (GTC)'
+            . ' with the hyperlinks and replace [the Seller] with your company name:');
         $text .= '<br />';
-        $text .= '"' . __("[The Seller] offers its Customers the credit service of Younited Pay for the settlement of their purchases and the execution of the payment. This is conditional on the Customer's acceptance of the credit agreement offered by Younited.") . '"';
+        $text .= '"' . __("[The Seller] offers its Customers the credit service of Younited Pay for the settlement"
+                . " of their purchases and the execution of the payment. This is conditional on the Customer's"
+                . " acceptance of the credit agreement offered by Younited.") . '"';
         $text .= '<br />';
-        $text .= '"' . __("Any refusal by Younited to grant credit for an order may result in the cancellation of the order.");
+        $text .= '"' . __("Any refusal by Younited to grant credit for an order may result in the cancellation"
+                . " of the order.");
         $text .= '<br />';
-        $text .= __("Any termination of the T&Cs binding the Customer and [the Seller] shall result in the termination of the credit agreement between Younited and the Customer.") . '"';
+        $text .= __("Any termination of the T&Cs binding the Customer and [the Seller] shall result in the"
+                . " termination of the credit agreement between Younited and the Customer.") . '"';
         $text .= '<br />';
-        $text .= __('In addition, also add to your General Terms and Conditions (GTC) (in accordance with Article L312-45, under penalty of fine):');
-        $text .= ' "' . __("The amount is paid by a credit granted by Younited registered on the REGAFI under number 13156.") . '"';
+        $text .= __('In addition, also add to your General Terms and Conditions (GTC) (in accordance with'
+            . ' Article L312-45, under penalty of fine):');
+        $text .= ' "' . __("The amount is paid by a credit granted by Younited registered on the REGAFI"
+                . " under number 13156.") . '"';
 
-        $html = $element->getLabel() ? '<div class="config-additional-comment-title"><strong>' . $element->getLabel() . '</strong></div>' : '';
+        $html = $element->getLabel() ? '<div class="config-additional-comment-title"><strong>' . $element->getLabel()
+            . '</strong></div>' : '';
         $html .= '<div class="config-additional-comment-content">' . $text . '</div>';
         return $this->decorateRowHtml($element, $html);
     }
 
     /**
+     * Decorate HTML row
+     *
      * @param \Magento\Framework\Data\Form\Element\AbstractElement $element
      * @param string $html
      *

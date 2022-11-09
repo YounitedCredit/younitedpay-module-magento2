@@ -94,8 +94,10 @@ class Maturities extends \Magento\Framework\View\Element\Html\Select
                 $request = $request->enableSandbox();
             }
             try {
-                $response = $client->setCredential($credentials['clientId'],
-                    $credentials['clientSecret'])->sendRequest($request);
+                $response = $client->setCredential(
+                    $credentials['clientId'],
+                    $credentials['clientSecret']
+                )->sendRequest($request);
 
                 if ($response->getStatusCode() == 200) {
                     foreach ($response->getModel() as $val) {
@@ -103,7 +105,7 @@ class Maturities extends \Magento\Framework\View\Element\Html\Select
                     }
                 }
             } catch (Exception $e) {
-                // Do nothing
+                $this->_maturities = [];
             }
         }
 
@@ -114,6 +116,8 @@ class Maturities extends \Magento\Framework\View\Element\Html\Select
     }
 
     /**
+     * Set input name
+     *
      * @param string $value
      *
      * @return $this

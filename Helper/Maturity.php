@@ -221,7 +221,7 @@ class Maturity
     /**
      * Retrieve value from config
      *
-     * @param $productPrice float
+     * @param float|string $productPrice
      * @param null|string|bool|int|Store $store
      *
      * @return array|null
@@ -291,6 +291,8 @@ class Maturity
     }
 
     /**
+     * Get current Store
+     *
      * @return \Magento\Store\Api\Data\StoreInterface|Store
      * @throws \Magento\Framework\Exception\NoSuchEntityException
      */
@@ -304,7 +306,10 @@ class Maturity
     }
 
     /**
-     * @param false $storeId
+     * Get Api Credentials
+     *
+     * @param false|int $storeId
+     * @param false|int $website
      *
      * @return array|false
      * @throws LocalizedException
@@ -318,12 +323,21 @@ class Maturity
         }
 
         if ($website) {
-            $mode = $this->scopeConfig->getValue(Config::XML_PATH_API_DEV_MODE, ScopeInterface::SCOPE_WEBSITE,
-                $storeId);
-            $clientId = $this->scopeConfig->getValue(Config::XML_PATH_API_CLIENT_ID, ScopeInterface::SCOPE_WEBSITE,
-                $storeId);
-            $clientSecret = $this->scopeConfig->getValue(Config::XML_PATH_API_CLIENT_SECRET,
-                ScopeInterface::SCOPE_WEBSITE, $storeId);
+            $mode = $this->scopeConfig->getValue(
+                Config::XML_PATH_API_DEV_MODE,
+                ScopeInterface::SCOPE_WEBSITE,
+                $storeId
+            );
+            $clientId = $this->scopeConfig->getValue(
+                Config::XML_PATH_API_CLIENT_ID,
+                ScopeInterface::SCOPE_WEBSITE,
+                $storeId
+            );
+            $clientSecret = $this->scopeConfig->getValue(
+                Config::XML_PATH_API_CLIENT_SECRET,
+                ScopeInterface::SCOPE_WEBSITE,
+                $storeId
+            );
         } else {
             $mode = $this->getConfig(Config::XML_PATH_API_DEV_MODE, $storeId);
             $clientId = $this->getConfig(Config::XML_PATH_API_CLIENT_ID, $storeId);
@@ -332,7 +346,10 @@ class Maturity
 
         if (!$clientId || !$clientSecret) {
             if ($mode == 'dev') {
-                throw new LocalizedException(__('Please check your Magento configuration client_id and client_secret to enable Younited Credit.'));
+                throw new LocalizedException(
+                    __('Please check your Magento configuration client_id'
+                        . ' and client_secret to enable Younited Credit.')
+                );
             } else {
                 return false;
             }

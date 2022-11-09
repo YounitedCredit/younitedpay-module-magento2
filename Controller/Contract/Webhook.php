@@ -90,12 +90,12 @@ class Webhook extends AbstractWebhook
     }
 
     /**
+     * Execute method
+     *
      * @return \Magento\Framework\Controller\Result\Json
      */
     public function execute()
     {
-//        $this->logger->info('Webhook');
-//        $this->logger->info('$params :' . json_encode($params));
         $action = $this->getRequest()->getParam('action');
         $orderId = $this->getRequest()->getParam('order');
 
@@ -124,8 +124,10 @@ class Webhook extends AbstractWebhook
                     $request = $request->enableSandbox();
                 }
 
-                $response = $client->setCredential($credentials['clientId'],
-                    $credentials['clientSecret'])->sendRequest($request);
+                $response = $client->setCredential(
+                    $credentials['clientId'],
+                    $credentials['clientSecret']
+                )->sendRequest($request);
 
                 $isContractCanceled = false;
                 if ($response->getStatusCode() == 200) {
@@ -165,6 +167,8 @@ class Webhook extends AbstractWebhook
     }
 
     /**
+     * For POST requests
+     *
      * @param RequestInterface $request
      *
      * @return InvalidRequestException|null
@@ -175,6 +179,8 @@ class Webhook extends AbstractWebhook
     }
 
     /**
+     * For POST requests
+     *
      * @param RequestInterface $request
      *
      * @return bool|null

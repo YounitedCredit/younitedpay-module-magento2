@@ -21,11 +21,11 @@
 <?= $block->getButtonHtml() ?>
 <span class="sandbox-indicator" id="younited_span">
     <img class="processing" hidden="hidden" alt="processing" style="margin:0 5px"
-         src="<?= $block->getViewFileUrl('images/process_spinner.gif') ?>"/>
+         src="<?= $block->escapeHtml($block->getViewFileUrl('images/process_spinner.gif')) ?>"/>
     <img class="url-fail" hidden="hidden" alt="url-fail" style="margin:0 5px"
-         src="<?= $block->getViewFileUrl('images/rule_component_remove.gif') ?>"/>
+         src="<?= $block->escapeHtml($block->getViewFileUrl('images/rule_component_remove.gif')) ?>"/>
     <img class="url-success" hidden="hidden" alt="url-success" style="margin:-3px 5px"
-         src="<?= $block->getViewFileUrl('images/rule_component_apply.gif') ?>"/>
+         src="<?= $block->escapeHtml($block->getViewFileUrl('images/rule_component_apply.gif')) ?>"/>
     <span id="younited_message_span"></span>
 </span>
 
@@ -33,7 +33,7 @@
     require([
         'jquery'
     ], function ($) {
-        var cleanCacheUrl = '<?= $block->getCleanCacheUrl() ?>';
+        var cleanCacheUrl = '<?= $block->escapeHtml($block->getCleanCacheUrl()) ?>';
 
         $('#younited_flush_cache').click(function () {
             window.location.href = cleanCacheUrl;
@@ -67,11 +67,14 @@
                     let from = (minAmount / installment).toFixed(2)
                     let to = (maxAmount / installment).toFixed(2)
                     let html = `<div class="maturity-notice">`
-                    html += `<?= __('Reminder: the minimum monthly payment is 9.99 euros / month') ?>`
+                    html +=
+                        `<?= $block->escapeHtml(__('Reminder: the minimum monthly payment is 9.99 euros / month')) ?>`
                     html += `<br />`
-                    html += `<?= __('Installments from') ?> ${from} <?= __('€/month') ?>.`
+                    html += `<?= $block->escapeHtml(__('Installments from')) ?>`
+                    html += ` ${from} <?= $block->escapeHtml(__('€/month')) ?>.`
                     if (maxAmount) {
-                        html += `<?= __(' And up to') ?> ${to} <?= __('€/month') ?>.`
+                        html += `<?= $block->escapeHtml(__(' And up to')) ?> ${to} `
+                        html += `<?= $block->escapeHtml(__('€/month')) ?>.`
                     }
                     html += `</div>`
                     row.append(html);

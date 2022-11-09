@@ -68,6 +68,8 @@ class Withdrawn extends \Magento\Framework\App\Action\Action
     }
 
     /**
+     * Execute method
+     *
      * @return \Magento\Framework\Controller\Result\Json
      */
     public function execute()

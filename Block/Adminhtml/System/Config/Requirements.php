@@ -28,6 +28,8 @@ use YounitedPaySDK\Request\BestPriceRequest;
 class Requirements extends \Magento\Config\Block\System\Config\Form\Field
 {
     /**
+     * Render method
+     *
      * @param \Magento\Framework\Data\Form\Element\AbstractElement $element
      *
      * @return string
@@ -40,6 +42,8 @@ class Requirements extends \Magento\Config\Block\System\Config\Form\Field
     }
 
     /**
+     * Decorate HTML row
+     *
      * @param \Magento\Framework\Data\Form\Element\AbstractElement $element
      * @param string $html
      *
@@ -76,35 +80,46 @@ class Requirements extends \Magento\Config\Block\System\Config\Form\Field
          */
         $isValid = 'invalid';
         $isEnabled = 'Not enabled';
-        if ($_SERVER['HTTPS'] && $_SERVER['HTTPS'] != 'off' && $tls_version >= 1.2) {
+        $https = $this->_request->getServer('HTTPS');
+        if ($https && $https != 'off' && $tls_version >= 1.2) {
             $isValid = 'valid';
             $isEnabled = 'Enabled';
         }
-        $format .= '<div class="config-younited-server"><span class="' . $isValid . '"></span> SSL & TLS1.2 - ' . $isEnabled . ' on all the shop</div>';
+        $format .= '<div class="config-younited-server"><span class="' . $isValid . '"></span> SSL & TLS1.2 - '
+            . $isEnabled . ' on all the shop</div>';
 
         try {
             $isValid = $this->isApiConnected() ? 'valid' : 'invalid';
-            $format .= '<div class="config-younited-server"><span class="' . $isValid . '"></span> Connected to Younited API</div>';
+            $format .= '<div class="config-younited-server"><span class="' . $isValid
+                . '"></span> Connected to Younited API</div>';
         } catch (\Exception $e) {
-            $format .= '<div class="config-younited-server">Please Check SDK installation: ' . $e->getMessage() . '</div>';
+            $format .= '<div class="config-younited-server">Please Check SDK installation: '
+                . $e->getMessage() . '</div>';
         }
 
         $isValid = $this->isWebhookConnected() ? 'valid' : 'invalid';
         $format .= '<div class="config-younited-server"><span class="' . $isValid . '"></span> WebHook contacted</div>';
 
         if ($this->getRequest()->getParam('store')) {
-            $mode = $this->_scopeConfig->getValue("younited_setup/general/mode", ScopeInterface::SCOPE_STORE,
-                $this->getRequest()->getParam('store'));
+            $mode = $this->_scopeConfig->getValue(
+                Config::XML_PATH_API_DEV_MODE,
+                ScopeInterface::SCOPE_STORE,
+                $this->getRequest()->getParam('store')
+            );
         } else {
             if ($this->getRequest()->getParam('website')) {
-                $mode = $this->_scopeConfig->getValue("younited_setup/general/mode", ScopeInterface::SCOPE_WEBSITE,
-                    $this->getRequest()->getParam('website'));
+                $mode = $this->_scopeConfig->getValue(
+                    Config::XML_PATH_API_DEV_MODE,
+                    ScopeInterface::SCOPE_WEBSITE,
+                    $this->getRequest()->getParam('website')
+                );
             } else {
                 $mode = $this->_scopeConfig->getValue("younited_setup/general/mode");
             }
         }
         $isValid = $mode == 'prod' ? 'valid' : 'invalid';
-        $format .= '<div class="config-younited-server"><span class="' . $isValid . '"></span> Production enviroment</div>';
+        $format .= '<div class="config-younited-server"><span class="' . $isValid
+            . '"></span> Production enviroment</div>';
 
         $format .= '</div>';
 
@@ -127,11 +142,17 @@ class Requirements extends \Magento\Config\Block\System\Config\Form\Field
         }
 
         if ($storeId) {
-            $webHookValue = $this->_scopeConfig->getValue(Config::XML_PATH_API_SECRET_WEBHOOK,
-                ScopeInterface::SCOPE_STORE, $storeId);
+            $webHookValue = $this->_scopeConfig->getValue(
+                Config::XML_PATH_API_SECRET_WEBHOOK,
+                ScopeInterface::SCOPE_STORE,
+                $storeId
+            );
         } else {
-            $webHookValue = $this->_scopeConfig->getValue(Config::XML_PATH_API_SECRET_WEBHOOK,
-                ScopeInterface::SCOPE_WEBSITE, $websiteId);
+            $webHookValue = $this->_scopeConfig->getValue(
+                Config::XML_PATH_API_SECRET_WEBHOOK,
+                ScopeInterface::SCOPE_WEBSITE,
+                $websiteId
+            );
         }
 
         return $webHookValue;
@@ -139,6 +160,8 @@ class Requirements extends \Magento\Config\Block\System\Config\Form\Field
 
     /**
      * Check API connection
+     *
+     * @return bool
      */
     private function isApiConnected()
     {
@@ -149,19 +172,37 @@ class Requirements extends \Magento\Config\Block\System\Config\Form\Field
         }
 
         if ($storeId) {
-            $apiMode = $this->_scopeConfig->getValue(Config::XML_PATH_API_DEV_MODE, ScopeInterface::SCOPE_STORE,
-                $storeId);
-            $clientId = $this->_scopeConfig->getValue(Config::XML_PATH_API_CLIENT_ID, ScopeInterface::SCOPE_STORE,
-                $storeId);
-            $clientSecret = $this->_scopeConfig->getValue(Config::XML_PATH_API_CLIENT_SECRET,
-                ScopeInterface::SCOPE_STORE, $storeId);
+            $apiMode = $this->_scopeConfig->getValue(
+                Config::XML_PATH_API_DEV_MODE,
+                ScopeInterface::SCOPE_STORE,
+                $storeId
+            );
+            $clientId = $this->_scopeConfig->getValue(
+                Config::XML_PATH_API_CLIENT_ID,
+                ScopeInterface::SCOPE_STORE,
+                $storeId
+            );
+            $clientSecret = $this->_scopeConfig->getValue(
+                Config::XML_PATH_API_CLIENT_SECRET,
+                ScopeInterface::SCOPE_STORE,
+                $storeId
+            );
         } else {
-            $apiMode = $this->_scopeConfig->getValue(Config::XML_PATH_API_DEV_MODE, ScopeInterface::SCOPE_WEBSITE,
-                $websiteId);
-            $clientId = $this->_scopeConfig->getValue(Config::XML_PATH_API_CLIENT_ID, ScopeInterface::SCOPE_WEBSITE,
-                $websiteId);
-            $clientSecret = $this->_scopeConfig->getValue(Config::XML_PATH_API_CLIENT_SECRET,
-                ScopeInterface::SCOPE_WEBSITE, $websiteId);
+            $apiMode = $this->_scopeConfig->getValue(
+                Config::XML_PATH_API_DEV_MODE,
+                ScopeInterface::SCOPE_WEBSITE,
+                $websiteId
+            );
+            $clientId = $this->_scopeConfig->getValue(
+                Config::XML_PATH_API_CLIENT_ID,
+                ScopeInterface::SCOPE_WEBSITE,
+                $websiteId
+            );
+            $clientSecret = $this->_scopeConfig->getValue(
+                Config::XML_PATH_API_CLIENT_SECRET,
+                ScopeInterface::SCOPE_WEBSITE,
+                $websiteId
+            );
         }
 
         if (!$clientId || !$clientSecret) {
@@ -182,8 +223,7 @@ class Requirements extends \Magento\Config\Block\System\Config\Form\Field
             $response = $client->setCredential($clientId, $clientSecret)->sendRequest($request);
             return ($response->getStatusCode() === 200);
         } catch (Exception $e) {
-            // Do nothing
+            return false;
         }
-        return false;
     }
 }

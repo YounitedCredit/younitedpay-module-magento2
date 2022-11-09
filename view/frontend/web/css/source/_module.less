@@ -18,34 +18,35 @@
 
 @font-face {
     font-family: 'Roboto';
-    src: url('../YounitedCredit_YounitedPay/fonts/Roboto/Roboto-Medium.ttf');
-    font-weight: 400;
     font-style: normal;
+    font-weight: 400;
+    src: url('../YounitedCredit_YounitedPay/fonts/Roboto/Roboto-Medium.ttf');
 }
 
 @font-face {
     font-family: 'Roboto';
-    src: url('../YounitedCredit_YounitedPay/fonts/Roboto/Roboto-Bold.ttf');
-    font-weight: 700;
     font-style: normal;
+    font-weight: 700;
+    src: url('../YounitedCredit_YounitedPay/fonts/Roboto/Roboto-Bold.ttf');
 }
 
 //
 //  Common
 //  _____________________________________________
+
 & when (@media-common = true) {
     .yp-error-notice {
-        text-align: center;
-        color: red;
+        color: #ff0000;
         font-weight: 700;
         margin-bottom: 20px;
+        text-align: center;
     }
 
     .younitedpay-widget-root {
+        background: #fff;
         font-family: 'Roboto';
         margin-bottom: 20px;
         padding: 16px 0;
-        background: #fff;
 
         #younited_block {
             position: relative;
@@ -64,19 +65,20 @@
         }
 
         .maturity_installment {
-            display: inline-block;
-            text-align: center;
-            width: 48px;
-            padding: 6px 0px;
-            margin: 13px 8px;
-            cursor: pointer;
-            font-size: 22px;
-            border-radius: 2px;
-            transition-duration: .5s;
             border: 1px solid #c5a1fe;
+            border-radius: 2px;
+            cursor: pointer;
+            display: inline-block;
+            font-size: 22px;
+            margin: 13px 8px;
+            padding: 6px 0;
+            text-align: center;
+            transition-duration: .5s;
             transition-property: background-color, border-color, color, fill, stroke;
+            width: 48px;
 
-            &:hover, &.selected {
+            &:hover,
+            &.selected {
                 border-width: 2px;
                 width: 46px;
             }
@@ -94,54 +96,52 @@
     }
 
     #younited_popupzone {
-        color: #000;
-        font-size: 12px;
-        font-weight: 400;
-        z-index: 1000;
-        position: fixed;
-        top: 0;
-        bottom: 0;
-        left: 0;
-        right: 0;
-        justify-content: center;
         align-items: center;
         background-color: #ccc;
         background-color: #00000077;
-        align-items: center;
+        bottom: 0;
+        color: #000;
         display: flex;
+        font-size: 12px;
+        font-weight: 400;
         justify-content: center;
+        left: 0;
+        position: fixed;
+        right: 0;
+        top: 0;
+        z-index: 1000;
 
         h3 {
             font-size: 40px;
             font-weight: 700;
-            line-height: 48px;
             letter-spacing: -0.02em;
-            padding-left: 24px;
+            line-height: 48px;
             margin: 0;
+            padding-left: 24px;
         }
 
         .popup-content {
-            width: 91%;
-            max-width: 896px;
-            height: 650px;
-            position: relative;
-            overflow: auto;
-            max-height: 95vh;
+            background-color: #fff;
+            border-radius: 2px;
             font-size: 18px;
             font-weight: 700;
-            border-radius: 2px;
-            background-color: #fff;
+            height: 650px;
+            max-height: 95vh;
+            max-width: 896px;
+            overflow: auto;
+            position: relative;
+            width: 91%;
         }
 
         .yp-left {
-            width: 40%;
-            padding: 32px 5%;
             float: left;
+            padding: 32px 5%;
+            width: 40%;
 
             img.yp-popup-logo {
+                bottom: 15px;
                 position: relative;
                 right: 15px;
-                bottom: 15px;
             }
 
             .yp-left-title {
@@ -151,16 +151,16 @@
             }
 
             .yp-text {
-                padding: 0 0 0 24px;
                 margin: 64px 0 0 0;
+                padding: 0 0 0 24px;
             }
 
             .yp-link {
-                padding: 0 0 0 24px;
-                margin: 64px 0 0 0;
-                font-weight: 400;
                 color: #7a7a7a;
                 font-size: 15px;
+                font-weight: 400;
+                margin: 64px 0 0 0;
+                padding: 0 0 0 24px;
 
                 a {
                     text-decoration: underline;
@@ -168,8 +168,8 @@
             }
 
             .logo-cards {
-                padding: 0 0 0 24px;
                 margin: 28px 0 0 0;
+                padding: 0 0 0 24px;
 
                 img {
                     height: 32px;
@@ -179,32 +179,32 @@
 
         .yp-right {
             background-color: #fff;
-            width: 40%;
-            padding: 32px 5%;
             float: left;
+            padding: 32px 5%;
+            width: 40%;
 
             h4 {
-                text-align: center;
                 font-size: 18px;
                 line-height: 22px;
                 margin: 0;
+                text-align: center;
             }
 
             ul {
-                list-style: none;
                 justify-content: center;
+                list-style: none;
                 margin: 0;
 
                 li {
-                    transition-property: all;
-                    font-size: 14px;
-                    display: inline-block;
-                    cursor: pointer;
-                    margin: 16px 6px 16px 0;
                     border: 1px solid #000;
+                    cursor: pointer;
+                    display: inline-block;
+                    font-size: 14px;
+                    line-height: 17px;
+                    margin: 16px 6px 16px 0;
                     padding: 8px 11px;
                     text-align: left;
-                    line-height: 17px;
+                    transition-property: all;
 
                     &.selected {
                         background: #000;
@@ -214,14 +214,14 @@
             }
 
             p.info-text {
-                padding-top: 16px;
                 font-size: 18px;
                 font-weight: 400;
+                padding-top: 16px;
             }
 
             .yp-finance {
-                margin-top: 32px;
                 margin-bottom: 32px;
+                margin-top: 32px;
 
                 p {
                     margin-bottom: 0;
@@ -233,11 +233,10 @@
                 }
 
                 > div {
-                    padding-bottom: 16px;
-
-                    flex-direction: row;
                     display: flex;
+                    flex-direction: row;
                     justify-content: space-between;
+                    padding-bottom: 16px;
                 }
 
                 > div:first-child {
@@ -247,26 +246,26 @@
             }
 
             .yp-tax {
-                margin-top: 32px;
                 margin-bottom: 32px;
+                margin-top: 32px;
 
                 > div {
-                    flex-direction: row;
                     display: flex;
+                    flex-direction: row;
                     justify-content: flex-end;
                 }
             }
 
             .yp-engagement {
-                margin-top: 32px;
-                display: flex;
+                align-items: center;
                 background-color: #F4ECFF;
                 color: #000;
+                display: flex;
+                font-size: 16px;
                 height: 125px;
                 justify-content: center;
-                align-items: center;
                 line-height: 22px;
-                font-size: 16px;
+                margin-top: 32px;
             }
         }
 
@@ -279,31 +278,31 @@
         }
 
         .yp-font-normal {
+            font-size: 16px;
             font-weight: 400;
-            font-size: 16px
         }
 
         #yp-close-popup {
-            cursor: pointer;
             background-color: transparent;
             background-image: none;
-            overflow: visible;
-            transition-duration: .1s;
-            transition-property: opacity, font-size;
-            position: absolute;
-            right: 16px;
-            top: 12px;
+            border: 0;
+            cursor: pointer;
+            font-size: 35px;
+            margin: 0;
             outline: 2px solid transparent;
             outline-offset: 2px;
             opacity: .5;
-            font-size: 35px;
-            margin: 0;
+            overflow: visible;
             padding: 0;
-            border: 0;
+            position: absolute;
+            right: 16px;
+            top: 12px;
+            transition-duration: .1s;
+            transition-property: opacity, font-size;
 
             &:hover {
-                opacity: 1;
                 font-size: 44px;
+                opacity: 1;
             }
         }
     }
@@ -319,9 +318,9 @@
 
             input,
             label span {
-                line-height: 35px;
                 display: block;
                 float: left;
+                line-height: 35px;
             }
         }
 
@@ -330,7 +329,6 @@
         }
 
         .yp-error {
-
             .message.error > *:first-child:before {
                 margin: -3px 0 0;
             }
@@ -346,6 +344,7 @@
 //
 //  Mobile
 //  _____________________________________________
+
 .media-width(@extremum, @break) when (@extremum = 'max') and (@break = @screen__xs) {
 
 }
@@ -353,6 +352,7 @@
 //
 //  Mobile landscape
 //  _____________________________________________
+
 .media-width(@extremum, @break) when (@extremum = 'max') and (@break = @screen__m) {
 
 }
@@ -360,6 +360,7 @@
 //
 //  Mobile & tablet
 //  _____________________________________________
+
 .media-width(@extremum, @break) when (@extremum = 'max') and (@break = @screen__l) {
 
 }
@@ -374,6 +375,7 @@
 //
 //  Desktop only
 //  _____________________________________________
+
 .media-width(@extremum, @break) when (@extremum = 'min') and (@break = @screen__m) {
     body .product.data.items {
         z-index: 10;

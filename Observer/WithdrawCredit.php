@@ -51,6 +51,7 @@ class WithdrawCredit extends RequestHandler
     /**
      * WithdrawCredit constructor.
      *
+     * @param Maturity $maturityHelper
      * @param CreditmemoRepositoryInterface $creditmemoRepository
      * @param SearchCriteriaBuilder $searchCriteriaBuilder
      * @param ScopeConfigInterface $scopeConfig
@@ -74,6 +75,8 @@ class WithdrawCredit extends RequestHandler
     }
 
     /**
+     * Execute method
+     *
      * @param Observer $observer
      */
     public function execute(Observer $observer)
@@ -116,11 +119,9 @@ class WithdrawCredit extends RequestHandler
             $allowCall = false;
         }
 
-        if (
-            $refundTotal >= $orderTotal
+        if ($refundTotal >= $orderTotal
             && $informations["Payment Status"] != Config::CREDIT_STATUS_CANCELED
-            && $informations["Payment Status"] != Config::CREDIT_STATUS_ACTIVATED
-        ) {
+            && $informations["Payment Status"] != Config::CREDIT_STATUS_ACTIVATED) {
             // Total refund
             $status = Config::CREDIT_STATUS_CANCELED;
             $request = new CancelContractRequest();
@@ -128,7 +129,10 @@ class WithdrawCredit extends RequestHandler
         } else if ($allowCall) {
             // Partial refund
             if ($informations["Payment Status"] != Config::CREDIT_STATUS_ACTIVATED) {
-                throw new LocalizedException(__('Younited Pay : please consider either make a total refund, or make a partial refund AFTER you ship the order.'));
+                throw new LocalizedException(
+                    __('Younited Pay : please consider either make a total refund,'
+                        . ' or make a partial refund AFTER you ship the order.')
+                );
             }
             $request = new WithdrawContractRequest();
             $body = new WithdrawContract();
@@ -139,7 +143,11 @@ class WithdrawCredit extends RequestHandler
 
         if ($allowCall) {
             $informations = $this->sendRequest(
-                $body, $request, $informations, $order->getStoreId(), $status,
+                $body,
+                $request,
+                $informations,
+                $order->getStoreId(),
+                $status,
                 'An error occured with Younited Payment refund. Please do it manually from Younited Payment dashboard.',
                 'Younited Payment contract successfully updated.'
             );

@@ -23,62 +23,73 @@
  */
 ?>
 <?php $product = $block->getProduct() ?>
-<?php if ($block->isEnabled() && $product && $product->getId() && $product->getTypeId() != 'grouped') : ?>
+<?php if ($block->isEnabled() && $product && $product->getId() && $product->getTypeId() != 'grouped'): ?>
     <?php $installments = $block->getInstallments($product) ?>
     <?php $defaultMaturity = 0 ?>
     <?php $defaultInstallment = 0 ?>
-    <div class="younitedpay-widget-root" id="yp-widget" data-price="<?= $block->getWidgetProductPrice($product) ?>"
-         data-type="<?= $product->getTypeId() ?>"<?php if (empty($installments)) : ?> style="display: none"<?php endif ?>>
+    <div class="younitedpay-widget-root" id="yp-widget"
+         data-price="<?= $block->escapeHtml($block->getWidgetProductPrice($product)) ?>"
+         data-type="<?= $block->escapeHtml($product->getTypeId()) ?>"
+        <?php if (empty($installments)): ?> style="display: none"<?php endif ?>>
         <div id="younited_block">
-            <img src="<?= $block->getImageSrc('logo-younitedpay-btn.png') ?>" alt="<?= __("Younited Pay") ?>">
+            <img src="<?= $block->escapeHtml($block->getImageSrc('logo-younitedpay-btn.png')) ?>"
+                 alt="<?= $block->escapeHtml(__("Younited Pay")) ?>">
             <div id="yp-current-maturities">
-                <?php $i = 0;
-                foreach ($installments as $installment => $amount) : ?>
+                <?php $i = 0; ?>
+                <?php foreach ($installments as $installment => $amount): ?>
                     <?php $defaultMaturity = ($i == 0) ? $amount['monthlyInstallmentAmount'] : $defaultMaturity; ?>
                     <?php $defaultInstallment = ($i == 0) ? $installment : $defaultInstallment; ?>
                     <div class="maturity_installment <?= ($i == 0) ? 'selected' : '' ?>"
-                         id="maturity_installment<?= $installment ?>" data-key="<?= $installment ?>"
-                         data-maturity="<?= $amount['monthlyInstallmentAmount'] ?>">
-                        <span><?= $installment ?>x</span>
+                         id="maturity_installment<?= $block->escapeHtml($installment) ?>"
+                         data-key="<?= $block->escapeHtml($installment) ?>"
+                         data-maturity="<?= $block->escapeHtml($amount['monthlyInstallmentAmount']) ?>">
+                        <span><?= $block->escapeHtml($installment) ?>x</span>
                     </div>
-                    <?php $i++; endforeach; ?>
+                    <?php $i++; ?>
+                <?php endforeach; ?>
             </div>
             <div class="yp-current-installment">
-                <b><span><span id="yp-maturity"><?= $defaultMaturity ?></span>€</span></b>
-                <span id="yp-installment">x<?= $defaultInstallment ?></span>
+                <b><span><span id="yp-maturity"><?= $block->escapeHtml($defaultMaturity) ?></span>€</span></b>
+                <span id="yp-installment">x<?= $block->escapeHtml($defaultInstallment) ?></span>
             </div>
         </div>
         <div id="younited_popupzone" style="display:none;">
             <div class="popup-content">
                 <button id="yp-close-popup">x</button>
                 <div class="yp-left">
-                    <img class="yp-popup-logo" src="<?= $block->getImageSrc('logo-younitedpay.png') ?>"
-                         alt="youpay">
+                    <img class="yp-popup-logo" alt="youpay"
+                         src="<?= $block->escapeHtml($block->getImageSrc('logo-younitedpay.png')) ?>">
                     <div class="yp-left-title">
-                        <h3><?= __("Simple") ?>.</h3>
-                        <h3><?= __("Instant") ?>.</h3>
-                        <h3><?= __("Secured") ?>.</h3>
+                        <h3><?= $block->escapeHtml(__("Simple")) ?>.</h3>
+                        <h3><?= $block->escapeHtml(__("Instant")) ?>.</h3>
+                        <h3><?= $block->escapeHtml(__("Secured")) ?>.</h3>
                     </div>
                     <div class="yp-text">
-                        <?= __("Younited, it's never been easier") ?><br>
-                        <?= __("to pay in several times.") ?>
+                        <?= $block->escapeHtml(__("Younited, it's never been easier")) ?><br>
+                        <?= $block->escapeHtml(__("to pay in several times.")) ?>
                     </div>
                     <div class="yp-link">
-                        <?= __("Have a question? Visit our") ?> <a
+                        <?= $block->escapeHtml(__("Have a question? Visit our")) ?> <a
                                 href="https://www.younited-credit.com/questions-reponses"
-                                target="_blank"><?= __("dedicated page") ?></a>
+                                target="_blank"><?= $block->escapeHtml(__("dedicated page")) ?></a>
                     </div>
                     <div class="logo-cards">
-                        <img src="<?= $block->getImageSrc('cb.png') ?>" alt="<?= __("Bank Card") ?>">
-                        <img src="<?= $block->getImageSrc('visa.png') ?>" alt="<?= __("Visa") ?>">
-                        <img src="<?= $block->getImageSrc('mastercard.png') ?>" alt="<?= __("Mastercard") ?>">
+                        <img src="<?= $block->escapeHtml($block->getImageSrc('cb.png')) ?>"
+                             alt="<?= $block->escapeHtml(__("Bank Card")) ?>">
+                        <img src="<?= $block->escapeHtml($block->getImageSrc('visa.png')) ?>"
+                             alt="<?= $block->escapeHtml(__("Visa")) ?>">
+                        <img src="<?= $block->escapeHtml($block->getImageSrc('mastercard.png')) ?>"
+                             alt="<?= $block->escapeHtml(__("Mastercard")) ?>">
                     </div>
                 </div>
                 <div class="yp-right">
                     <h4>
-                        <?= __("Your purchase for") ?> <span
-                                id="popup-maturity"><?= $defaultMaturity ?></span>€<?= __("/month with") ?><br>
-                        <span class="yp-purple"><?= __("Younited Pay") ?></span>
+                        <?= $block->escapeHtml(__("Your purchase for")) ?>
+                        <span id="popup-maturity">
+                            <?= $block->escapeHtml($defaultMaturity) ?>
+                        </span>€<?= $block->escapeHtml(__("/month with")) ?>
+                        <br>
+                        <span class="yp-purple"><?= $block->escapeHtml(__("Younited Pay")) ?></span>
                     </h4>
                     <ul id="yp-popup-maturities">
                         <?php $i = 0; ?>
@@ -92,51 +103,51 @@
                         <?php foreach ($installments as $installment => $amount) : ?>
                             <?php $defautAmount = ($i == 0) ? $amount : $defautAmount ?>
                             <li class="blocks_maturities_popup <?= ($i == 0) ? 'selected' : '' ?>"
-                                id="blocks_maturities_popup<?= $installment ?>"
-                                data-key="<?= $installment ?>"
-                                data-maturity="<?= $amount['monthlyInstallmentAmount'] ?>"
-                                data-amount="<?= $amount['requestedAmount'] ?>"
-                                data-percent="<?= $amount['annualPercentageRate'] ?>"
-                                data-debit="<?= $amount['annualDebitRate'] ?>"
-                                data-total="<?= $amount['creditTotalAmount'] ?>"
-                                data-interests="<?= $amount['interestsTotalAmount'] ?>">
-                                <span class=""><?= $installment ?> <?= __("months") ?></span>
+                                id="blocks_maturities_popup<?= $block->escapeHtml($installment) ?>"
+                                data-key="<?= $block->escapeHtml($installment) ?>"
+                                data-maturity="<?= $block->escapeHtml($amount['monthlyInstallmentAmount']) ?>"
+                                data-amount="<?= $block->escapeHtml($amount['requestedAmount']) ?>"
+                                data-percent="<?= $block->escapeHtml($amount['annualPercentageRate']) ?>"
+                                data-debit="<?= $block->escapeHtml($amount['annualDebitRate']) ?>"
+                                data-total="<?= $block->escapeHtml($amount['creditTotalAmount']) ?>"
+                                data-interests="<?= $block->escapeHtml($amount['interestsTotalAmount']) ?>">
+                                <span class=""><?= $block->escapeHtml($installment) ?> <?= $block->escapeHtml(
+                                        __("months")
+                                    ) ?></span>
                             </li>
                             <?php $i++; endforeach; ?>
                     </ul>
 
                     <p class="info-text">
-                        <span class="yp-dark-purple"><?= __("Buy today and start paying") ?></span><br>
-                        <span class="yp-purple"><?= __("in just 30 days!") ?></span>
+                        <span class="yp-dark-purple"><?= $block->escapeHtml(__("Buy today and start paying")) ?></span><br>
+                        <span class="yp-purple"><?= $block->escapeHtml(__("in just 30 days!")) ?></span>
                     </p>
 
                     <div class="yp-finance">
                         <div>
-                            <p class="yp-dark-purple yp-font-normal"><?= __("Amount of financing") ?></p>
+                            <p class="yp-dark-purple yp-font-normal"><?= $block->escapeHtml(__("Amount of financing")) ?></p>
                             <p class="yp-dark-purple"><span
-                                        id="yp-amount"><?= $defautAmount['requestedAmount'] ?></span>
+                                        id="yp-amount"><?= $block->escapeHtml($defautAmount['requestedAmount']) ?></span>
                                 €</p>
                         </div>
                         <div>
-                            <p class="yp-dark-purple">+ <span
-                                        class="yp-font-normal"><?= __("Payment cost") ?></span></p>
-                            <p class="yp-dark-purple"><span
-                                        id="yp-cost"><?= $defautAmount['interestsTotalAmount'] ?></span> €</p>
+                            <p class="yp-dark-purple">+ <span class="yp-font-normal"
+                                ><?= $block->escapeHtml(__("Payment cost")) ?></span></p>
+                            <p class="yp-dark-purple"><span id="yp-cost"
+                                ><?= $block->escapeHtml($defautAmount['interestsTotalAmount']) ?></span> €</p>
                         </div>
                         <hr/>
                         <div>
-                            <p class="yp-dark-purple">= <?= __("Total amount owed") ?></p>
-                            <p class="yp-dark-purple"><span
-                                        id="yp-total"><?= $defautAmount['creditTotalAmount'] ?></span>
-                                €</p>
+                            <p class="yp-dark-purple">= <?= $block->escapeHtml(__("Total amount owed")) ?></p>
+                            <p class="yp-dark-purple"><span id="yp-total"
+                                ><?= $block->escapeHtml($defautAmount['creditTotalAmount']) ?></span>€</p>
                         </div>
                     </div>
 
                     <div class="yp-tax">
-                        <div><span class="yp-dark-purple"><?= __("Fixed APR") ?>:&nbsp;&nbsp;<span
-                                        id="yp-percent"><?= $defautAmount['annualPercentageRate'] * 100 ?></span> %</span>
-                        </div>
-                        <div><span class="yp-dark-purple"><?= __("Fixed borrowing rate") ?>:&nbsp;&nbsp;<span
+                        <div><span class="yp-dark-purple"><?= __("Fixed APR") ?>:&nbsp;&nbsp;<span id="yp-percent"
+                                ><?= $defautAmount['annualPercentageRate'] * 100 ?></span> %</span></div>
+                        <div><span class="yp-dark-purple"><?= $block->escapeHtml(__("Fixed borrowing rate")) ?>:&nbsp;&nbsp;<span
                                         id="yp-debit"><?= $defautAmount['annualDebitRate'] * 100 ?></span> %</span>
                         </div>
                     </div>

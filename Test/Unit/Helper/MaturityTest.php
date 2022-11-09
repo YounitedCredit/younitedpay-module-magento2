@@ -50,5 +50,4 @@ class MaturityTest extends \PHPUnit\Framework\TestCase
     {
         $this->assertEquals(1, $this->helper->getDefaultMaturity());
     }
-
 }

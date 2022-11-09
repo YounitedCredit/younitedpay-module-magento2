@@ -44,6 +44,8 @@ class Clean extends Action
     }
 
     /**
+     * Execute method
+     *
      * @return \Magento\Framework\App\ResponseInterface|\Magento\Framework\Controller\ResultInterface
      */
     public function execute()
@@ -61,6 +63,8 @@ class Clean extends Action
     }
 
     /**
+     * Default redirection
+     *
      * @return mixed
      */
     protected function defaultRedirect()
