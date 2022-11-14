@@ -70,6 +70,6 @@ class Clean extends Action
     protected function defaultRedirect()
     {
         $resultRedirect = $this->resultFactory->create(ResultFactory::TYPE_REDIRECT);
-        return $resultRedirect->setUrl($this->_redirect->getRefererUrl());
+        return $resultRedirect->setUrl($this->_redirect->getRefererUrl()); // phpcs:ignore
     }
 }

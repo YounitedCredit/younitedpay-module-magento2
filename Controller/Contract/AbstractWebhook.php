@@ -19,16 +19,19 @@
 
 namespace YounitedCredit\YounitedPay\Controller\Contract;
 
+use Magento\Framework\App\Action\Action;
+
 $objectManager = \Magento\Framework\App\ObjectManager::getInstance();
 $productMetadata = $objectManager->get(\Magento\Framework\App\ProductMetadataInterface::class);
 
 if (version_compare($productMetadata->getVersion(), "2.3.0", '>=')) {
-    abstract class AbstractWebhook extends \Magento\Framework\App\Action\Action
-        implements \Magento\Framework\App\CsrfAwareActionInterface
+    abstract class AbstractWebhook extends Action implements \Magento\Framework\App\CsrfAwareActionInterface
     {
     }
 } else {
-    abstract class AbstractWebhook extends \Magento\Framework\App\Action\Action
+    // @codingStandardsIgnoreStart
+    abstract class AbstractWebhook extends Action
     {
+        // @codingStandardsIgnoreEnd
     }
 }

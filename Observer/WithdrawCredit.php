@@ -126,7 +126,7 @@ class WithdrawCredit extends RequestHandler
             $status = Config::CREDIT_STATUS_CANCELED;
             $request = new CancelContractRequest();
             $body = new CancelContract();
-        } else if ($allowCall) {
+        } elseif ($allowCall) {
             // Partial refund
             if ($informations["Payment Status"] != Config::CREDIT_STATUS_ACTIVATED) {
                 throw new LocalizedException(

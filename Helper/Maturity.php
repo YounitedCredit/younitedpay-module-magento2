@@ -365,7 +365,8 @@ class Maturity
     /**
      * Get installments for spécified price
      *
-     * @param $price float
+     * @param float $price
+     * @param int|string $storeId
      *
      * @return array|null
      * @throws \Magento\Framework\Exception\NoSuchEntityException
@@ -388,11 +389,17 @@ class Maturity
             : (new BestPriceRequest())->setModel($body);
 
         try {
-            $response = $client->setCredential($credentials['clientId'],
-                $credentials['clientSecret'])->sendRequest($request);
+            $response = $client->setCredential(
+                $credentials['clientId'],
+                $credentials['clientSecret']
+            )->sendRequest($request);
+
             if ($response->getStatusCode() !== 200) {
-                return __('Cannot contact Younited Credit API. Status code: %1 - %2.', $response->getStatusCode(),
-                    $response->getReasonPhrase());
+                return __(
+                    'Cannot contact Younited Credit API. Status code: %1 - %2.',
+                    $response->getStatusCode(),
+                    $response->getReasonPhrase()
+                );
             }
         } catch (Exception $e) {
             return __('Exception: ') . $e->getMessage() . $e->getFile() . ':' . $e->getLine() . $e->getTraceAsString();
@@ -421,7 +428,10 @@ class Maturity
     }
 
     /**
-     * @param $path
+     * Get config value
+     *
+     * @param string $path
+     * @param bool|int|string $storeId
      *
      * @return mixed
      */

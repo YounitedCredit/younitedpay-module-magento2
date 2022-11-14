@@ -19,6 +19,7 @@
 
 namespace YounitedCredit\YounitedPay\Setup;
 
+// phpcs:ignoreFile
 class InstallSchema implements \Magento\Framework\Setup\InstallSchemaInterface
 {
     /**

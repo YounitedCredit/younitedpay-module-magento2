@@ -79,15 +79,15 @@ abstract class RequestHandler implements ObserverInterface
     /**
      * Send API request
      *
-     * @param $body
-     * @param $request
+     * @param \YounitedPaySDK\Model\AbstractModel $body
+     * @param \YounitedPaySDK\Request\AbstractRequest $request
      * @param string[] $informations
      * @param int $storeId
-     * @param false $status
+     * @param bool $status
      * @param string $errorMessage
      * @param string $successMessage
      *
-     * @return false
+     * @return bool
      * @throws \Magento\Framework\Exception\LocalizedException
      * @throws \Magento\Framework\Exception\NoSuchEntityException
      */

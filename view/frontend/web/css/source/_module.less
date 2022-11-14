@@ -16,6 +16,25 @@
  * @license   https://opensource.org/licenses/AFL-3.0  Academic Free License (AFL 3.0)
  */
 
+//
+//  Variables
+//  _____________________________________________
+
+@younited_error_notice: #f00;
+@younited_white: #fff;
+@younited_black: #000;
+@younited_black_opacity: #00000077;
+@younited_grey: #ccc;
+@younited_grey_light: #f4ecff;
+@younited_grey_dark: #7a7a7a;
+@younited_purple_light: #c5a1fe;
+@younited_purple: #6200fe;
+@younited_purple_dark: #564c5d;
+
+//
+//  Fonts
+//  _____________________________________________
+
 @font-face {
     font-family: 'Roboto';
     font-style: normal;
@@ -36,14 +55,14 @@
 
 & when (@media-common = true) {
     .yp-error-notice {
-        color: #ff0000;
+        color: @younited_error_notice;
         font-weight: 700;
         margin-bottom: 20px;
         text-align: center;
     }
 
     .younitedpay-widget-root {
-        background: #fff;
+        background: @younited_white;
         font-family: 'Roboto';
         margin-bottom: 20px;
         padding: 16px 0;
@@ -65,7 +84,7 @@
         }
 
         .maturity_installment {
-            border: 1px solid #c5a1fe;
+            border: 1px solid @younited_purple_light;
             border-radius: 2px;
             cursor: pointer;
             display: inline-block;
@@ -97,10 +116,10 @@
 
     #younited_popupzone {
         align-items: center;
-        background-color: #ccc;
-        background-color: #00000077;
+        background-color: @younited_grey;
+        background-color: @younited_black_opacity;
         bottom: 0;
-        color: #000;
+        color: @younited_black;
         display: flex;
         font-size: 12px;
         font-weight: 400;
@@ -121,7 +140,7 @@
         }
 
         .popup-content {
-            background-color: #fff;
+            background-color: @younited_white;
             border-radius: 2px;
             font-size: 18px;
             font-weight: 700;
@@ -156,7 +175,7 @@
             }
 
             .yp-link {
-                color: #7a7a7a;
+                color: @younited_grey_dark;
                 font-size: 15px;
                 font-weight: 400;
                 margin: 64px 0 0 0;
@@ -178,7 +197,7 @@
         }
 
         .yp-right {
-            background-color: #fff;
+            background-color: @younited_white;
             float: left;
             padding: 32px 5%;
             width: 40%;
@@ -196,7 +215,7 @@
                 margin: 0;
 
                 li {
-                    border: 1px solid #000;
+                    border: 1px solid @younited_black;
                     cursor: pointer;
                     display: inline-block;
                     font-size: 14px;
@@ -207,8 +226,8 @@
                     transition-property: all;
 
                     &.selected {
-                        background: #000;
-                        color: #fff;
+                        background: @younited_black;
+                        color: @younited_white;
                     }
                 }
             }
@@ -258,8 +277,8 @@
 
             .yp-engagement {
                 align-items: center;
-                background-color: #F4ECFF;
-                color: #000;
+                background-color: @younited_grey_light;
+                color: @younited_black;
                 display: flex;
                 font-size: 16px;
                 height: 125px;
@@ -270,11 +289,11 @@
         }
 
         .yp-dark-purple {
-            color: #564C5D;
+            color: @younited_purple_dark;
         }
 
         .yp-purple {
-            color: #6200fe;
+            color: @younited_purple;
         }
 
         .yp-font-normal {
@@ -289,9 +308,9 @@
             cursor: pointer;
             font-size: 35px;
             margin: 0;
+            opacity: .5;
             outline: 2px solid transparent;
             outline-offset: 2px;
-            opacity: .5;
             overflow: visible;
             padding: 0;
             position: absolute;
@@ -329,6 +348,7 @@
         }
 
         .yp-error {
+
             .message.error > *:first-child:before {
                 margin: -3px 0 0;
             }
@@ -338,39 +358,31 @@
             }
         }
     }
-
 }
 
 //
 //  Mobile
 //  _____________________________________________
 
-.media-width(@extremum, @break) when (@extremum = 'max') and (@break = @screen__xs) {
-
-}
+.media-width(@extremum, @break) when (@extremum = 'max') and (@break = @screen__xs) {}
 
 //
 //  Mobile landscape
 //  _____________________________________________
 
-.media-width(@extremum, @break) when (@extremum = 'max') and (@break = @screen__m) {
-
-}
+.media-width(@extremum, @break) when (@extremum = 'max') and (@break = @screen__m) {}
 
 //
 //  Mobile & tablet
 //  _____________________________________________
 
-.media-width(@extremum, @break) when (@extremum = 'max') and (@break = @screen__l) {
-
-}
+.media-width(@extremum, @break) when (@extremum = 'max') and (@break = @screen__l) {}
 
 //
 //  Mobile & tablet
 //  _____________________________________________
-.media-width(@extremum, @break) when (@extremum = 'max') and (@break = @screen__l) {
 
-}
+.media-width(@extremum, @break) when (@extremum = 'max') and (@break = @screen__l) {}
 
 //
 //  Desktop only

@@ -136,7 +136,7 @@ class Maturities extends \Magento\Framework\View\Element\Html\Select
     {
         if (!$this->getOptions()) {
             foreach ($this->getMaturities() as $maturity => $maturityLabel) {
-                $this->addOption($maturity, addslashes($maturityLabel));
+                $this->addOption($maturity, addslashes($maturityLabel)); // phpcs:ignore
             }
         }
         return parent::_toHtml();

@@ -139,7 +139,9 @@ class ValidateCredit extends RequestHandler
     }
 
     /**
-     * @param $informations
+     * Check infos
+     *
+     * @param string[] $informations
      *
      * @throws LocalizedException
      */
