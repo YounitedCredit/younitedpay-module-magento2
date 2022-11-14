@@ -67,6 +67,11 @@ class Contract extends \Magento\Checkout\Controller\Onepage
     protected $urlBuilder;
 
     /**
+     * @var \Magento\Framework\App\ProductMetadataInterface
+     */
+    protected $productMetadata;
+
+    /**
      * @var \Psr\Log\LoggerInterface
      */
     protected $logger;
@@ -94,6 +99,7 @@ class Contract extends \Magento\Checkout\Controller\Onepage
      * @param \Magento\Quote\Api\CartRepositoryInterface $cartRepository
      * @param \Magento\Framework\Stdlib\DateTime\DateTime $date
      * @param UrlInterface $urlBuilder
+     * @param \Magento\Framework\App\ProductMetadataInterface $productMetadata
      * @param \Psr\Log\LoggerInterface $logger
      */
     public function __construct(
@@ -117,6 +123,7 @@ class Contract extends \Magento\Checkout\Controller\Onepage
         \Magento\Quote\Api\CartRepositoryInterface $cartRepository,
         \Magento\Framework\Stdlib\DateTime\DateTime $date,
         UrlInterface $urlBuilder,
+        \Magento\Framework\App\ProductMetadataInterface $productMetadata,
         \Psr\Log\LoggerInterface $logger
     ) {
         $this->orderRepository = $orderRepository;
@@ -125,6 +132,7 @@ class Contract extends \Magento\Checkout\Controller\Onepage
         $this->cartRepository = $cartRepository;
         $this->urlBuilder = $urlBuilder;
         $this->date = $date;
+        $this->productMetadata = $productMetadata;
         $this->logger = $logger;
 
         parent::__construct(
@@ -315,6 +323,11 @@ class Contract extends \Magento\Checkout\Controller\Onepage
      */
     public function getContractUrl($controller, $params = [])
     {
+        if ($controller == 'webhook') {
+            if (version_compare($this->productMetadata->getVersion(), "2.3.0", '<')) {
+                $controller = 'webhookold';
+            }
+        }
         return $this->maturityHelper->getStore()->getUrl('younited/contract/' . $controller, $params);
     }
 
