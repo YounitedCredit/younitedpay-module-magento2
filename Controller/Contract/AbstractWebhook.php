@@ -29,9 +29,13 @@ if (version_compare($productMetadata->getVersion(), "2.3.0", '>=')) {
     {
     }
 } else {
-    // @codingStandardsIgnoreStart
+    /**
+     * @codingStandardsIgnoreStart
+     */
     abstract class AbstractWebhook extends Action
     {
-        // @codingStandardsIgnoreEnd
+        /**
+         * @codingStandardsIgnoreEnd
+         */
     }
 }
