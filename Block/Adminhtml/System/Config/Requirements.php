@@ -59,14 +59,14 @@ class Requirements extends \Magento\Config\Block\System\Config\Form\Field
         $tls_version = 0;
         if (function_exists('curl_version')) {
             $isValid = 'valid';
-            $curl_info = curl_version(); // phpcs:ignore
+            $curl_info = curl_version();
             $curl_version = 'version v' . $curl_info['version'];
             $ssl_version = $curl_info['ssl_version'];
 
-            $ch = curl_init('https://www.howsmyssl.com/a/check'); // phpcs:ignore
-            curl_setopt($ch, CURLOPT_RETURNTRANSFER, true); // phpcs:ignore
-            $data = curl_exec($ch); // phpcs:ignore
-            curl_close($ch); // phpcs:ignore
+            $ch = curl_init('https://www.howsmyssl.com/a/check');
+            curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
+            $data = curl_exec($ch);
+            curl_close($ch);
 
             $json = json_decode($data);
             $tls_version = (float)str_replace('TLS ', '', $json->tls_version);
