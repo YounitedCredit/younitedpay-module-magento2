@@ -5,7 +5,7 @@
     "license": "AFL-3.0",
     "description": "Official module for Younited Pay integration.",
     "require": {
-        "202ecommerce/younitedpay-sdk": "dev-release/2.x"
+        "202ecommerce/younitedpay-sdk": "2.0.0"
     },
     "autoload": {
         "files": [
