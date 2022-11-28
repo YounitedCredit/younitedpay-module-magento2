@@ -53,6 +53,11 @@ class Maturity
     protected $storeManager;
 
     /**
+     * @var \Psr\Log\LoggerInterface
+     */
+    protected $logger;
+
+    /**
      * @var \Magento\Store\Model\Store
      */
     protected $store;
@@ -68,17 +73,20 @@ class Maturity
      * @param \Magento\Framework\App\Config\ScopeConfigInterface $scopeConfig
      * @param \Magento\Framework\Math\Random $mathRandom
      * @param \Magento\Store\Model\StoreManagerInterface $storeManager
+     * @param \Psr\Log\LoggerInterface $logger
      * @param Json|null $serializer
      */
     public function __construct(
         \Magento\Framework\App\Config\ScopeConfigInterface $scopeConfig,
         \Magento\Framework\Math\Random $mathRandom,
         \Magento\Store\Model\StoreManagerInterface $storeManager,
+        \Psr\Log\LoggerInterface $logger,
         Json $serializer = null
     ) {
         $this->scopeConfig = $scopeConfig;
         $this->mathRandom = $mathRandom;
         $this->storeManager = $storeManager;
+        $this->logger = $logger;
         $this->serializer = $serializer ?: ObjectManager::getInstance()->get(Json::class);
     }
 
@@ -346,13 +354,11 @@ class Maturity
 
         if (!$clientId || !$clientSecret) {
             if ($mode == 'dev') {
-                throw new LocalizedException(
-                    __('Please check your Magento configuration client_id'
-                        . ' and client_secret to enable Younited Credit.')
-                );
-            } else {
-                return false;
+                $this->logger->warning(__('Please check your Magento configuration client_id'
+                    . ' and client_secret to enable Younited Credit.'));
             }
+
+            return false;
         }
 
         return [

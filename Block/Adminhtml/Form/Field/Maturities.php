@@ -88,6 +88,10 @@ class Maturities extends \Magento\Framework\View\Element\Html\Select
                 $credentials = $this->maturityHelper->getApiCredentials(false, $websiteId);
             }
 
+            if ($credentials === false) {
+                return [];
+            }
+
             $client = new Client();
             $request = new AvailableMaturitiesRequest();
             if ($credentials['mode'] === 'dev') {

@@ -18,6 +18,9 @@
  */
 ?>
 <?php /* @var $block \YounitedCredit\YounitedPay\Block\System\Config\Cache */ ?>
+<?php $message = __('Please check your Magento configuration client_id'
+    . ' and client_secret to enable Younited Credit.') ?>
+
 <?= $block->getButtonHtml() ?>
 <span class="sandbox-indicator" id="younited_span">
     <img class="processing" hidden="hidden" alt="processing" style="margin:0 5px"
@@ -44,6 +47,18 @@
             if ($('#payment_fr_younited_maturities').length > 0) {
                 elem = $('#payment_fr_younited_maturities');
             }
+
+            setTimeout(function () {
+                var emptyMaturities = false;
+                $.each(elem.find('select.empty'), function () {
+                    emptyMaturities = true;
+                });
+
+                if (emptyMaturities) {
+                    var errorMsg = '<p style="color: red"><?= $block->escapeHtml($message) ?></p>';
+                    elem.html(errorMsg)
+                }
+            }, 2000)
 
             $.each(elem.find('tr'), function () {
 
