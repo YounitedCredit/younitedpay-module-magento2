@@ -4,7 +4,23 @@ The **Younited Pay module for Magento 2** is a PHP module which allows you to ac
 
 ## Getting started
 
+### Manual installation
+
+With PHP 8.0+ :
+- Install SDK using Composer: `composer require 202ecommerce/younitedpay-sdk:1.0.3`
+
+With PHP < 8.0 :
+- Install SDK using Composer: `composer require 202ecommerce/younitedpay-sdk:2.0.0`
+
+- Copy/Paste module files to your Magento root directory
+- Run: `php bin/magento module:enable YounitedCredit_YounitedPay`
+- Run: `php bin/magento setup:upgrade`
+- Run: `php bin/magento setup:static-content:deploy`
+- Flush caches with: `php bin/magento cache:flush`
+
 ### Composer installation
+
+For Magento 2.3+ only.
 
 - Install module and dependencies using Composer: `composer require younitedcredit/younitedpay-module-magento2`
 - Run: `php bin/magento module:enable YounitedCredit_YounitedPay`
@@ -23,15 +39,6 @@ php bin/magento setup:di:compile
 php bin/magento setup:static-content:deploy
 php bin/magento cache:flush
 ```
-
-### Manual installation
-
-- Install SDK using Composer: `composer require 202ecommerce/younitedpay-sdk:1.0.0`
-- Copy/Paste module files to your Magento root directory
-- Run: `php bin/magento module:enable YounitedCredit_YounitedPay`
-- Run: `php bin/magento setup:upgrade`
-- Run: `php bin/magento setup:static-content:deploy`
-- Flush caches with: `php bin/magento cache:flush`
 
 ## Maintenance mode
 
