@@ -46,7 +46,7 @@
                     <p><b data-bind="i18n: 'Taking out a loan is a commitment with an obligation of repayment. Verify your ability to repay the loan before committing.'"></b></p>
                     <div class="yp-error messages">
                         <div class="message-error error message">
-                            <p class="yp-error-phone" data-bind="i18n: 'Cell Phone number is not french and in international format (+33X XX XX XX XX). Please update your phone number of your address and try again.'"></p>
+                            <p class="yp-error-phone" data-bind="text: getPhoneError()"></p>
                         </div>
                     </div>
                 </div>

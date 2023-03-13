@@ -55,13 +55,21 @@ define([
                 .replace(' ', '')
                 .slice(0, 3)
 
-            if (indicative != '+33') {
+            if (indicative != window.checkoutConfig.payment.younited.phoneAreaCode) {
                 $('.yp-error').show()
                 $('#yp-checkout').prop("disabled", true);
             } else {
                 $('.yp-error').hide()
                 $('#yp-checkout').prop("disabled", false);
             }
+        },
+
+        getPhoneAreaCode: function() {
+            return window.checkoutConfig.payment.younited.phoneAreaCode;
+        },
+
+        getPhoneError: function() {
+            return window.checkoutConfig.payment.younited.phoneError;
         },
 
         /**
