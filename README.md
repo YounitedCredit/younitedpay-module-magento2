@@ -6,10 +6,10 @@ The **Younited Pay module for Magento 2** is a PHP module which allows you to ac
 
 ### Manual installation
 
-With PHP 8.0+ :
-- Install SDK using Composer: `composer require 202ecommerce/younitedpay-sdk:1.0.3`
-
 With PHP < 8.0 :
+- Install SDK using Composer: `composer require 202ecommerce/younitedpay-sdk:1.0.4`
+
+With PHP 8.0+ :
 - Install SDK using Composer: `composer require 202ecommerce/younitedpay-sdk:2.0.0`
 
 - Copy/Paste module files to your Magento root directory
