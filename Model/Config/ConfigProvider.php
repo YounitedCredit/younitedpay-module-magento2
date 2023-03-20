@@ -124,10 +124,10 @@ class ConfigProvider implements ConfigProviderInterface
         $version = explode('.', $this->productMetadata->getVersion());
         $defaultPhoneAreaCode = '+33';
         $countryCode = $this->scopeConfig->getValue('general/country/default');
-        $phoneError = __('Cell Phone number is not french and in international format (+33X XX XX XX XX). Please update your phone number of your address and try again.');
-        if (strtolower($countryCode) !== 'FR') {
+        $phoneError = __('Cell Phone number is not french and in international format (+33XXXXXXXXX). Please update your phone number of your address and try again.');
+        if (strtoupper($countryCode) === 'ES') {
             $defaultPhoneAreaCode = '+34';
-            $phoneError = __('Cell Phone number is not spanish and in international format (+34X XX XX XX XX). Please update your phone number of your address and try again.');
+            $phoneError = __('Cell Phone number is not spanish and in international format (+34XXXXXXXXX). Please update your phone number of your address and try again.');
         }
 
 

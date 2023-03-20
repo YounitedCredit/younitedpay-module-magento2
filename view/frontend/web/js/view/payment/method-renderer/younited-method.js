@@ -34,6 +34,7 @@ define([
         redirectAfterPlaceOrder: false,
         maturities: null,
         currentTotal: null,
+        phoneError: window.checkoutConfig.payment.younited.phoneError,
         defaults: {
             template: 'YounitedCredit_YounitedPay/payment/younited'
         },
@@ -64,12 +65,11 @@ define([
             }
         },
 
-        getPhoneAreaCode: function() {
-            return window.checkoutConfig.payment.younited.phoneAreaCode;
-        },
-
-        getPhoneError: function() {
-            return window.checkoutConfig.payment.younited.phoneError;
+        /**
+         * Get Phone Error Message
+         */
+        getPhoneError: function () {
+            return this.phoneError;
         },
 
         /**
