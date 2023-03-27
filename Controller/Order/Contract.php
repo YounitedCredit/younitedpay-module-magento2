@@ -229,13 +229,22 @@ class Contract extends \Magento\Checkout\Controller\Onepage
 
         $address = $order->getBillingAddress();
         $street = implode(', ', $order->getBillingAddress()->getStreet());
+        
+        $additionalAdress = '';
+        if (mb_strlen($street) > 38) {
+            $additionalAdress = substr($street, 38) . ' ';
+            $street = substr($street, 0, 38);
+        }
+
+        $additionalAdress .= $address->getCompany();
         $customerAddress = new Address();
-        $customerAddress->setAdditionalAddress($address->getCompany());
+        $customerAddress->setAdditionalAddress($additionalAdress);
         $customerAddress->setCity($address->getCity());
         $customerAddress->setCountryCode($address->getCountryId());
         $customerAddress->setPostalCode($address->getPostcode());
         $customerAddress->setStreetName($street);
         $customerAddress->setStreetNumber(null);
+        $customerAddress->setAdditionalAddress($additionalAdress);
 
         $customerInfo = new PersonalInformation();
         $customerInfo->setAddress($customerAddress);
