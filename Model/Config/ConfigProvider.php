@@ -21,6 +21,7 @@ namespace YounitedCredit\YounitedPay\Model\Config;
 
 use Magento\Checkout\Model\ConfigProviderInterface;
 use Magento\Checkout\Model\Session as CheckoutSession;
+use Magento\Framework\App\Config\ScopeConfigInterface;
 use Magento\Framework\App\ProductMetadataInterface;
 use Magento\Framework\UrlInterface;
 use Magento\Framework\View\Asset\Repository;
@@ -123,7 +124,10 @@ class ConfigProvider implements ConfigProviderInterface
         $grandTotal = (float)$totals['grand_total'];
         $version = explode('.', $this->productMetadata->getVersion());
         $defaultPhoneAreaCode = '+33';
-        $countryCode = $this->scopeConfig->getValue('general/country/default');
+        $countryCode = $this->scopeConfig->getValue(
+            'general/country/default',
+            \Magento\Store\Model\ScopeInterface::SCOPE_WEBSITE
+        );
         $phoneError = __('Cell Phone number is not french and in international format (+33XXXXXXXXX). Please update your phone number of your address and try again.');
         if (strtoupper($countryCode) === 'ES') {
             $defaultPhoneAreaCode = '+34';
