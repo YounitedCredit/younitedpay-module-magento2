@@ -55,18 +55,42 @@
                 </field>
                 <field id="client_id" translate="label comment" sortOrder="20" type="text" showInDefault="0" showInWebsite="1" showInStore="1">
                     <label>Client ID</label>
+                    <frontend_model>YounitedCredit\YounitedPay\Block\Adminhtml\System\Config\Login</frontend_model>
                     <comment>
                         <![CDATA[This information is located in your dashboard: 'Settings' > 'General settings'.]]>
                     </comment>
                 </field>
                 <field id="client_secret" translate="label comment" sortOrder="30" type="text" showInDefault="0" showInWebsite="1" showInStore="1">
                     <label>Client Secret</label>
+                    <frontend_model>YounitedCredit\YounitedPay\Block\Adminhtml\System\Config\Login</frontend_model>
                     <comment>
                         <![CDATA[This information is located in your dashboard: 'Settings' > 'General settings'.]]>
                     </comment>
                 </field>
                 <field id="secret_webhook" translate="label" sortOrder="40" type="text" showInDefault="0" showInWebsite="1" showInStore="1">
                     <label>WebHook Secret</label>
+                    <frontend_model>YounitedCredit\YounitedPay\Block\Adminhtml\System\Config\Login</frontend_model>
+                    <comment>
+                        <![CDATA[This information is located in your dashboard: 'Settings' > 'General settings'.]]>
+                    </comment>
+                </field>
+                <field id="client_id_production" translate="label comment" sortOrder="20" type="text" showInDefault="0" showInWebsite="1" showInStore="1">
+                    <label>Client ID</label>
+                    <frontend_model>YounitedCredit\YounitedPay\Block\Adminhtml\System\Config\Login</frontend_model>
+                    <comment>
+                        <![CDATA[This information is located in your dashboard: 'Settings' > 'General settings'.]]>
+                    </comment>
+                </field>
+                <field id="client_secret_production" translate="label comment" sortOrder="30" type="text" showInDefault="0" showInWebsite="1" showInStore="1">
+                    <label>Client Secret</label>
+                    <frontend_model>YounitedCredit\YounitedPay\Block\Adminhtml\System\Config\Login</frontend_model>
+                    <comment>
+                        <![CDATA[This information is located in your dashboard: 'Settings' > 'General settings'.]]>
+                    </comment>
+                </field>
+                <field id="secret_webhook_production" translate="label" sortOrder="40" type="text" showInDefault="0" showInWebsite="1" showInStore="1">
+                    <label>WebHook Secret</label>
+                    <frontend_model>YounitedCredit\YounitedPay\Block\Adminhtml\System\Config\Login</frontend_model>
                     <comment>
                         <![CDATA[This information is located in your dashboard: 'Settings' > 'General settings'.]]>
                     </comment>

@@ -171,39 +171,24 @@ class Requirements extends \Magento\Config\Block\System\Config\Form\Field
             return false;
         }
 
-        if ($storeId) {
-            $apiMode = $this->_scopeConfig->getValue(
-                Config::XML_PATH_API_DEV_MODE,
-                ScopeInterface::SCOPE_STORE,
-                $storeId
-            );
-            $clientId = $this->_scopeConfig->getValue(
-                Config::XML_PATH_API_CLIENT_ID,
-                ScopeInterface::SCOPE_STORE,
-                $storeId
-            );
-            $clientSecret = $this->_scopeConfig->getValue(
-                Config::XML_PATH_API_CLIENT_SECRET,
-                ScopeInterface::SCOPE_STORE,
-                $storeId
-            );
-        } else {
-            $apiMode = $this->_scopeConfig->getValue(
-                Config::XML_PATH_API_DEV_MODE,
-                ScopeInterface::SCOPE_WEBSITE,
-                $websiteId
-            );
-            $clientId = $this->_scopeConfig->getValue(
-                Config::XML_PATH_API_CLIENT_ID,
-                ScopeInterface::SCOPE_WEBSITE,
-                $websiteId
-            );
-            $clientSecret = $this->_scopeConfig->getValue(
-                Config::XML_PATH_API_CLIENT_SECRET,
-                ScopeInterface::SCOPE_WEBSITE,
-                $websiteId
-            );
+        $scope = ScopeInterface::SCOPE_STORE;
+        if ($websiteId !== false && !$storeId) {
+            $storeId = $websiteId;
+            $scope = ScopeInterface::SCOPE_WEBSITE;
         }
+
+        $apiMode = $this->getConfig(Config::XML_PATH_API_DEV_MODE, $storeId, $scope);
+        $production = $apiMode != 'dev' ? '_production' : '';
+        $clientId = $this->getConfig(
+            Config::XML_PATH_API_CLIENT_ID . $production,
+            $storeId,
+            $scope
+        );
+        $clientSecret = $this->getConfig(
+            Config::XML_PATH_API_CLIENT_SECRET . $production,
+            $storeId,
+            $scope
+        );
 
         if (!$clientId || !$clientSecret) {
             return false;
@@ -222,8 +207,26 @@ class Requirements extends \Magento\Config\Block\System\Config\Form\Field
         try {
             $response = $client->setCredential($clientId, $clientSecret)->sendRequest($request);
             return ($response->getStatusCode() === 200);
-        } catch (Exception $e) {
+        } catch (\Exception $e) {
             return false;
         }
+    }
+
+    /**
+     * Get config value
+     *
+     * @param string $path
+     * @param bool|int|string $storeId
+     * @param ScopeInterface $scope
+     *
+     * @return mixed
+     */
+    public function getConfig($path, $storeId = false, $scope = ScopeInterface::SCOPE_STORE)
+    {
+        if ($storeId === false) {
+            $storeId = $this->getStore()->getId();
+        }
+
+        return $this->_scopeConfig->getValue($path, $scope, $storeId);
     }
 }

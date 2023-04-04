@@ -39,6 +39,10 @@ class Config
     const XML_PATH_API_CLIENT_SECRET = 'younited_setup/general/client_secret';
     const XML_PATH_API_SECRET_WEBHOOK = 'younited_setup/general/secret_webhook';
 
+    const XML_PATH_API_CLIENT_ID_PRODUCTION = 'younited_setup/general/client_id_production';
+    const XML_PATH_API_CLIENT_SECRET_PRODUCTION = 'younited_setup/general/client_secret_production';
+    const XML_PATH_API_SECRET_WEBHOOK_PRODUCTION = 'younited_setup/general/secret_webhook_production';
+
     const CREDIT_STATUS_TO_CONFIRME = 'To confirme';
     const CREDIT_STATUS_CONFIRMED = 'Confirmed';
     const CREDIT_STATUS_CANCELED = 'Canceled';

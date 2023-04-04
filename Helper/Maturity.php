@@ -325,38 +325,30 @@ class Maturity
      */
     public function getApiCredentials($storeId = false, $website = false)
     {
-
         if ($storeId === false) {
             $storeId = $this->getStore()->getId();
         }
 
+        $scope = ScopeInterface::SCOPE_STORE;
         if ($website) {
-            $mode = $this->scopeConfig->getValue(
-                Config::XML_PATH_API_DEV_MODE,
-                ScopeInterface::SCOPE_WEBSITE,
-                $storeId
-            );
-            $clientId = $this->scopeConfig->getValue(
-                Config::XML_PATH_API_CLIENT_ID,
-                ScopeInterface::SCOPE_WEBSITE,
-                $storeId
-            );
-            $clientSecret = $this->scopeConfig->getValue(
-                Config::XML_PATH_API_CLIENT_SECRET,
-                ScopeInterface::SCOPE_WEBSITE,
-                $storeId
-            );
-        } else {
-            $mode = $this->getConfig(Config::XML_PATH_API_DEV_MODE, $storeId);
-            $clientId = $this->getConfig(Config::XML_PATH_API_CLIENT_ID, $storeId);
-            $clientSecret = $this->getConfig(Config::XML_PATH_API_CLIENT_SECRET, $storeId);
+            $scope = ScopeInterface::SCOPE_WEBSITE;
         }
+        $mode = $this->getConfig(Config::XML_PATH_API_DEV_MODE, $storeId, $scope);
+        $production = $mode != 'dev' ? '_production' : '';
+        $clientId = $this->getConfig(
+            Config::XML_PATH_API_CLIENT_ID . $production,
+            $storeId,
+            $scope
+        );
+        $clientSecret = $this->getConfig(
+            Config::XML_PATH_API_CLIENT_SECRET . $production,
+            $storeId,
+            $scope
+        );
 
         if (!$clientId || !$clientSecret) {
-            if ($mode == 'dev') {
-                $this->logger->warning(__('Please check your Magento configuration client_id'
-                    . ' and client_secret to enable Younited Credit.'));
-            }
+            $this->logger->warning(__('Please check your Magento configuration client_id'
+                . ' and client_secret to enable Younited Credit.'));            
 
             return false;
         }
@@ -401,13 +393,14 @@ class Maturity
             )->sendRequest($request);
 
             if ($response->getStatusCode() !== 200) {
-                return __(
+                $this->logger->warning(__(
                     'Cannot contact Younited Credit API. Status code: %1 - %2.',
                     $response->getStatusCode(),
                     $response->getReasonPhrase()
-                );
+                ));          
+                return [];
             }
-        } catch (Exception $e) {
+        } catch (\Exception $e) {
             return __('Exception: ') . $e->getMessage() . $e->getFile() . ':' . $e->getLine() . $e->getTraceAsString();
         }
 
@@ -438,16 +431,17 @@ class Maturity
      *
      * @param string $path
      * @param bool|int|string $storeId
+     * @param ScopeInterface $scope
      *
      * @return mixed
      */
-    public function getConfig($path, $storeId = false)
+    public function getConfig($path, $storeId = false, $scope = ScopeInterface::SCOPE_STORE)
     {
         if ($storeId === false) {
             $storeId = $this->getStore()->getId();
         }
 
-        return $this->scopeConfig->getValue($path, ScopeInterface::SCOPE_STORE, $storeId);
+        return $this->scopeConfig->getValue($path, $scope, $storeId);
     }
 
     /**
