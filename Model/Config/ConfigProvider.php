@@ -126,7 +126,7 @@ class ConfigProvider implements ConfigProviderInterface
         $defaultPhoneAreaCode = '+33';
         $countryCode = $this->scopeConfig->getValue(
             'general/country/default',
-            \Magento\Store\Model\ScopeInterface::SCOPE_WEBSITE
+            \Magento\Store\Model\ScopeInterface::SCOPE_STORE
         );
         $phoneError = __('Cell Phone number is not french and in international format (+33XXXXXXXXX). Please update your phone number of your address and try again.');
         if (strtoupper($countryCode) === 'ES') {
