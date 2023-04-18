@@ -30,7 +30,6 @@ define([
     'use strict';
 
     return Component.extend({
-        isCalculated: false,
         redirectAfterPlaceOrder: false,
         maturities: null,
         currentTotal: null,
@@ -108,10 +107,8 @@ define([
                             var monthlyInstallmentAmount = maturity.monthlyInstallmentAmount.toFixed(2);
                             maturity.installment = parseInt(installment);
 
-                            if (!this.isCalculated) {
-                                maturity.annualDebitRate = parseFloat(maturity.annualDebitRate) * 100;
-                                maturity.annualPercentageRate = parseFloat(maturity.annualPercentageRate) * 100;
-                            }
+                            maturity.annualDebitRate = maturity.annualDebitRate;
+                            maturity.annualPercentageRate = maturity.annualPercentageRate;
 
                             var feesTxt = maturity.annualDebitRate ? feesMessage : feesWithoutMessage;
                             maturity.subTitle = `<span>` +
@@ -128,8 +125,6 @@ define([
                             getTotalsAction([], deferred);
                             getPaymentInformationAction(deferred);
                         }
-
-                        this.isCalculated = true;
 
                         return _this.maturities;
                     }, 'error': function (request, error) {

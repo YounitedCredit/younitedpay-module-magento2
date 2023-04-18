@@ -156,13 +156,13 @@
                                 <div class="yp-justify-between yp-dark-purple">
                                     <span><?= $block->escapeHtml(__("Fixed APR")) ?></span>
                                     <span>
-                                        <span id="yp-percent" ><?= $defautAmount['annualPercentageRate'] * 100 ?></span> %
+                                        <span id="yp-percent" ><?= $defautAmount['annualPercentageRate'] ?></span> %
                                     </span>
                                 </div>
                                 <div class="yp-justify-between yp-dark-purple">
                                     <span><?= $block->escapeHtml(__("Fixed borrowing rate")) ?></span>
                                     <span><span id="yp-debit">
-                                        <?= $block->escapeHtml($defautAmount['annualDebitRate'] * 100) ?>
+                                        <?= $block->escapeHtml($defautAmount['annualDebitRate']) ?>
                                     </span> %</span>
                                 </div>
                             </div>
