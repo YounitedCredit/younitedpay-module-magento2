@@ -231,9 +231,9 @@ class Contract extends \Magento\Checkout\Controller\Onepage
         $street = implode(', ', $order->getBillingAddress()->getStreet());
         
         $additionalAdress = '';
-        if (mb_strlen($street) > 76) {
-            $additionalAdress = substr($street, 76) . ' ';
-            $street = substr($street, 0, 76);
+        if (mb_strlen($street) > 38) {
+            $additionalAdress = substr($street, 38) . ' ';
+            $street = substr($street, 0, 38);
         }
 
         $additionalAdress .= $address->getCompany();
