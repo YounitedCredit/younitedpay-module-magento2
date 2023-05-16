@@ -30,23 +30,43 @@
 @younited_purple_light: #c5a1fe;
 @younited_purple: #6200fe;
 @younited_purple_dark: #564c5d;
+@younited_purple_pink: #EFE6FF;
+@younited_purple_very_light: #f9f5ff;
 
 //
 //  Fonts
 //  _____________________________________________
 
+// @font-face {
+//     font-family: 'Roboto';
+//     font-style: normal;
+//     font-weight: 400;
+//     src: url('../YounitedCredit_YounitedPay/fonts/Roboto/Roboto-Medium.ttf');
+// }
+
+// @font-face {
+//     font-family: 'Roboto';
+//     font-style: normal;
+//     font-weight: 700;
+//     src: url('../YounitedCredit_YounitedPay/fonts/Roboto/Roboto-Bold.ttf');
+// }
+
 @font-face {
     font-family: 'Roboto';
     font-style: normal;
     font-weight: 400;
-    src: url('../YounitedCredit_YounitedPay/fonts/Roboto/Roboto-Medium.ttf');
+    font-display: swap;
+    src: url(https://fonts.gstatic.com/s/roboto/v30/KFOmCnqEu92Fr1Mu4mxK.woff2) format('woff2');
+    unicode-range: U+0000-00FF, U+0131, U+0152-0153, U+02BB-02BC, U+02C6, U+02DA, U+02DC, U+2000-206F, U+2074, U+20AC, U+2122, U+2191, U+2193, U+2212, U+2215, U+FEFF, U+FFFD;
 }
 
 @font-face {
     font-family: 'Roboto';
     font-style: normal;
     font-weight: 700;
-    src: url('../YounitedCredit_YounitedPay/fonts/Roboto/Roboto-Bold.ttf');
+    font-display: swap;
+    src: url(https://fonts.gstatic.com/s/roboto/v30/KFOlCnqEu92Fr1MmWUlfBBc4.woff2) format('woff2');
+    unicode-range: U+0000-00FF, U+0131, U+0152-0153, U+02BB-02BC, U+02C6, U+02DA, U+02DC, U+2000-206F, U+2074, U+20AC, U+2122, U+2191, U+2193, U+2212, U+2215, U+FEFF, U+FFFD;
 }
 
 //
@@ -63,20 +83,12 @@
 
     .younitedpay-widget-root {
         background: @younited_white;
-        font-family: 'Roboto';
+        font-family: Roboto, sans-serif;
         margin-bottom: 20px;
         padding: 16px 0;
 
         #younited_block {
             position: relative;
-
-            .loading-mask {
-                position: absolute;
-
-                img {
-                    position: absolute;
-                }
-            }
 
             img {
                 float: left;
@@ -85,6 +97,7 @@
 
         .maturity_installment {
             border: 1px solid @younited_purple_light;
+            color:@younited_purple_dark;
             border-radius: 2px;
             cursor: pointer;
             display: inline-block;
@@ -116,9 +129,7 @@
 
     #younited_popupzone {
         align-items: center;
-        background-color: @younited_grey;
-        background-color: @younited_black_opacity;
-        bottom: 0;
+        background-color: #00000099;
         color: @younited_black;
         display: flex;
         font-size: 12px;
@@ -127,10 +138,48 @@
         left: 0;
         position: fixed;
         right: 0;
+        bottom:0;
         top: 0;
         z-index: 1000;
+        overflow: scroll;
 
-        h3 {
+        a {
+            color: inherit;
+        }
+        
+        .yp-bg-prple-grey {
+            background-color: @younited_grey_light !important;
+        }
+
+        .yp-border-prple {
+            border-color: @younited_purple_light !important;
+        }
+
+        .yp-border-purple-bright {
+            border-color: @younited_purple !important;
+        }
+
+        .yp-bg-prple {
+            background-color: @younited_purple_light !important;
+        }
+
+        .yp-pol-purpledark {
+            color: @younited_purple_dark;
+        }
+
+        .yp-p-6 {
+            padding: 24px !important;
+        }
+
+        .yp-border {
+            border-width: 1px !important;
+        }
+        
+        .yp-justify-between {
+            justify-content: space-between !important;
+        }
+
+        .yp-h3 {
             font-size: 40px;
             font-weight: 700;
             letter-spacing: -0.02em;
@@ -140,22 +189,37 @@
         }
 
         .popup-content {
-            background-color: @younited_white;
+            background-color: @younited_purple_very_light;
             border-radius: 2px;
             font-size: 18px;
-            font-weight: 700;
-            height: 650px;
-            max-height: 95vh;
+            font-weight: 400;
             max-width: 896px;
             overflow: auto;
             position: relative;
-            width: 91%;
+            width: 100vw!important;
+            display:flex;
+            height: 100vh!important;
+            flex-wrap: wrap;
+            @media (min-width:768px) {
+                width: 91.666667% !important;
+                max-width: 950px !important;
+                height: auto!important;
+                flex-wrap: nowrap;
+                max-height: 95vh;
+            }
+        }
+
+        .yp-question {
+            position:relative;
+            bottom: 6px;
         }
 
         .yp-left {
-            float: left;
-            padding: 32px 5%;
-            width: 40%;
+            padding: 24px;
+            width: 100% !important;
+            @media (min-width: 768px) {
+                width: 40%!important;
+            }
 
             img.yp-popup-logo {
                 bottom: 15px;
@@ -170,19 +234,25 @@
             }
 
             .yp-text {
-                margin: 64px 0 0 0;
-                padding: 0 0 0 24px;
+                margin: 24px 0 0 0;
+                padding: 0;
+                padding-left: 24px;
             }
 
             .yp-link {
-                color: @younited_grey_dark;
-                font-size: 15px;
-                font-weight: 400;
-                margin: 64px 0 0 0;
-                padding: 0 0 0 24px;
+                padding-left: 24px;
+                margin: 80px 0 0 0;
 
-                a {
-                    text-decoration: underline;
+                .yp-link-content {
+                    color: @younited_purple_dark;
+                    border: solid 1px @younited_purple !important;
+                    font-size: 15px;
+                    padding: 16px !important;                    
+                    background-color: @younited_grey_light;
+    
+                    a {
+                        text-decoration: underline;
+                    }
                 }
             }
 
@@ -196,17 +266,32 @@
             }
         }
 
+        #yp-popup-maturities {
+            padding-inline-start: 0;
+        }
+
         .yp-right {
             background-color: @younited_white;
-            float: left;
-            padding: 32px 5%;
-            width: 40%;
+            display:flex;
+            flex-direction: column;
+            padding: 32px;
+            width: 100% !important;
+            @media (min-width: 768px) {
+                width: 60%!important;
+            }
 
-            h4 {
+            .yp-flex-grow {
+                flex-grow: 1;
+            }
+
+            .yp-size-35 {
+                font-size: 35px;
+            }
+
+            .yp-h4 {
                 font-size: 18px;
                 line-height: 22px;
                 margin: 0;
-                text-align: center;
             }
 
             ul {
@@ -215,7 +300,7 @@
                 margin: 0;
 
                 li {
-                    border: 1px solid @younited_black;
+                    border: 1px solid @younited_purple;
                     cursor: pointer;
                     display: inline-block;
                     font-size: 14px;
@@ -224,23 +309,27 @@
                     padding: 8px 11px;
                     text-align: left;
                     transition-property: all;
+                    color: @younited_purple_dark;
+                    background-color: @younited_white;
 
-                    &.selected {
-                        background: @younited_black;
-                        color: @younited_white;
+                    &.selected, &:hover {
+                        background-color: @younited_purple_pink;
                     }
                 }
             }
 
             p.info-text {
-                font-size: 18px;
+                font-size: 15px;
                 font-weight: 400;
-                padding-top: 16px;
+                margin-top: 16px;
+                margin-top: 20px;
+                color: @younited_grey_dark;
+                .yp-pol-purpledark {
+                    font-weight:700;
+                }
             }
 
             .yp-finance {
-                margin-bottom: 32px;
-                margin-top: 32px;
 
                 p {
                     margin-bottom: 0;
@@ -265,8 +354,7 @@
             }
 
             .yp-tax {
-                margin-bottom: 32px;
-                margin-top: 32px;
+                margin-top: 24px;
 
                 > div {
                     display: flex;
@@ -276,15 +364,11 @@
             }
 
             .yp-engagement {
-                align-items: center;
-                background-color: @younited_grey_light;
-                color: @younited_black;
-                display: flex;
-                font-size: 16px;
-                height: 125px;
-                justify-content: center;
-                line-height: 22px;
-                margin-top: 32px;
+                font-style: italic;
+                font-size: 20px;
+                font-weight: 400;
+                color: @younited_grey_dark;
+                margin-top: 18px;
             }
         }
 
@@ -298,12 +382,15 @@
 
         .yp-font-normal {
             font-size: 16px;
-            font-weight: 400;
+        }
+
+        .yp-font-bold {
+            font-weight: 700;
         }
 
         #yp-close-popup {
-            background-color: transparent;
-            background-image: none;
+            background-color: transparent!important;
+            background-image: none!important;
             border: 0;
             cursor: pointer;
             font-size: 35px;
@@ -316,12 +403,12 @@
             position: absolute;
             right: 16px;
             top: 12px;
-            transition-duration: .1s;
-            transition-property: opacity, font-size;
 
-            &:hover {
-                font-size: 44px;
+            .yp-close-black:hover {
                 opacity: 1;
+                fill: @younited_purple;
+                background: none;
+                border: none;
             }
         }
     }

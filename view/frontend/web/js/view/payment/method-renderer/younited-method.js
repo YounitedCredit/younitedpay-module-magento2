@@ -30,10 +30,10 @@ define([
     'use strict';
 
     return Component.extend({
-        isCalculated: false,
         redirectAfterPlaceOrder: false,
         maturities: null,
         currentTotal: null,
+        phoneError: window.checkoutConfig.payment.younited.phoneError,
         defaults: {
             template: 'YounitedCredit_YounitedPay/payment/younited'
         },
@@ -55,13 +55,20 @@ define([
                 .replace(' ', '')
                 .slice(0, 3)
 
-            if (indicative != '+33') {
+            if (indicative != window.checkoutConfig.payment.younited.phoneAreaCode) {
                 $('.yp-error').show()
                 $('#yp-checkout').prop("disabled", true);
             } else {
                 $('.yp-error').hide()
                 $('#yp-checkout').prop("disabled", false);
             }
+        },
+
+        /**
+         * Get Phone Error Message
+         */
+        getPhoneError: function () {
+            return this.phoneError;
         },
 
         /**
@@ -100,10 +107,8 @@ define([
                             var monthlyInstallmentAmount = maturity.monthlyInstallmentAmount.toFixed(2);
                             maturity.installment = parseInt(installment);
 
-                            if (!this.isCalculated) {
-                                maturity.annualDebitRate = parseFloat(maturity.annualDebitRate) * 100;
-                                maturity.annualPercentageRate = parseFloat(maturity.annualPercentageRate) * 100;
-                            }
+                            maturity.annualDebitRate = maturity.annualDebitRate;
+                            maturity.annualPercentageRate = maturity.annualPercentageRate;
 
                             var feesTxt = maturity.annualDebitRate ? feesMessage : feesWithoutMessage;
                             maturity.subTitle = `<span>` +
@@ -120,8 +125,6 @@ define([
                             getTotalsAction([], deferred);
                             getPaymentInformationAction(deferred);
                         }
-
-                        this.isCalculated = true;
 
                         return _this.maturities;
                     }, 'error': function (request, error) {

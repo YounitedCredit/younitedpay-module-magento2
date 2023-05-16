@@ -29,7 +29,13 @@ class Gtc extends \Magento\Config\Block\System\Config\Form\Field
      * @return string
      */
     public function render(\Magento\Framework\Data\Form\Element\AbstractElement $element)
-    {
+    {        
+        $locale = 'en_EN';
+        try {
+            $locale = $this->getLocale();
+        } catch (\Exception $ex) {
+        }
+
         $text = __('In order to comply with the legislation, please add to your General Terms and Conditions (GTC)'
             . ' with the hyperlinks and replace [the Seller] with your company name:');
         $text .= '<br />';
@@ -42,11 +48,18 @@ class Gtc extends \Magento\Config\Block\System\Config\Form\Field
         $text .= '<br />';
         $text .= __("Any termination of the T&Cs binding the Customer and [the Seller] shall result in the"
                 . " termination of the credit agreement between Younited and the Customer.") . '"';
-        $text .= '<br />';
-        $text .= __('In addition, also add to your General Terms and Conditions (GTC) (in accordance with'
-            . ' Article L312-45, under penalty of fine):');
-        $text .= ' "' . __("The amount is paid by a credit granted by Younited registered on the REGAFI"
-                . " under number 13156.") . '"';
+        if ($locale === 'es_ES') {
+            $text .= '<br />"';
+            $text .= __('In addition, also add to your General Terms and Conditions (GTC) (in accordance with'
+                . ' Article L312-45, under penalty of fine):') . '"';
+        } else {
+            $text .= '<br />';
+            $text .= __('In addition, also add to your General Terms and Conditions (GTC) (in accordance with'
+                . ' Article L312-45, under penalty of fine):');
+            $text .= ' "' . __("The amount is paid by a credit granted by Younited registered on the REGAFI"
+                    . " under number 13156.") . '"';
+
+        }
 
         $html = $element->getLabel() ? '<div class="config-additional-comment-title"><strong>' . $element->getLabel()
             . '</strong></div>' : '';
@@ -69,5 +82,16 @@ class Gtc extends \Magento\Config\Block\System\Config\Form\Field
             $element->getHtmlId(),
             $html
         );
+    }
+
+    /**
+     * Get current user connected locale code - Spain users have different GTC
+     */
+    private function getLocale()
+    {
+        $objectManager = \Magento\Framework\App\ObjectManager::getInstance(); 
+        /** @var \Magento\Backend\Model\Auth\Session $authSession */
+        $authSession = $objectManager->get('\Magento\Backend\Model\Auth\Session'); 
+        return $authSession->getUser()->getInterfaceLocale();
     }
 }

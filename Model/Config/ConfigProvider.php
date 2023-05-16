@@ -21,6 +21,7 @@ namespace YounitedCredit\YounitedPay\Model\Config;
 
 use Magento\Checkout\Model\ConfigProviderInterface;
 use Magento\Checkout\Model\Session as CheckoutSession;
+use Magento\Framework\App\Config\ScopeConfigInterface;
 use Magento\Framework\App\ProductMetadataInterface;
 use Magento\Framework\UrlInterface;
 use Magento\Framework\View\Asset\Repository;
@@ -76,6 +77,11 @@ class ConfigProvider implements ConfigProviderInterface
     protected $productMetadata;
 
     /**
+     * @var \Magento\Framework\App\Config\ScopeConfigInterface
+     */
+    protected $scopeConfig;
+
+    /**
      * ConfigProvider constructor.
      *
      * @param CheckoutSession $checkoutSession
@@ -85,6 +91,7 @@ class ConfigProvider implements ConfigProviderInterface
      * @param Maturity $maturityHelper
      * @param Repository $assetRepository
      * @param ProductMetadataInterface $productMetadata
+     * @param \Magento\Framework\App\Config\ScopeConfigInterface $scopeConfig
      */
     public function __construct(
         CheckoutSession $checkoutSession,
@@ -93,7 +100,8 @@ class ConfigProvider implements ConfigProviderInterface
         UrlInterface $urlInterface,
         Maturity $maturityHelper,
         Repository $assetRepository,
-        ProductMetadataInterface $productMetadata
+        ProductMetadataInterface $productMetadata,
+        \Magento\Framework\App\Config\ScopeConfigInterface $scopeConfig
     ) {
         $this->checkoutSession = $checkoutSession;
         $this->cartTotalRepository = $cartTotalRepository;
@@ -102,6 +110,7 @@ class ConfigProvider implements ConfigProviderInterface
         $this->maturityHelper = $maturityHelper;
         $this->assetRepository = $assetRepository;
         $this->productMetadata = $productMetadata;
+        $this->scopeConfig = $scopeConfig;
     }
 
     /**
@@ -114,6 +123,17 @@ class ConfigProvider implements ConfigProviderInterface
         $totals = $this->getTotalsData();
         $grandTotal = (float)$totals['grand_total'];
         $version = explode('.', $this->productMetadata->getVersion());
+        $defaultPhoneAreaCode = '+33';
+        $countryCode = $this->scopeConfig->getValue(
+            'general/country/default',
+            \Magento\Store\Model\ScopeInterface::SCOPE_STORE
+        );
+        $phoneError = __('Cell Phone number is not french and in international format (+33XXXXXXXXX). Please update your phone number of your address and try again.');
+        if (strtoupper($countryCode) === 'ES') {
+            $defaultPhoneAreaCode = '+34';
+            $phoneError = __('Cell Phone number is not spanish and in international format (+34XXXXXXXXX). Please update your phone number of your address and try again.');
+        }
+
 
         return [
             'payment' => [
@@ -126,7 +146,9 @@ class ConfigProvider implements ConfigProviderInterface
                     'logo' => $this->assetRepository
                         ->createAsset('YounitedCredit_YounitedPay::images/logo-younitedpay-payment.png')
                         ->getUrl(),
-                    'maturities' => $this->maturityHelper->getInstallments($grandTotal, $this->getStoreCode())
+                    'maturities' => $this->maturityHelper->getInstallments($grandTotal, $this->getStoreCode()),
+                    'phoneAreaCode' => $defaultPhoneAreaCode,
+                    'phoneError' => $phoneError,
                 ]
             ]
         ];

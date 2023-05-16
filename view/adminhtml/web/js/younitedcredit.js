@@ -1,5 +1,3 @@
-<?xml version="1.0"?>
-<!--
 /**
  * Copyright since 2022 Younited Credit
  *
@@ -17,10 +15,25 @@
  * @copyright 2022 Younited Credit
  * @license   https://opensource.org/licenses/AFL-3.0  Academic Free License (AFL 3.0)
  */
--->
-<page xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" layout="admin-1column" xsi:noNamespaceSchemaLocation="urn:magento:framework:View/Layout/etc/page_configuration.xsd">
-    <head>
-        <css src="YounitedCredit_YounitedPay::css/younitedcredit.css"/>
-        <script src="YounitedCredit_YounitedPay::js/younitedcredit.js"/>
-    </head>
-</page>
+
+require([
+    'jquery'
+], function ($) {
+    $(document).on('readystatechange', function() {
+        $('#younited_setup_general_mode').change(function(e) {
+            e.preventDefault();
+            younitedCreditChangeMode();
+        });
+    });
+
+    function younitedCreditChangeMode() {
+        var modeYounited = $('#younited_setup_general_mode').val();
+
+        $('.younitedcredit_login').addClass('hidden');
+        if (modeYounited == 'dev') {
+            $('.younitedcredit_dev').removeClass('hidden');
+        } else {
+            $('.younitedcredit_prod').removeClass('hidden');
+        }
+    }
+});
