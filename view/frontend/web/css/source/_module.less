@@ -26,30 +26,18 @@
 @younited_black_opacity: #00000077;
 @younited_grey: #ccc;
 @younited_grey_light: #f4ecff;
+@younited_grey_medium: #DDDBDF;
 @younited_grey_dark: #7a7a7a;
 @younited_purple_light: #c5a1fe;
 @younited_purple: #6200fe;
 @younited_purple_dark: #564c5d;
+@younited_purple_blue: #6200FE;
 @younited_purple_pink: #EFE6FF;
 @younited_purple_very_light: #f9f5ff;
 
 //
 //  Fonts
 //  _____________________________________________
-
-// @font-face {
-//     font-family: 'Roboto';
-//     font-style: normal;
-//     font-weight: 400;
-//     src: url('../YounitedCredit_YounitedPay/fonts/Roboto/Roboto-Medium.ttf');
-// }
-
-// @font-face {
-//     font-family: 'Roboto';
-//     font-style: normal;
-//     font-weight: 700;
-//     src: url('../YounitedCredit_YounitedPay/fonts/Roboto/Roboto-Bold.ttf');
-// }
 
 @font-face {
     font-family: 'Roboto';
@@ -127,6 +115,17 @@
         }
     }
 
+    .yp-center {
+        text-align: center;
+    }
+    
+    .yp-linumber {
+        background-color: @younited_purple_light;
+        color: @younited_purple_dark;
+        padding: 8px 14px;
+        margin-right: 12px;
+    }
+
     #younited_popupzone {
         align-items: center;
         background-color: #00000099;
@@ -165,6 +164,9 @@
 
         .yp-pol-purpledark {
             color: @younited_purple_dark;
+        }
+        .yp-pol-purpleblue {
+            color: @younited_purple_blue;
         }
 
         .yp-p-6 {
@@ -214,29 +216,36 @@
             bottom: 6px;
         }
 
+        .yp-step {
+            display:flex;
+            align-items: center;
+            margin-bottom:20px;
+        }
+
         .yp-left {
-            padding: 24px;
+            padding: 40px;
             width: 100% !important;
             @media (min-width: 768px) {
-                width: 40%!important;
+                width: 32%!important;
             }
 
-            img.yp-popup-logo {
-                bottom: 15px;
-                position: relative;
-                right: 15px;
+            img.yp-popup-logo {                
+                margin-top:24px;
+                width:95px;             
             }
 
             .yp-left-title {
-                font-size: 40px;
-                margin: 64px 0 0;
+                margin: 56px 0 28px 0;
+                font-size: 38px;
+                font-weight: 500;
+                line-height: 46px;
+                letter-spacing: -0.02em;
+                text-align: left;
                 padding: 0;
             }
 
             .yp-text {
-                margin: 24px 0 0 0;
                 padding: 0;
-                padding-left: 24px;
             }
 
             .yp-link {
@@ -277,7 +286,14 @@
             padding: 32px;
             width: 100% !important;
             @media (min-width: 768px) {
-                width: 60%!important;
+                width: 68%!important;
+            }
+
+            .yp-hr {
+                background-color: @younited_grey_medium;
+                height:1.5px;
+                width:100%;
+                margin: 15px 0 25px;
             }
 
             .yp-flex-grow {
@@ -289,7 +305,7 @@
             }
 
             .yp-h4 {
-                font-size: 18px;
+                font-size: 24px;
                 line-height: 22px;
                 margin: 0;
             }
@@ -300,26 +316,26 @@
                 margin: 0;
 
                 li {
-                    border: 1px solid @younited_purple;
+                    border-bottom: 1px solid @younited_grey_medium;
                     cursor: pointer;
                     display: inline-block;
                     font-size: 14px;
-                    line-height: 17px;
+                    line-height: 16px;
                     margin: 16px 6px 16px 0;
-                    padding: 8px 11px;
+                    padding: 6px 9px;
                     text-align: left;
                     transition-property: all;
                     color: @younited_purple_dark;
-                    background-color: @younited_white;
 
                     &.selected, &:hover {
-                        background-color: @younited_purple_pink;
+                        border-bottom: 1px solid @younited_purple_blue;
+                        color: @younited_purple_blue;
                     }
                 }
             }
 
             p.info-text {
-                font-size: 15px;
+                font-size: 20px;
                 font-weight: 400;
                 margin-top: 16px;
                 margin-top: 20px;
@@ -367,7 +383,7 @@
                 font-style: italic;
                 font-size: 20px;
                 font-weight: 400;
-                color: @younited_grey_dark;
+                color: #9A949E;
                 margin-top: 18px;
             }
         }
@@ -401,14 +417,22 @@
             overflow: visible;
             padding: 0;
             position: absolute;
-            right: 16px;
-            top: 12px;
+            right: 35px;
+            top: 25px;
+
+            &:hover {
+                font-size:18px;
+                right: 34px;
+                top: 24px;
+            }
 
             .yp-close-black:hover {
                 opacity: 1;
                 fill: @younited_purple;
                 background: none;
                 border: none;
+                width:16px;
+                height:16px;
             }
         }
     }

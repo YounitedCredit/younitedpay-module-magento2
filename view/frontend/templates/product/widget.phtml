@@ -61,46 +61,44 @@
                 </svg>
                 </button>
                 <div class="yp-left">
-                    <img class="yp-popup-logo" alt="youpay"
-                         src="<?= $block->escapeHtml($block->getImageSrc('logo-younitedpay.png')) ?>">
                     <div class="yp-left-title">
-                        <span class="yp-h3"><?= $block->escapeHtml(__("Simple")) ?>.</span><br />
-                        <span class="yp-h3"><?= $block->escapeHtml(__("Instant")) ?>.</span><br />
-                        <span class="yp-h3"><?= $block->escapeHtml(__("Secured")) ?>.</span>
+                        <span><?= $block->escapeHtml(__("Buy now and pay as you go")) ?></span>
                     </div>
                     <div class="yp-text yp-font-normal yp-pol-purpledark">
-                        <?= $block->escapeHtml(__("Younited, it's never been easier")) ?>
-                        <?= $block->escapeHtml(__("to pay in installments.")) ?>
+                        <span class="yp-step">
+                            <span class="yp-linumber">1</span>
+                            <span><?= __("At checkout step, select <b>Younited Pay</b>") ?></span>
+                        </span>
+                        <span class="yp-step">
+                            <span class="yp-linumber">2</span>
+                            <span><?= __("Choose the repayment <b>duration</b>") ?></span>
+                        </span>
+                        <span class="yp-step">
+                            <span class="yp-linumber">3</span>
+                            <span><?= __("<b>Simply</b> and <b>securely</b> connect your bank account") ?></span>
+                        </span>
+                        <span class="yp-step">
+                            <span class="yp-linumber">4</span>
+                            <span><?= __("Receive a response <b>within seconds</b>") ?></span>
+                        </span>
                     </div>
-                    <div class="yp-link">
-                        <div class="yp-link-content">
-                            <svg width="24" height="24" viewBox="0 0 20 20" fill="none" xmlns="http://www.w3.org/2000/svg" style="display:inline;padding-right:6px!important;">
-                                <path d="M10 0.833344C4.91671 0.833344 0.833374 4.91668 0.833374 10C0.833374 15.0833 4.91671 19.1667 10 19.1667C15.0834 19.1667 19.1667 15.0833 19.1667 10C19.1667 4.91668 15.0834 0.833344 10 0.833344ZM10 17.5C5.83337 17.5 2.50004 14.1667 2.50004 10C2.50004 5.83334 5.83337 2.50001 10 2.50001C14.1667 2.50001 17.5 5.83334 17.5 10C17.5 14.1667 14.1667 17.5 10 17.5Z" fill="#564C5D"></path>
-                                <path d="M11.0001 5.16667C9.25008 4.58334 7.33341 5.5 6.75008 7.16667C6.66674 7.66667 6.83341 8.16667 7.33341 8.25C7.75008 8.41667 8.25008 8.16667 8.41674 7.75C8.75008 6.91667 9.66674 6.41667 10.5834 6.75C11.2501 7 11.6667 7.58334 11.6667 8.33334C11.6667 9.16667 10.2501 9.83334 9.75008 10.0833C9.33341 10.25 9.08341 10.6667 9.25008 11.1667C9.33341 11.5 9.66674 11.75 10.0001 11.75C10.0834 11.75 10.1667 11.75 10.2501 11.6667C10.5834 11.5833 13.3334 10.5833 13.3334 8.41667C13.2501 6.91667 12.3334 5.66667 11.0001 5.16667Z" fill="#564C5D"></path>
-                                <path d="M10.0001 13.3333C9.50008 13.3333 9.16675 13.6667 9.16675 14.1667C9.16675 14.6667 9.58341 15 10.0001 15C10.4167 15 10.8334 14.6667 10.8334 14.1667C10.8334 13.6667 10.5001 13.3333 10.0001 13.3333Z" fill="#564C5D"></path>
-                            </svg>
-                            <span class="yp-question">
-                            <?= $block->escapeHtml(__("Have a question? Visit our")) ?> <a
-                                    href="https://www.younited-credit.com/questions-reponses"
-                                    target="_blank"><?= $block->escapeHtml(__("dedicated page")) ?></a></span>
-                        </div>
+                    <div class="yp-center">
+                        <img class="yp-popup-logo" alt="youpay" src="<?= $block->escapeHtml($block->getImageSrc('logo-younitedpay.png')) ?>" />
                     </div>
                 </div>
                 <div class="yp-right">
                     <div class="yp-flex-grow">
                         <span class="yp-h4">
-                            <?= $block->escapeHtml(__("Your purchase for")) ?>
-                            <span class="yp-size-35"><span id="popup-maturity">
-                                <?= $block->escapeHtml($defaultMaturity) ?>
-                            </span>€<?= $block->escapeHtml(__("/month")) ?></span>
-                            <br><?= $block->escapeHtml(__("with ")) ?>
-                            <span class="yp-purple"><?= $block->escapeHtml(__("Younited Pay")) ?></span>
+                            <?= $block->escapeHtml(__("Start paying")) ?>
+                            <?= $block->escapeHtml(__("in just 30 days!")) ?></span>
                         </span>
                         <p class="info-text">
-                            <span>
-                                <?= $block->escapeHtml(__("Buy today and start paying")) ?>
+                            <span class="yp-dark-purple">
+                            <?= $block->escapeHtml(__("Your purchase for")) ?>
                             </span>
-                            <span class="yp-pol-purpledark"><?= $block->escapeHtml(__("in just 30 days!")) ?></span>
+                            <span class="yp-pol-purpleblue"><span id="popup-maturity">
+                                <?= $block->escapeHtml($defaultMaturity) ?>
+                            </span>€<?= $block->escapeHtml(__("/month")) ?></span>
                         </p>
                         <ul id="yp-popup-maturities">
                             <?php $i = 0; ?>
@@ -128,6 +126,8 @@
                                 <?php $i++; ?>
                             <?php endforeach; ?>
                         </ul>
+
+                        <div class="yp-hr"></div>
 
                         <div class="yp-bg-prple-grey yp-border yp-border-prple yp-p-6">
                             <div class="yp-finance">
@@ -158,6 +158,10 @@
                                     <span>
                                         <span id="yp-percent" ><?= $defautAmount['annualPercentageRate'] ?></span> %
                                     </span>
+                                </div>
+                                <div class="yp-justify-between yp-dark-purple">
+                                    <span><?= $block->escapeHtml(__("(excluding optional insurance)")) ?></span>
+                                    <span></span>
                                 </div>
                                 <div class="yp-justify-between yp-dark-purple">
                                     <span><?= $block->escapeHtml(__("Fixed borrowing rate")) ?></span>
