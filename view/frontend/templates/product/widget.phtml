@@ -96,7 +96,7 @@
                             <span class="yp-dark-purple">
                             <?= $block->escapeHtml(__("Your purchase for")) ?>
                             </span>
-                            <span class="yp-pol-purpleblue"><span id="popup-maturity">
+                            <span class="yp-pol-purpleblue yp-font-bold"><span id="popup-maturity">
                                 <?= $block->escapeHtml($defaultMaturity) ?>
                             </span>€<?= $block->escapeHtml(__("/month")) ?></span>
                         </p>
@@ -131,38 +131,38 @@
 
                         <div class="yp-bg-prple-very-light yp-border yp-border-prple yp-p-6">
                             <div class="yp-finance">
-                                <div class="yp-justify-between">
-                                    <p class="yp-dark-purple yp-font-normal">
+                                <div class="yp-justify-between yp-font-normal">
+                                    <p class="yp-dark-purple">
                                         <?= $block->escapeHtml(__("Credit amount")) ?>
                                     </p>
                                     <p class="yp-dark-purple yp-font-bold"><span
                                     id="yp-amount"><?= $block->escapeHtml($defautAmount['requestedAmount']) ?></span>€</p>
                                 </div>
-                                <div class="yp-justify-between">
-                                    <p class="yp-dark-purple">+ <span class="yp-font-normal"
-                                        ><?= $block->escapeHtml(__("Financing cost")) ?></span></p>
+                                <div class="yp-justify-between yp-font-normal">
+                                    <p class="yp-dark-purple">+ 
+                                        <?= $block->escapeHtml(__("Interest on credit")) ?></p>
                                     <p class="yp-dark-purple yp-font-bold"><span id="yp-cost"
                                         ><?= $block->escapeHtml($defautAmount['interestsTotalAmount']) ?></span> €</p>
                                 </div>
                                 <hr/>
-                                <div class="yp-justify-between yp-font-bold">
+                                <div class="yp-justify-between yp-font-bold yp-p-20px">
                                     <p class="yp-dark-purple">= <?= $block->escapeHtml(__("Total amount due")) ?></p>
                                     <p class="yp-dark-purple"><span id="yp-total"
                                         ><?= $block->escapeHtml($defautAmount['creditTotalAmount']) ?></span>€</p>
                                 </div>
-                                <div class="yp-justify-between yp-dark-purple">
-                                    <span class="yp-p-20px">
-                                        <span class="yp-font-bold"><?= $block->escapeHtml(__("Fixed APR")) ?></span>
+                                <div class="yp-justify-between yp-dark-purple yp-font-bold yp-p-20px">
+                                    <span>
+                                        <span><?= $block->escapeHtml(__("Fixed APR")) ?></span>
                                     <?php if (trim($block->escapeHtml(__("(excluding optional insurance)")) != '')): ?>
                                         <br />
-                                        <span><?= $block->escapeHtml(__("(excluding optional insurance)")) ?></span>
+                                        <span class="yp-font-normal"><?= $block->escapeHtml(__("(excluding optional insurance)")) ?></span>
                                     <?php endif; ?>
                                     </span>
                                     <span>
-                                        <span class="yp-font-bold" id="yp-percent" ><?= $defautAmount['annualPercentageRate'] ?></span> %
+                                        <span id="yp-percent" ><?= $defautAmount['annualPercentageRate'] ?></span> %
                                     </span>
                                 </div>
-                                <div class="yp-justify-between yp-dark-purple">
+                                <div class="yp-justify-between yp-dark-purple yp-font-normal">
                                     <span><?= $block->escapeHtml(__("Fixed lending rate")) ?></span>
                                     <span><span class="yp-font-bold" id="yp-debit">
                                         <?= $block->escapeHtml($defautAmount['annualDebitRate']) ?>
