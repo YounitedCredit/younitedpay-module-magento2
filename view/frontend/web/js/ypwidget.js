@@ -87,6 +87,12 @@ define([
             });
 
             $('.maturity_installment').on('click', function (e) {
+                var contentTitle = $('.yp-left-title').html();
+                if (contentTitle.search('Achetez maintenant') > -1) {
+                    $('.yp-left-title').css('margin', '25px 0 28px 0');
+                } else {
+                    $('.yp-left-title').css('margin','');
+                }
                 $('#younited_popupzone').show();
                 $('#blocks_maturities_popup' + $(this).data('key')).trigger('click');
             });
