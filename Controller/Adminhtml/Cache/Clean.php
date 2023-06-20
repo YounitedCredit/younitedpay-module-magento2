@@ -22,11 +22,6 @@ namespace YounitedCredit\YounitedPay\Controller\Adminhtml\Cache;
 use Magento\Backend\App\Action;
 use Magento\Framework\Controller\ResultFactory;
 
-/**
- * Class Clean
- *
- * @package YounitedCredit\YounitedPay\Controller\Adminhtml\Cache
- */
 class Clean extends Action
 {
     /**
@@ -49,6 +44,8 @@ class Clean extends Action
     }
 
     /**
+     * Execute method
+     *
      * @return \Magento\Framework\App\ResponseInterface|\Magento\Framework\Controller\ResultInterface
      */
     public function execute()
@@ -66,11 +63,13 @@ class Clean extends Action
     }
 
     /**
+     * Default redirection
+     *
      * @return mixed
      */
     protected function defaultRedirect()
     {
         $resultRedirect = $this->resultFactory->create(ResultFactory::TYPE_REDIRECT);
-        return $resultRedirect->setUrl($this->_redirect->getRefererUrl());
+        return $resultRedirect->setUrl($this->_redirect->getRefererUrl()); // phpcs:ignore
     }
 }

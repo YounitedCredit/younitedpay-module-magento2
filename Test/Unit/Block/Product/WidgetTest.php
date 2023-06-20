@@ -22,11 +22,6 @@ namespace YounitedCredit\YounitedPay\Test\Unit\Block\Product;
 use Magento\Framework\TestFramework\Unit\Helper\ObjectManager;
 use YounitedCredit\YounitedPay\Block\Product\Widget;
 
-/**
- * Class WidgetTest
- *
- * @package YounitedCredit\YounitedPay\Test\Unit\Block\Product
- */
 class WidgetTest extends \PHPUnit\Framework\TestCase
 {
     /**

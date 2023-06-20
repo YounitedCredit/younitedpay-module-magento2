@@ -27,11 +27,6 @@ use Psr\Log\LoggerInterface;
 use YounitedCredit\YounitedPay\Helper\Maturity;
 use YounitedPaySDK\Client;
 
-/**
- * Class RequestHandler
- *
- * @package YounitedCredit\YounitedPay\Observer
- */
 abstract class RequestHandler implements ObserverInterface
 {
     /**
@@ -75,19 +70,26 @@ abstract class RequestHandler implements ObserverInterface
     }
 
     /**
+     * Execute method
+     *
      * @param Observer $observer
      */
     abstract public function execute(Observer $observer);
 
     /**
-     * @param $body
-     * @param $request
-     * @param $informations
-     * @param $storeId
-     * @param $status
-     * @param string $errorMessage
+     * Send API request
      *
-     * @return false|string[]
+     * @param \YounitedPaySDK\Model\AbstractModel $body
+     * @param \YounitedPaySDK\Request\AbstractRequest $request
+     * @param string[] $informations
+     * @param int $storeId
+     * @param bool $status
+     * @param string $errorMessage
+     * @param string $successMessage
+     *
+     * @return bool
+     * @throws \Magento\Framework\Exception\LocalizedException
+     * @throws \Magento\Framework\Exception\NoSuchEntityException
      */
     protected function sendRequest(
         $body,
@@ -127,15 +129,19 @@ abstract class RequestHandler implements ObserverInterface
                     $this->logger->warning(__($errorMessage));
                 }
 
-                $this->logger->warning(__(
-                    'Cannot contact Younited Credit API. Status code: %1 - %2.',
-                    $response->getStatusCode(),
-                    $response->getReasonPhrase()
-                ));
+                $this->logger->warning(
+                    __(
+                        'Cannot contact Younited Credit API. Status code: %1 - %2.',
+                        $response->getStatusCode(),
+                        $response->getReasonPhrase()
+                    )
+                );
             }
         } catch (Exception $e) {
-            $this->logger->critical('Younited Credit confirmation failed. Younited API Error',
-                ['exception' => $e]);
+            $this->logger->critical(
+                'Younited Credit confirmation failed. Younited API Error',
+                ['exception' => $e]
+            );
         }
 
         return false;

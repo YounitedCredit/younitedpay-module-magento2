@@ -19,14 +19,11 @@
 
 namespace YounitedCredit\YounitedPay\Block\Adminhtml\System\Config;
 
-/**
- * Class Image
- *
- * @package YounitedCredit\YounitedPay\Block\Adminhtml\System\Config
- */
 class Image extends \Magento\Config\Block\System\Config\Form\Field
 {
     /**
+     * Render method
+     *
      * @param \Magento\Framework\Data\Form\Element\AbstractElement $element
      *
      * @return string
@@ -39,6 +36,8 @@ class Image extends \Magento\Config\Block\System\Config\Form\Field
     }
 
     /**
+     * Decorate row
+     *
      * @param \Magento\Framework\Data\Form\Element\AbstractElement $element
      * @param string $html
      *

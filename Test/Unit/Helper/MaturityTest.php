@@ -21,11 +21,6 @@ namespace YounitedCredit\YounitedPay\Test\Unit\Helper;
 
 use YounitedCredit\YounitedPay\Helper\Maturity;
 
-/**
- * Class MaturityTest
- *
- * @package YounitedCredit\YounitedPay\Test\Unit\Helper
- */
 class MaturityTest extends \PHPUnit\Framework\TestCase
 {
     /**
@@ -55,5 +50,4 @@ class MaturityTest extends \PHPUnit\Framework\TestCase
     {
         $this->assertEquals(1, $this->helper->getDefaultMaturity());
     }
-
 }

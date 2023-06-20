@@ -19,14 +19,11 @@
 
 namespace YounitedCredit\YounitedPay\Block\Adminhtml\System\Config;
 
-/**
- * Class InfoTriggerStatus
- *
- * @package YounitedCredit\YounitedPay\Block\Adminhtml\System\Config
- */
 class InfoTriggerStatus extends \Magento\Config\Block\System\Config\Form\Field
 {
     /**
+     * Render method
+     *
      * @param \Magento\Framework\Data\Form\Element\AbstractElement $element
      *
      * @return string
@@ -38,6 +35,8 @@ class InfoTriggerStatus extends \Magento\Config\Block\System\Config\Form\Field
     }
 
     /**
+     * Decorate row
+     *
      * @param \Magento\Framework\Data\Form\Element\AbstractElement $element
      * @param string $html
      *
@@ -46,7 +45,8 @@ class InfoTriggerStatus extends \Magento\Config\Block\System\Config\Form\Field
     private function decorateRowHtml(\Magento\Framework\Data\Form\Element\AbstractElement $element, $html)
     {
         return sprintf(
-            '<tr id="row_%s"><td class="label"></td><td class="value"><div class="message message-warning warning">%s</div></td></tr>',
+            '<tr id="row_%s"><td class="label"></td><td class="value">
+<div class="message message-warning warning">%s</div></td></tr>',
             $element->getHtmlId(),
             $html
         );

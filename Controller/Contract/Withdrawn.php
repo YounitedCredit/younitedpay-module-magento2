@@ -21,11 +21,6 @@ namespace YounitedCredit\YounitedPay\Controller\Contract;
 
 use Magento\Framework\Controller\Result\JsonFactory;
 
-/**
- * Class Canceled
- *
- * @package YounitedCredit\YounitedPay\Controller\Contract
- */
 class Withdrawn extends \Magento\Framework\App\Action\Action
 {
     /**
@@ -73,6 +68,8 @@ class Withdrawn extends \Magento\Framework\App\Action\Action
     }
 
     /**
+     * Execute method
+     *
      * @return \Magento\Framework\Controller\Result\Json
      */
     public function execute()

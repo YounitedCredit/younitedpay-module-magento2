@@ -21,17 +21,40 @@ declare(strict_types=1);
 
 namespace YounitedCredit\YounitedPay\Block\Adminhtml\Form\Field;
 
-/**
- * Class MaturitiesConfig
- *
- * @package YounitedCredit\YounitedPay\Block\Adminhtml\Form\Field
- */
+use Magento\Backend\Block\Template\Context;
+use Magento\Framework\App\ObjectManager;
+use Magento\Framework\View\Helper\SecureHtmlRenderer;
+use YounitedCredit\YounitedPay\Helper\Maturity;
+
 class MaturitiesConfig extends \Magento\Config\Block\System\Config\Form\Field\FieldArray\AbstractFieldArray
 {
+    /**
+     * @var Maturity
+     */
+    protected $maturityHelper;
+
     /**
      * @var Maturities
      */
     protected $maturityRenderer;
+
+    /**
+     * MaturitiesConfig constructor.
+     *
+     * @param Context $context
+     * @param Maturity $maturityHelper
+     * @param array $data
+     * @param SecureHtmlRenderer|null $secureRenderer
+     */
+    public function __construct(
+        Context $context,
+        Maturity $maturityHelper,
+        array $data = [],
+        $secureRenderer = null
+    ) {
+        parent::__construct($context, $data, $secureRenderer);
+        $this->maturityHelper = $maturityHelper;
+    }
 
     /**
      * Retrieve maturity column renderer
@@ -46,7 +69,18 @@ class MaturitiesConfig extends \Magento\Config\Block\System\Config\Form\Field\Fi
                 '',
                 ['data' => ['is_render_to_js_template' => true]]
             );
-            $this->maturityRenderer->setClass('customer_group_select admin__control-select');
+
+            if ($storeId = $this->getRequest()->getParam('store')) {
+                $credentials = $this->maturityHelper->getApiCredentials($storeId);
+            } elseif ($websiteId = $this->getRequest()->getParam('website')) {
+                $credentials = $this->maturityHelper->getApiCredentials(false, $websiteId);
+            }
+
+            if ($credentials === false) {
+                $this->maturityRenderer->setClass('maturities_block_select empty admin__control-select');
+            } else {
+                $this->maturityRenderer->setClass('maturities_block_select admin__control-select');
+            }
         }
         return $this->maturityRenderer;
     }

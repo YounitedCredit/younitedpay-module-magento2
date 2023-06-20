@@ -27,12 +27,11 @@ unset($additionalInfo['method_title']);
 
 $paymentTitle = $block->getMethod()->getConfigData('title', $block->getInfo()->getOrder()->getStoreId());
 ?>
-<img src="<?= $block->getYpImage() ?>" alt="<?= /* @noEscape */
-$paymentTitle ?>"/>
+<img src="<?= $block->escapeHtml($block->getYpImage()) ?>" alt="<?= $block->escapeHtml($paymentTitle) ?>"/>
 
-<?php if ($specificInfo) : ?>
+<?php if ($specificInfo): ?>
     <table class="data-table admin__table-secondary">
-        <?php foreach ($specificInfo as $label => $value) : ?>
+        <?php foreach ($specificInfo as $label => $value): ?>
             <tr>
                 <th><?= $block->escapeHtml($label) ?>:</th>
                 <td>
@@ -44,9 +43,9 @@ $paymentTitle ?>"/>
     </table>
 <?php endif; ?>
 
-<?php if ($additionalInfo) : ?>
+<?php if ($additionalInfo): ?>
     <table class="data-table admin__table-secondary">
-        <?php foreach ($additionalInfo as $label => $value) : ?>
+        <?php foreach ($additionalInfo as $label => $value): ?>
             <tr>
                 <th><?= $block->escapeHtml(__($label)) ?>:</th>
                 <td>

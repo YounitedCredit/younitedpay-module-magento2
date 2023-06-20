@@ -19,11 +19,6 @@
 
 namespace YounitedCredit\YounitedPay\Api\Data;
 
-/**
- * Interface MaturityInterface
- *
- * @package YounitedCredit\YounitedPay\Api\Data
- */
 interface MaturityInterface
 {
 

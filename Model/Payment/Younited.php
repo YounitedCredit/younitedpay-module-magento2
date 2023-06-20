@@ -24,11 +24,6 @@ use Magento\Framework\DataObject;
 use Magento\Quote\Api\Data\PaymentInterface;
 use YounitedCredit\YounitedPay\Helper\Maturity;
 
-/**
- * Class Younited
- *
- * @package YounitedCredit\YounitedPay\Model\Payment
- */
 class Younited extends \Magento\Payment\Model\Method\AbstractMethod
 {
     /**
@@ -51,17 +46,60 @@ class Younited extends \Magento\Payment\Model\Method\AbstractMethod
      */
     protected $_infoBlockType = \YounitedCredit\YounitedPay\Block\Order\Info::class;
 
+    /**
+     * @var bool
+     */
     protected $_isGateway = true;
+
+    /**
+     * @var bool
+     */
     protected $_canCapture = true;
+
+    /**
+     * @var bool
+     */
     protected $_canCapturePartial = true;
+
+    /**
+     * @var bool
+     */
     protected $_canRefund = true;
+
+    /**
+     * @var bool
+     */
     protected $_canRefundInvoicePartial = true;
+
+    /**
+     * @var bool
+     */
     protected $_canCancelInvoice = false;
+
+    /**
+     * @var bool
+     */
     protected $_stripeApi = false;
+
+    /**
+     * @var bool
+     */
     protected $_countryFactory;
+
+    /**
+     * @var float|null
+     */
     protected $_minAmount = null;
+
+    /**
+     * @var float|null
+     */
     protected $_maxAmount = null;
-    protected $_supportedCurrencyCodes = array('EUR');
+
+    /**
+     * @var string[]
+     */
+    protected $_supportedCurrencyCodes = ['EUR'];
 
     /**
      * @var string
@@ -97,8 +135,17 @@ class Younited extends \Magento\Payment\Model\Method\AbstractMethod
         DirectoryHelper $directory = null
     ) {
         parent::__construct(
-            $context, $registry, $extensionFactory, $customAttributeFactory, $paymentData, $scopeConfig, $logger,
-            null, null, $data, $directory
+            $context,
+            $registry,
+            $extensionFactory,
+            $customAttributeFactory,
+            $paymentData,
+            $scopeConfig,
+            $logger,
+            null,
+            null,
+            $data,
+            $directory
         );
 
         $this->storeManager = $storeManager;

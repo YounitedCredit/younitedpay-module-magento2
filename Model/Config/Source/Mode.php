@@ -19,11 +19,6 @@
 
 namespace YounitedCredit\YounitedPay\Model\Config\Source;
 
-/**
- * Class Mode
- *
- * @package YounitedCredit\YounitedPay\Model\Config\Source
- */
 class Mode implements \Magento\Framework\Option\ArrayInterface
 {
     /**

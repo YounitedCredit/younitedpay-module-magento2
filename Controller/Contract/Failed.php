@@ -19,14 +19,11 @@
 
 namespace YounitedCredit\YounitedPay\Controller\Contract;
 
-/**
- * Class Failed
- *
- * @package YounitedCredit\YounitedPay\Controller\Contract
- */
 class Failed extends \YounitedCredit\YounitedPay\Controller\Contract
 {
     /**
+     * Execute method
+     *
      * @return \Magento\Framework\App\ResponseInterface|\Magento\Framework\Controller\Result\Redirect|\Magento\Framework\Controller\ResultInterface
      * @throws \Magento\Framework\Exception\NoSuchEntityException
      */

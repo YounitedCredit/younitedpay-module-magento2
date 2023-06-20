@@ -22,11 +22,6 @@ namespace YounitedCredit\YounitedPay\Controller;
 use Magento\Customer\Api\AccountManagementInterface;
 use Magento\Customer\Api\CustomerRepositoryInterface;
 
-/**
- * Class Contract
- *
- * @package YounitedCredit\YounitedPay\Controller
- */
 abstract class Contract extends \Magento\Checkout\Controller\Onepage
 {
     /**
@@ -122,9 +117,16 @@ abstract class Contract extends \Magento\Checkout\Controller\Onepage
         $this->logger = $logger;
     }
 
+    /**
+     * Execute method
+     *
+     * @return \Magento\Framework\App\ResponseInterface|\Magento\Framework\Controller\ResultInterface
+     */
     abstract public function execute();
 
     /**
+     * Redirect to cart page
+     *
      * @param \Magento\Framework\Phrase $message
      *
      * @return \Magento\Framework\Controller\Result\Redirect
@@ -151,6 +153,7 @@ abstract class Contract extends \Magento\Checkout\Controller\Onepage
             $this->orderManagement->cancel($orderId);
         } catch (\Exception $e) {
             // Do nothing
+            $this->messageManager->addErrorMessage(__('Cannot cancel order.'));
         }
 
         return $this->resultRedirectFactory->create()->setPath('checkout/cart');

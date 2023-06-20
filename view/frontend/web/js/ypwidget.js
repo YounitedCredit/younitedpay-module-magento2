@@ -81,12 +81,18 @@ define([
                 $('#yp-amount').text(_this.getTotalAmount(data.amount));
                 $('#yp-cost').text(_this.getTotalAmount(data.interests));
                 $('#yp-total').text(_this.getTotalAmount(data.total));
-                $('#yp-percent').text(data.percent * 100);
-                $('#yp-debit').text(data.debit * 100);
+                $('#yp-percent').text(data.percent);
+                $('#yp-debit').text(data.debit);
                 $('#maturity_installment' + data.key).trigger('mouseenter');
             });
 
             $('.maturity_installment').on('click', function (e) {
+                var contentTitle = $('.yp-left-title').html();
+                if (contentTitle.search('Achetez maintenant') > -1) {
+                    $('.yp-left-title').css('margin', '25px 0 28px 0');
+                } else {
+                    $('.yp-left-title').css('margin','');
+                }
                 $('#younited_popupzone').show();
                 $('#blocks_maturities_popup' + $(this).data('key')).trigger('click');
             });

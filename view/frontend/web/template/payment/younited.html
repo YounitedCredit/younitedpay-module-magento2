@@ -3,7 +3,7 @@
         <input type="radio"
                name="payment[method]"
                class="radio"
-               data-bind="attr: {'id': getCode()}, value: getCode(), checked: isChecked, click: selectPaymentMethod, visible: isRadioButtonVisible()"/>
+               data-bind="attr: {'id': getCode()}, value: getCode(), checked: isChecked, click: selectPaymentMethod, visible: isRadioButtonVisible()">
         <label data-bind="attr: {'for': getCode()}" class="label"><span data-bind="text: getTitle()"></span></label>
     </div>
     <div class="payment-method-content">
@@ -13,7 +13,7 @@
                 <input type="radio"
                        name="maturity"
                        class="radio mat_radio"
-                       data-bind="attr: {'id': 'mat_' + maturity.installment}, value: maturity.installment, click:$parent.selectMaturity.bind($data, maturity.installment)"/>
+                       data-bind="attr: {'id': 'mat_' + maturity.installment}, value: maturity.installment, click:$parent.selectMaturity.bind($data, maturity.installment)">
                 <label data-bind="html: maturity.subTitle, attr: {'for': 'mat_' + maturity.installment}"
                        class="label"></label>
                 <div class="yp-info" data-bind="attr: {'id': 'yp-info-' + maturity.installment}, visible: false">
@@ -37,7 +37,7 @@
                             <span data-bind="i18n: 'Fixed Annual Percentage Rate (APR) of'"></span>
                             <span data-bind="text: maturity.annualPercentageRate"></span>%.
                         </b>
-                        <br />
+                        <br>
                         <span data-bind="i18n: 'Fixed borrowing rate of'"></span>
                         <span data-bind="text: maturity.annualDebitRate"></span>%.
                         <span data-bind="i18n: 'Interest and fees due of'"></span>
@@ -46,7 +46,7 @@
                     <p><b data-bind="i18n: 'Taking out a loan is a commitment with an obligation of repayment. Verify your ability to repay the loan before committing.'"></b></p>
                     <div class="yp-error messages">
                         <div class="message-error error message">
-                            <p class="yp-error-phone" data-bind="i18n: 'Cell Phone number is not french and in international format (+33X XX XX XX XX). Please update your phone number of your address and try again.'"></p>
+                            <p class="yp-error-phone" data-bind="text: $parent.getPhoneError()"></p>
                         </div>
                     </div>
                 </div>

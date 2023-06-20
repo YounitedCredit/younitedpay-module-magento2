@@ -1,4 +1,3 @@
-<?php
 /**
  * Copyright since 2022 Younited Credit
  *
@@ -17,18 +16,24 @@
  * @license   https://opensource.org/licenses/AFL-3.0  Academic Free License (AFL 3.0)
  */
 
-namespace YounitedCredit\YounitedPay\Controller\Contract;
+require([
+    'jquery'
+], function ($) {
+    $(document).on('readystatechange', function() {
+        $('#younited_setup_general_mode').change(function(e) {
+            e.preventDefault();
+            younitedCreditChangeMode();
+        });
+    });
 
-class Canceled extends \YounitedCredit\YounitedPay\Controller\Contract
-{
-    /**
-     * Execute method
-     *
-     * @return \Magento\Framework\App\ResponseInterface|\Magento\Framework\Controller\Result\Redirect|\Magento\Framework\Controller\ResultInterface
-     * @throws \Magento\Framework\Exception\NoSuchEntityException
-     */
-    public function execute()
-    {
-        return $this->redirectToCart(__('Payment refused, or error occurs during validation. Please try again.'));
+    function younitedCreditChangeMode() {
+        var modeYounited = $('#younited_setup_general_mode').val();
+
+        $('.younitedcredit_login').addClass('hidden');
+        if (modeYounited == 'dev') {
+            $('.younitedcredit_dev').removeClass('hidden');
+        } else {
+            $('.younitedcredit_prod').removeClass('hidden');
+        }
     }
-}
+});

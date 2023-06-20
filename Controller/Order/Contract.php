@@ -34,11 +34,6 @@ use YounitedPaySDK\Model\MerchantUrls;
 use YounitedPaySDK\Model\PersonalInformation;
 use YounitedPaySDK\Request\InitializeContractRequest;
 
-/**
- * Class Contract
- *
- * @package YounitedCredit\YounitedPay\Controller\Ajax
- */
 class Contract extends \Magento\Checkout\Controller\Onepage
 {
     /**
@@ -72,6 +67,11 @@ class Contract extends \Magento\Checkout\Controller\Onepage
     protected $urlBuilder;
 
     /**
+     * @var \Magento\Framework\App\ProductMetadataInterface
+     */
+    protected $productMetadata;
+
+    /**
      * @var \Psr\Log\LoggerInterface
      */
     protected $logger;
@@ -99,6 +99,7 @@ class Contract extends \Magento\Checkout\Controller\Onepage
      * @param \Magento\Quote\Api\CartRepositoryInterface $cartRepository
      * @param \Magento\Framework\Stdlib\DateTime\DateTime $date
      * @param UrlInterface $urlBuilder
+     * @param \Magento\Framework\App\ProductMetadataInterface $productMetadata
      * @param \Psr\Log\LoggerInterface $logger
      */
     public function __construct(
@@ -122,6 +123,7 @@ class Contract extends \Magento\Checkout\Controller\Onepage
         \Magento\Quote\Api\CartRepositoryInterface $cartRepository,
         \Magento\Framework\Stdlib\DateTime\DateTime $date,
         UrlInterface $urlBuilder,
+        \Magento\Framework\App\ProductMetadataInterface $productMetadata,
         \Psr\Log\LoggerInterface $logger
     ) {
         $this->orderRepository = $orderRepository;
@@ -130,6 +132,7 @@ class Contract extends \Magento\Checkout\Controller\Onepage
         $this->cartRepository = $cartRepository;
         $this->urlBuilder = $urlBuilder;
         $this->date = $date;
+        $this->productMetadata = $productMetadata;
         $this->logger = $logger;
 
         parent::__construct(
@@ -151,6 +154,8 @@ class Contract extends \Magento\Checkout\Controller\Onepage
     }
 
     /**
+     * Execute method
+     *
      * @return \Magento\Framework\App\ResponseInterface|\Magento\Framework\Controller\Result\Json|\Magento\Framework\Controller\ResultInterface
      */
     public function execute()
@@ -215,18 +220,35 @@ class Contract extends \Magento\Checkout\Controller\Onepage
         $merchantUrls = new MerchantUrls();
         $merchantUrls->setOnApplicationFailedRedirectUrl($this->getContractUrl('failed'));
         $merchantUrls->setOnApplicationSucceededRedirectUrl($this->getContractUrl('success'));
-        $merchantUrls->setOnCanceledWebhookUrl($this->getContractUrl('webhook', ['action' => 'cancel', 'order' => $orderId]));
-        $merchantUrls->setOnWithdrawnWebhookUrl($this->getContractUrl('webhook', ['action' => 'withdrawn', 'order' => $orderId]));
+        $merchantUrls->setOnCanceledWebhookUrl(
+            $this->getContractUrl('webhook', ['action' => 'cancel', 'order' => $orderId])
+        );
+        $merchantUrls->setOnWithdrawnWebhookUrl(
+            $this->getContractUrl('webhook', ['action' => 'withdrawn', 'order' => $orderId])
+        );
 
         $address = $order->getBillingAddress();
         $street = implode(', ', $order->getBillingAddress()->getStreet());
+        
+        $additionalAdress = '';
+        if (mb_strlen($street) > 38) {
+            $additionalAdress = substr($street, 38) . ' ';
+            $street = substr($street, 0, 38);
+        }
+
+        $additionalAdress .= $address->getCompany();
+        if (mb_strlen($additionalAdress) > 38) {
+            $additionalAdress = substr($additionalAdress, 0, 38);
+        }
+
         $customerAddress = new Address();
-        $customerAddress->setAdditionalAddress($address->getCompany());
+        $customerAddress->setAdditionalAddress($additionalAdress);
         $customerAddress->setCity($address->getCity());
         $customerAddress->setCountryCode($address->getCountryId());
         $customerAddress->setPostalCode($address->getPostcode());
         $customerAddress->setStreetName($street);
         $customerAddress->setStreetNumber(null);
+        $customerAddress->setAdditionalAddress($additionalAdress);
 
         $customerInfo = new PersonalInformation();
         $customerInfo->setAddress($customerAddress);
@@ -255,8 +277,10 @@ class Contract extends \Magento\Checkout\Controller\Onepage
         }
 
         try {
-            $response = $client->setCredential($credentials['clientId'],
-                $credentials['clientSecret'])->sendRequest($request);
+            $response = $client->setCredential(
+                $credentials['clientId'],
+                $credentials['clientSecret']
+            )->sendRequest($request);
 
             if ($response->getStatusCode() !== 200) {
                 return $this->redirectOnError($order, __(
@@ -286,14 +310,15 @@ class Contract extends \Magento\Checkout\Controller\Onepage
 
         $order->getPayment()->setAdditionalInformation($informations)->save();
 
-        $order->addStatusHistoryComment(__('Younited Credit transaction started. Reference: %1',
-            $informations['Payment ID']))
+        $order
+            ->addStatusHistoryComment(
+                __(
+                    'Younited Credit transaction started. Reference: %1',
+                    $informations['Payment ID']
+                )
+            )
             ->setIsCustomerNotified(false)
             ->save();
-
-//        \Zend_Debug::dump($result["contractReference"]);
-//        \Zend_Debug::dump($result["redirectUrl"]);
-//        die('ok');
 
         return $this->resultRedirectFactory->create()
             ->setRefererUrl($this->urlBuilder->getUrl('younited/contract/cancel'))
@@ -301,6 +326,8 @@ class Contract extends \Magento\Checkout\Controller\Onepage
     }
 
     /**
+     * Get contract URL
+     *
      * @param string $controller
      * @param array $params
      *
@@ -309,10 +336,17 @@ class Contract extends \Magento\Checkout\Controller\Onepage
      */
     public function getContractUrl($controller, $params = [])
     {
+        if ($controller == 'webhook') {
+            if (version_compare($this->productMetadata->getVersion(), "2.3.0", '<')) {
+                $controller = 'webhookold';
+            }
+        }
         return $this->maturityHelper->getStore()->getUrl('younited/contract/' . $controller, $params);
     }
 
     /**
+     * Redirection on error
+     *
      * @param \Magento\Sales\Api\Data\OrderInterface $order
      * @param \Magento\Framework\Phrase $message
      */
@@ -328,6 +362,7 @@ class Contract extends \Magento\Checkout\Controller\Onepage
             $this->orderManagement->cancel($orderId);
         } catch (\Exception $e) {
             // Do nothing
+            $this->messageManager->addErrorMessage(__('Cannot cancel order.'));
         }
 
         return $this->resultRedirectFactory->create()->setPath('checkout/cart');

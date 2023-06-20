@@ -19,11 +19,6 @@
 
 namespace YounitedCredit\YounitedPay\Model\Config\Source;
 
-/**
- * Class Location
- *
- * @package YounitedCredit\YounitedPay\Model\Config\Source
- */
 class Location implements \Magento\Framework\Option\ArrayInterface
 {
     /**

@@ -22,11 +22,6 @@ namespace YounitedCredit\YounitedPay\Test\Unit\Model\Config\Source;
 use Magento\Framework\TestFramework\Unit\Helper\ObjectManager;
 use YounitedCredit\YounitedPay\Model\Config\Source\Location;
 
-/**
- * Class LocationTest
- *
- * @package YounitedCredit\YounitedPay\Test\Unit\Model\Config\Source
- */
 class LocationTest extends \PHPUnit\Framework\TestCase
 {
     /**

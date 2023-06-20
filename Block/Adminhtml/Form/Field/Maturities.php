@@ -24,11 +24,6 @@ use YounitedCredit\YounitedPay\Helper\Maturity;
 use YounitedPaySDK\Client;
 use YounitedPaySDK\Request\AvailableMaturitiesRequest;
 
-/**
- * Class Maturities
- *
- * @package YounitedCredit\YounitedPay\Block\Adminhtml\Form\Field
- */
 class Maturities extends \Magento\Framework\View\Element\Html\Select
 {
     /**
@@ -93,14 +88,20 @@ class Maturities extends \Magento\Framework\View\Element\Html\Select
                 $credentials = $this->maturityHelper->getApiCredentials(false, $websiteId);
             }
 
+            if ($credentials === false) {
+                return [];
+            }
+
             $client = new Client();
             $request = new AvailableMaturitiesRequest();
             if ($credentials['mode'] === 'dev') {
                 $request = $request->enableSandbox();
             }
             try {
-                $response = $client->setCredential($credentials['clientId'],
-                    $credentials['clientSecret'])->sendRequest($request);
+                $response = $client->setCredential(
+                    $credentials['clientId'],
+                    $credentials['clientSecret']
+                )->sendRequest($request);
 
                 if ($response->getStatusCode() == 200) {
                     foreach ($response->getModel() as $val) {
@@ -108,7 +109,7 @@ class Maturities extends \Magento\Framework\View\Element\Html\Select
                     }
                 }
             } catch (Exception $e) {
-                // Do nothing
+                $this->_maturities = [];
             }
         }
 
@@ -119,6 +120,8 @@ class Maturities extends \Magento\Framework\View\Element\Html\Select
     }
 
     /**
+     * Set input name
+     *
      * @param string $value
      *
      * @return $this
@@ -137,7 +140,7 @@ class Maturities extends \Magento\Framework\View\Element\Html\Select
     {
         if (!$this->getOptions()) {
             foreach ($this->getMaturities() as $maturity => $maturityLabel) {
-                $this->addOption($maturity, addslashes($maturityLabel));
+                $this->addOption($maturity, addslashes($maturityLabel)); // phpcs:ignore
             }
         }
         return parent::_toHtml();

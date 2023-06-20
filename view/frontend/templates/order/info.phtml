@@ -24,17 +24,17 @@
 $specificInfo = $block->getInfo()->getOrder()->getPayment()->getAdditionalInformation();
 unset($specificInfo['method_title']);
 
-$title = $block->escapeHtml($block->getMethod()->getTitle());
+$title = $block->getMethod()->getTitle();
 ?>
 <dl class="payment-method">
-    <dt class="title"><img src="<?= $block->getYpImage() ?>" alt="<?= /* @noEscape */
-        $title ?>"/></dt>
-    <?php if ($specificInfo) : ?>
+    <dt class="title">
+        <img src="<?= $block->escapeHtml($block->getYpImage()) ?>" alt="<?= $block->escapeHtml($title) ?>"/>
+    </dt>
+    <?php if ($specificInfo): ?>
         <dd class="content">
             <table class="data table">
-                <caption class="table-caption"><?= /* @noEscape */
-                    $title ?></caption>
-                <?php foreach ($specificInfo as $label => $value) : ?>
+                <caption class="table-caption"><?= $block->escapeHtml($title) ?></caption>
+                <?php foreach ($specificInfo as $label => $value): ?>
                     <tr>
                         <th scope="row"><?= $block->escapeHtml(__($label)) ?></th>
                         <td>

@@ -28,11 +28,6 @@ use YounitedPaySDK\Client;
 use YounitedPaySDK\Model\BestPrice;
 use YounitedPaySDK\Request\BestPriceRequest;
 
-/**
- * Class Maturity
- *
- * @package YounitedCredit\YounitedPay\Helper
- */
 class Maturity
 {
     /**
@@ -58,6 +53,11 @@ class Maturity
     protected $storeManager;
 
     /**
+     * @var \Psr\Log\LoggerInterface
+     */
+    protected $logger;
+
+    /**
      * @var \Magento\Store\Model\Store
      */
     protected $store;
@@ -73,17 +73,20 @@ class Maturity
      * @param \Magento\Framework\App\Config\ScopeConfigInterface $scopeConfig
      * @param \Magento\Framework\Math\Random $mathRandom
      * @param \Magento\Store\Model\StoreManagerInterface $storeManager
+     * @param \Psr\Log\LoggerInterface $logger
      * @param Json|null $serializer
      */
     public function __construct(
         \Magento\Framework\App\Config\ScopeConfigInterface $scopeConfig,
         \Magento\Framework\Math\Random $mathRandom,
         \Magento\Store\Model\StoreManagerInterface $storeManager,
+        \Psr\Log\LoggerInterface $logger,
         Json $serializer = null
     ) {
         $this->scopeConfig = $scopeConfig;
         $this->mathRandom = $mathRandom;
         $this->storeManager = $storeManager;
+        $this->logger = $logger;
         $this->serializer = $serializer ?: ObjectManager::getInstance()->get(Json::class);
     }
 
@@ -226,7 +229,7 @@ class Maturity
     /**
      * Retrieve value from config
      *
-     * @param $productPrice float
+     * @param float|string $productPrice
      * @param null|string|bool|int|Store $store
      *
      * @return array|null
@@ -296,6 +299,8 @@ class Maturity
     }
 
     /**
+     * Get current Store
+     *
      * @return \Magento\Store\Api\Data\StoreInterface|Store
      * @throws \Magento\Framework\Exception\NoSuchEntityException
      */
@@ -309,7 +314,10 @@ class Maturity
     }
 
     /**
-     * @param false $storeId
+     * Get Api Credentials
+     *
+     * @param false|int $storeId
+     * @param false|int $website
      *
      * @return array|false
      * @throws LocalizedException
@@ -317,30 +325,32 @@ class Maturity
      */
     public function getApiCredentials($storeId = false, $website = false)
     {
-
         if ($storeId === false) {
             $storeId = $this->getStore()->getId();
         }
 
+        $scope = ScopeInterface::SCOPE_STORE;
         if ($website) {
-            $mode = $this->scopeConfig->getValue(Config::XML_PATH_API_DEV_MODE, ScopeInterface::SCOPE_WEBSITE,
-                $storeId);
-            $clientId = $this->scopeConfig->getValue(Config::XML_PATH_API_CLIENT_ID, ScopeInterface::SCOPE_WEBSITE,
-                $storeId);
-            $clientSecret = $this->scopeConfig->getValue(Config::XML_PATH_API_CLIENT_SECRET,
-                ScopeInterface::SCOPE_WEBSITE, $storeId);
-        } else {
-            $mode = $this->getConfig(Config::XML_PATH_API_DEV_MODE, $storeId);
-            $clientId = $this->getConfig(Config::XML_PATH_API_CLIENT_ID, $storeId);
-            $clientSecret = $this->getConfig(Config::XML_PATH_API_CLIENT_SECRET, $storeId);
+            $scope = ScopeInterface::SCOPE_WEBSITE;
         }
+        $mode = $this->getConfig(Config::XML_PATH_API_DEV_MODE, $storeId, $scope);
+        $production = $mode != 'dev' ? '_production' : '';
+        $clientId = $this->getConfig(
+            Config::XML_PATH_API_CLIENT_ID . $production,
+            $storeId,
+            $scope
+        );
+        $clientSecret = $this->getConfig(
+            Config::XML_PATH_API_CLIENT_SECRET . $production,
+            $storeId,
+            $scope
+        );
 
         if (!$clientId || !$clientSecret) {
-            if ($mode == 'dev') {
-                throw new LocalizedException(__('Please check your Magento configuration client_id and client_secret to enable Younited Credit.'));
-            } else {
-                return false;
-            }
+            $this->logger->warning(__('Please check your Magento configuration client_id'
+                . ' and client_secret to enable Younited Credit.'));            
+
+            return false;
         }
 
         return [
@@ -353,7 +363,8 @@ class Maturity
     /**
      * Get installments for spécified price
      *
-     * @param $price float
+     * @param float $price
+     * @param int|string $storeId
      *
      * @return array|null
      * @throws \Magento\Framework\Exception\NoSuchEntityException
@@ -376,13 +387,20 @@ class Maturity
             : (new BestPriceRequest())->setModel($body);
 
         try {
-            $response = $client->setCredential($credentials['clientId'],
-                $credentials['clientSecret'])->sendRequest($request);
+            $response = $client->setCredential(
+                $credentials['clientId'],
+                $credentials['clientSecret']
+            )->sendRequest($request);
+
             if ($response->getStatusCode() !== 200) {
-                return __('Cannot contact Younited Credit API. Status code: %1 - %2.', $response->getStatusCode(),
-                    $response->getReasonPhrase());
+                $this->logger->warning(__(
+                    'Cannot contact Younited Credit API. Status code: %1 - %2.',
+                    $response->getStatusCode(),
+                    $response->getReasonPhrase()
+                ));          
+                return [];
             }
-        } catch (Exception $e) {
+        } catch (\Exception $e) {
             return __('Exception: ') . $e->getMessage() . $e->getFile() . ':' . $e->getLine() . $e->getTraceAsString();
         }
 
@@ -396,8 +414,8 @@ class Maturity
 
             $maturity = $maturityConfig[$offers->getMaturityInMonths()];
             $maturity['requestedAmount'] = $offers->getRequestedAmount();
-            $maturity['annualPercentageRate'] = $offers->getAnnualPercentageRate();
-            $maturity['annualDebitRate'] = $offers->getAnnualDebitRate();
+            $maturity['annualPercentageRate'] = (string) round((float) $offers->getAnnualPercentageRate() * 100, 2);
+            $maturity['annualDebitRate'] = (string) round((float) $offers->getAnnualDebitRate() * 100, 2);
             $maturity['monthlyInstallmentAmount'] = $offers->getMonthlyInstallmentAmount();
             $maturity['creditTotalAmount'] = $offers->getCreditTotalAmount();
             $maturity['interestsTotalAmount'] = $offers->getInterestsTotalAmount();
@@ -409,17 +427,21 @@ class Maturity
     }
 
     /**
-     * @param $path
+     * Get config value
+     *
+     * @param string $path
+     * @param bool|int|string $storeId
+     * @param ScopeInterface $scope
      *
      * @return mixed
      */
-    public function getConfig($path, $storeId = false)
+    public function getConfig($path, $storeId = false, $scope = ScopeInterface::SCOPE_STORE)
     {
         if ($storeId === false) {
             $storeId = $this->getStore()->getId();
         }
 
-        return $this->scopeConfig->getValue($path, ScopeInterface::SCOPE_STORE, $storeId);
+        return $this->scopeConfig->getValue($path, $scope, $storeId);
     }
 
     /**

@@ -25,12 +25,8 @@ use Magento\Framework\App\Action\Context;
 use Magento\Framework\DB\Transaction;
 use Magento\Sales\Model\Order\Email\Sender\InvoiceSender;
 use Magento\Sales\Model\Service\InvoiceService;
+use YounitedCredit\YounitedPay\Helper\Config;
 
-/**
- * Class Success
- *
- * @package YounitedCredit\YounitedPay\Controller\Contract
- */
 class Success extends \Magento\Checkout\Controller\Onepage
 {
     /**
@@ -119,6 +115,8 @@ class Success extends \Magento\Checkout\Controller\Onepage
     }
 
     /**
+     * Execute method
+     *
      * @return \Magento\Framework\App\ResponseInterface|\Magento\Framework\Controller\Result\Redirect|\Magento\Framework\Controller\ResultInterface
      * @throws \Magento\Framework\Exception\LocalizedException
      */
@@ -157,8 +155,11 @@ class Success extends \Magento\Checkout\Controller\Onepage
         }
 
         $orderState = \Magento\Sales\Model\Order::STATE_PROCESSING;
-        $orderStatus = $this->scopeConfig->getValue('payment/younited/order_status_processing',
-            \Magento\Store\Model\ScopeInterface::SCOPE_STORE, $order->getStoreId());
+        $orderStatus = $this->scopeConfig->getValue(
+            Config::XML_PATH_ORDER_STATUS_PROCESSING,
+            \Magento\Store\Model\ScopeInterface::SCOPE_STORE,
+            $order->getStoreId()
+        );
         $order->setState($orderState)->setStatus($orderStatus);
         $order->save();
 

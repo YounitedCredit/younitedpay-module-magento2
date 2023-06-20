@@ -28,7 +28,7 @@ use YounitedPaySDK\Client;
 use YounitedPaySDK\Model\LoadContract;
 use YounitedPaySDK\Request\LoadContractRequest;
 
-class Webhook extends Action implements \Magento\Framework\App\CsrfAwareActionInterface
+class Webhookold extends Action
 {
     /**
      * @var \YounitedCredit\YounitedPay\Helper\Maturity

@@ -22,11 +22,6 @@ namespace YounitedCredit\YounitedPay\Test\Unit\Model\Config\Source;
 use Magento\Framework\TestFramework\Unit\Helper\ObjectManager;
 use YounitedCredit\YounitedPay\Model\Config\Source\Mode;
 
-/**
- * Class ModeTest
- *
- * @package YounitedCredit\YounitedPay\Test\Unit\Model\Config\Source
- */
 class ModeTest extends \PHPUnit\Framework\TestCase
 {
     /**
