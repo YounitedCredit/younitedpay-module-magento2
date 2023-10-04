@@ -220,6 +220,9 @@ class Contract extends \Magento\Checkout\Controller\Onepage
         $merchantUrls = new MerchantUrls();
         $merchantUrls->setOnApplicationFailedRedirectUrl($this->getContractUrl('failed'));
         $merchantUrls->setOnApplicationSucceededRedirectUrl($this->getContractUrl('success'));
+        $merchantUrls->setOnGrantedWebhookUrl(
+            $this->getContractUrl('success', ['order' => $orderId])
+        );
         $merchantUrls->setOnCanceledWebhookUrl(
             $this->getContractUrl('webhook', ['action' => 'cancel', 'order' => $orderId])
         );
@@ -228,6 +231,12 @@ class Contract extends \Magento\Checkout\Controller\Onepage
         );
 
         $address = $order->getBillingAddress();
+
+        $isInternationalPhone = $this->checkIfInternationalPhone($address->getTelephone(), $order);
+        if ($isInternationalPhone !== true) {
+            return $isInternationalPhone;
+        }
+
         $street = implode(', ', $order->getBillingAddress()->getStreet());
         
         $additionalAdress = '';
@@ -247,7 +256,7 @@ class Contract extends \Magento\Checkout\Controller\Onepage
         $customerAddress->setCountryCode($address->getCountryId());
         $customerAddress->setPostalCode($address->getPostcode());
         $customerAddress->setStreetName($street);
-        $customerAddress->setStreetNumber(null);
+        $customerAddress->setStreetNumber('');
         $customerAddress->setAdditionalAddress($additionalAdress);
 
         $customerInfo = new PersonalInformation();
@@ -283,6 +292,8 @@ class Contract extends \Magento\Checkout\Controller\Onepage
             )->sendRequest($request);
 
             if ($response->getStatusCode() !== 200) {
+                $this->logger->debug('[younited pay] Response contract' . json_encode($response));
+                $this->logger->debug('[younited pay] Response content' . json_encode($response->getModel()));
                 return $this->redirectOnError($order, __(
                     'Cannot contact Younited Credit API. Status code: %1 - %2.',
                     $response->getStatusCode(),
@@ -350,7 +361,7 @@ class Contract extends \Magento\Checkout\Controller\Onepage
      * @param \Magento\Sales\Api\Data\OrderInterface $order
      * @param \Magento\Framework\Phrase $message
      */
-    public function redirectOnError(\Magento\Sales\Api\Data\OrderInterface $order, \Magento\Framework\Phrase $message)
+    public function redirectOnError(\Magento\Sales\Api\Data\OrderInterface $order, \Magento\Framework\Phrase $message, $isPhoneError)
     {
         $this->messageManager->addErrorMessage($message);
         $quote = $this->cartRepository->get($order->getQuoteId());
@@ -358,13 +369,37 @@ class Contract extends \Magento\Checkout\Controller\Onepage
         $this->cartRepository->save($quote);
         $this->getOnepage()->getCheckout()->replaceQuote($quote)->unsLastRealOrderId();
 
-        try {
-            $this->orderManagement->cancel($orderId);
-        } catch (\Exception $e) {
-            // Do nothing
-            $this->messageManager->addErrorMessage(__('Cannot cancel order.'));
+        if ($isPhoneError === false) {
+            try {
+                $this->orderManagement->cancel($order->getQuoteId());
+            } catch (\Exception $e) {
+                // Do nothing
+                $this->messageManager->addErrorMessage(__('Cannot cancel order.'));
+            }
         }
 
         return $this->resultRedirectFactory->create()->setPath('checkout/cart');
+    }
+
+    /** 
+     * Check if phone number of billing address is in expected format
+    */
+    private function checkIfInternationalPhone(string $phone, $order)
+    {
+        $defaultPhoneAreaCode = '+33';
+        $countryCode = $this->scopeConfig->getValue(
+            'general/country/default',
+            \Magento\Store\Model\ScopeInterface::SCOPE_STORE
+        );
+        $phoneError = __('Cell Phone number is not french and in international format (+33XXXXXXXXX). Please update your phone number of your address and try again.');
+        if (strtoupper($countryCode) === 'ES') {
+            $defaultPhoneAreaCode = '+34';
+            $phoneError = __('Cell Phone number is not spanish and in international format (+34XXXXXXXXX). Please update your phone number of your address and try again.');
+        }
+        if (substr($phone, 0, 3) !== $defaultPhoneAreaCode) {
+            return $this->redirectOnError($order, $phoneError, true);
+        }
+
+        return true;
     }
 }

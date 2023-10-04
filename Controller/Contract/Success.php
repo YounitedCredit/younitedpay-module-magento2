@@ -26,6 +26,9 @@ use Magento\Framework\DB\Transaction;
 use Magento\Sales\Model\Order\Email\Sender\InvoiceSender;
 use Magento\Sales\Model\Service\InvoiceService;
 use YounitedCredit\YounitedPay\Helper\Config;
+use YounitedPaySDK\Client;
+use YounitedPaySDK\Model\LoadContract;
+use YounitedPaySDK\Request\LoadContractRequest;
 
 class Success extends \Magento\Checkout\Controller\Onepage
 {
@@ -50,6 +53,16 @@ class Success extends \Magento\Checkout\Controller\Onepage
     protected $invoiceSender;
 
     /**
+     * @var \Psr\Log\LoggerInterface
+     */
+    protected $logger;
+
+    /**
+     * @var \YounitedCredit\YounitedPay\Helper\Maturity
+     */
+    protected $maturityHelper;
+
+    /**
      * Success constructor.
      *
      * @param Context $context
@@ -70,9 +83,11 @@ class Success extends \Magento\Checkout\Controller\Onepage
      * @param InvoiceService $invoiceService
      * @param InvoiceSender $invoiceSender
      * @param Transaction $transaction
+     * @param \Psr\Log\LoggerInterface $logger
+     * @param \YounitedCredit\YounitedPay\Helper\Maturity $maturityHelper
      */
     public function __construct(
-        \Magento\Framework\App\Action\Context $context,
+        Context $context,
         \Magento\Customer\Model\Session $customerSession,
         CustomerRepositoryInterface $customerRepository,
         AccountManagementInterface $accountManagement,
@@ -89,12 +104,16 @@ class Success extends \Magento\Checkout\Controller\Onepage
         \Magento\Sales\Api\OrderRepositoryInterface $orderRepository,
         InvoiceService $invoiceService,
         InvoiceSender $invoiceSender,
-        Transaction $transaction
+        Transaction $transaction,
+        \Psr\Log\LoggerInterface $logger,
+        \YounitedCredit\YounitedPay\Helper\Maturity $maturityHelper
     ) {
         $this->orderRepository = $orderRepository;
         $this->invoiceService = $invoiceService;
         $this->transaction = $transaction;
         $this->invoiceSender = $invoiceSender;
+        $this->logger = $logger;
+        $this->maturityHelper = $maturityHelper;
 
         parent::__construct(
             $context,
@@ -118,54 +137,120 @@ class Success extends \Magento\Checkout\Controller\Onepage
      * Execute method
      *
      * @return \Magento\Framework\App\ResponseInterface|\Magento\Framework\Controller\Result\Redirect|\Magento\Framework\Controller\ResultInterface
+     *
      * @throws \Magento\Framework\Exception\LocalizedException
      */
     public function execute()
     {
-        // Mettre la commande en processing
-        $session = $this->getOnepage()->getCheckout();
-        if (!$this->_objectManager->get(\Magento\Checkout\Model\Session\SuccessValidator::class)->isValid()) {
-            return $this->resultRedirectFactory->create()->setPath('checkout/cart');
-        }
+        $orderId = $this->getRequest()->getParam('order', false);
+        if ($orderId !== false) {
+            $order = $this->orderRepository->get($orderId);
+            if ($this->isContractConfirmed($order) === false) {
+                $this->logger->debug('[younited pay] - on granted URL refused no contract confirmed');
+                $resultJson = $this->resultJsonFactory->create();
 
-        $orderId = $session->getLastOrderId();
-        $order = $this->orderRepository->get($orderId);
-        if ($order->canInvoice()) {
-            $invoice = $this->invoiceService->prepareInvoice($order);
-            $invoice->register();
-
-            if ($invoice->canCapture()) {
-                $invoice->capture();
+                return $resultJson->setData(['response_code' => 200, 'accepted' => false]);
+            }
+        } else {
+            // Mettre la commande en processing
+            $session = $this->getOnepage()->getCheckout();
+            if (!$this->_objectManager->get(\Magento\Checkout\Model\Session\SuccessValidator::class)->isValid()) {
+                return $this->resultRedirectFactory->create()->setPath('checkout/cart');
             }
 
-            $invoice->save();
-            $transactionSave = $this->transaction->addObject(
-                $invoice
-            )->addObject(
-                $invoice->getOrder()
-            );
-            $transactionSave->save();
-            $this->invoiceSender->send($invoice);
-
-//            Send Invoice mail to customer
-            $order->addStatusHistoryComment(
-                __('Customer successfully returns from Younited Pay. Invoice creation #%1.', $invoice->getIncrementId())
-            )
-                ->setIsCustomerNotified(true);
+            $orderId = $session->getLastOrderId();
+            $order = $this->orderRepository->get($orderId);
         }
 
+        return $this->executeOrder($order);
+    }
+
+    /**
+     * Make the order
+     *
+     * @param \Magento\Sales\Api\Data\OrderInterface $order
+     *
+     * @return \Magento\Framework\Controller\Result\Redirect $resultRedirect
+     */
+    protected function executeOrder($order)
+    {
         $orderState = \Magento\Sales\Model\Order::STATE_PROCESSING;
         $orderStatus = $this->scopeConfig->getValue(
             Config::XML_PATH_ORDER_STATUS_PROCESSING,
             \Magento\Store\Model\ScopeInterface::SCOPE_STORE,
             $order->getStoreId()
         );
-        $order->setState($orderState)->setStatus($orderStatus);
-        $order->save();
+
+        if ($order->getState() != $orderStatus) {
+            if ($order->canInvoice()) {
+                $invoice = $this->invoiceService->prepareInvoice($order);
+                $invoice->register();
+
+                if ($invoice->canCapture()) {
+                    $invoice->capture();
+                }
+
+                $invoice->save();
+                $transactionSave = $this->transaction->addObject(
+                    $invoice
+                )->addObject(
+                    $invoice->getOrder()
+                );
+                $transactionSave->save();
+                $this->invoiceSender->send($invoice);
+
+    //            Send Invoice mail to customer
+                $order->addStatusHistoryComment(
+                    __('Customer successfully returns from Younited Pay. Invoice creation #%1.', $invoice->getIncrementId())
+                )
+                    ->setIsCustomerNotified(true);
+            }
+            $order->setState($orderState)->setStatus($orderStatus);
+            $order->save();
+        }
 
         $resultRedirect = $this->resultRedirectFactory->create();
         $resultRedirect->setPath('checkout/onepage/success');
 
         return $resultRedirect;
+    }
+
+    /**
+     * Check if contract is correctly confirmed
+     *
+     * @param \Magento\Sales\Api\Data\OrderInterface $order
+     *
+     * @return bool
+     */
+    protected function isContractConfirmed($order)
+    {
+        $client = new Client();
+        $body = new LoadContract();
+        $request = new LoadContractRequest();
+        $credentials = $this->maturityHelper->getApiCredentials($order->getStoreId());
+
+        $payment = $order->getPayment();
+        $informations = $payment->getAdditionalInformation();
+
+        $body->setContractReference($informations['Payment ID']);
+        $request = $request->setModel($body);
+        if ($credentials['mode'] === 'dev') {
+            $request = $request->enableSandbox();
+        }
+
+        $response = $client->setCredential(
+            $credentials['clientId'],
+            $credentials['clientSecret']
+        )->sendRequest($request);
+
+        $statusOrderDone = ['INITIALIZED', 'GRANTED', 'CONFIRMED'];
+        if ($response->getStatusCode() == 200) {
+            $output = json_decode($response->getBody(), true);
+            if (isset($output['status']) && in_array($output['status'], $statusOrderDone) === true) {
+                return true;
+            }
+        }
+
+        return false;
     }
 }
