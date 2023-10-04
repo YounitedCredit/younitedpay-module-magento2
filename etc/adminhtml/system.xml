@@ -185,6 +185,13 @@
                     <frontend_model>YounitedCredit\YounitedPay\Block\Adminhtml\System\Config\Gtc</frontend_model>
                 </field>
             </group>
+            <group id="seven" translate="label" type="text" sortOrder="1" showInDefault="1" showInWebsite="1" showInStore="1">
+                <label>A question regarding Younited Pay?</label>
+                <field id="comment" translate="label comment" sortOrder="10" type="label" showInDefault="1" showInWebsite="1" showInStore="1">
+                    <comment><![CDATA[If your question is related to Younited Pay solution or your commercial relationship with Younited Pay, please connect to your back-office and use our support system directly integrated in the back-office.If your question is related to Younited Pay module in Magento, you can contact our dedicated technical support by clicking on the button below.<br /><br /><a class="button action-default" target="_blank" href="https://commercemarketplace.adobe.com/younitedcredit-younitedpay-module-magento2.html">Contact Support</a>]]></comment>
+                    <frontend_model>YounitedCredit\YounitedPay\Block\Adminhtml\System\Config\AdditionalComment</frontend_model>
+                </field>
+            </group>
         </section>
         <section id="payment">
             <group id="younited" translate="label" type="text" sortOrder="33" showInDefault="1" showInWebsite="1" showInStore="1">
