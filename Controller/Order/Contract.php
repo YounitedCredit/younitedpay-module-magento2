@@ -361,7 +361,7 @@ class Contract extends \Magento\Checkout\Controller\Onepage
      * @param \Magento\Sales\Api\Data\OrderInterface $order
      * @param \Magento\Framework\Phrase $message
      */
-    public function redirectOnError(\Magento\Sales\Api\Data\OrderInterface $order, \Magento\Framework\Phrase $message, $isPhoneError)
+    public function redirectOnError(\Magento\Sales\Api\Data\OrderInterface $order, \Magento\Framework\Phrase $message, $isPhoneError = false)
     {
         $this->messageManager->addErrorMessage($message);
         $quote = $this->cartRepository->get($order->getQuoteId());
