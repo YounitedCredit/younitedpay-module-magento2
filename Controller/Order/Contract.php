@@ -77,6 +77,11 @@ class Contract extends \Magento\Checkout\Controller\Onepage
     protected $logger;
 
     /**
+     * @var bool
+     */
+    protected $isPhoneError = false;
+
+    /**
      * Contract constructor.
      *
      * @param \Magento\Framework\App\Action\Context $context
@@ -352,6 +357,11 @@ class Contract extends \Magento\Checkout\Controller\Onepage
                 $controller = 'webhookold';
             }
         }
+        if ($controller == 'success') {
+            if (version_compare($this->productMetadata->getVersion(), "2.3.0", '<')) {
+                $controller = 'successold';
+            }
+        }
         return $this->maturityHelper->getStore()->getUrl('younited/contract/' . $controller, $params);
     }
 
@@ -361,7 +371,7 @@ class Contract extends \Magento\Checkout\Controller\Onepage
      * @param \Magento\Sales\Api\Data\OrderInterface $order
      * @param \Magento\Framework\Phrase $message
      */
-    public function redirectOnError(\Magento\Sales\Api\Data\OrderInterface $order, \Magento\Framework\Phrase $message, $isPhoneError = false)
+    public function redirectOnError(\Magento\Sales\Api\Data\OrderInterface $order, \Magento\Framework\Phrase $message)
     {
         $this->messageManager->addErrorMessage($message);
         $quote = $this->cartRepository->get($order->getQuoteId());
@@ -369,7 +379,7 @@ class Contract extends \Magento\Checkout\Controller\Onepage
         $this->cartRepository->save($quote);
         $this->getOnepage()->getCheckout()->replaceQuote($quote)->unsLastRealOrderId();
 
-        if ($isPhoneError === false) {
+        if ($this->isPhoneError === false) {
             try {
                 $this->orderManagement->cancel($order->getQuoteId());
             } catch (\Exception $e) {
@@ -396,8 +406,10 @@ class Contract extends \Magento\Checkout\Controller\Onepage
             $defaultPhoneAreaCode = '+34';
             $phoneError = __('Cell Phone number is not spanish and in international format (+34XXXXXXXXX). Please update your phone number of your address and try again.');
         }
+        $this->isPhoneError = false;
         if (substr($phone, 0, 3) !== $defaultPhoneAreaCode) {
-            return $this->redirectOnError($order, $phoneError, true);
+            $this->isPhoneError = true;
+            return $this->redirectOnError($order, $phoneError);
         }
 
         return true;
