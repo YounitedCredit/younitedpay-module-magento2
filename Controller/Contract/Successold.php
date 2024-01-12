@@ -32,7 +32,7 @@ use YounitedPaySDK\Client;
 use YounitedPaySDK\Model\LoadContract;
 use YounitedPaySDK\Request\LoadContractRequest;
 
-class Success extends \Magento\Checkout\Controller\Onepage implements \Magento\Framework\App\CsrfAwareActionInterface
+class Successold extends \Magento\Checkout\Controller\Onepage
 {
     /**
      * @var \Magento\Sales\Api\OrderRepositoryInterface

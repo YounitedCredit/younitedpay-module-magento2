@@ -50,7 +50,7 @@ define([
                 $('#mat_' + installment).prop("checked", true);
             }, 50)
 
-            var indicative = quote.shippingAddress().telephone
+            var indicative = quote.billingAddress().telephone
                 .replace('.', '')
                 .replace(' ', '')
                 .slice(0, 3)
