@@ -70,20 +70,39 @@ define([
             });
         },
 
+        YpchangeInstallment: function(key)
+        {
+            var actualOffer = parseInt(key);
+            var maturityZone = $($.find('.maturity_installment' + actualOffer.toString()));
+            var infoInstallmentAmount = maturityZone.attr('data-amount');
+            var currentMaturity = parseInt(maturityZone.attr('data-maturity'));
+            var initialAmount = maturityZone.attr('data-initamount');
+            var taeg = maturityZone.attr('data-taeg');
+            var tdf = maturityZone.attr('data-tdf');
+            var totalAmount = maturityZone.attr('data-totalamount');
+            var interestTotal = maturityZone.attr('data-interesttotal');
+            var infoInstallmentMaturity = currentMaturity + 'x';
+            
+            $('.maturity_installment').removeClass('yp-bg-black-btn');
+            $('.maturity_installment' + key).addClass('yp-bg-black-btn');
+
+            $('.yp-install-amount').text(infoInstallmentAmount + " €");
+            $('.yp-install-maturity').text(infoInstallmentMaturity);
+            $('.yp-tdf').text(tdf);
+            $('.yp-taeg').text(taeg);
+            $('.yp-total').text(totalAmount);
+            $('.yp-interest').text(interestTotal);
+            $('.yp-amount').text(initialAmount);
+            $('.yp-down-amount').text(downPaymentAmount);
+        },
+
         createMainObservers: function createMainObservers() {
             var _this = this;
 
             $('.blocks_maturities_popup').on('click', function (e) {
                 var data = $(this).data()
-                $('.blocks_maturities_popup').removeClass('selected');
-                $(this).addClass('selected');
-                $('#popup-maturity').text(_this.getTotalAmount(data.maturity));
-                $('#yp-amount').text(_this.getTotalAmount(data.amount));
-                $('#yp-cost').text(_this.getTotalAmount(data.interests));
-                $('#yp-total').text(_this.getTotalAmount(data.total));
-                $('#yp-percent').text(data.percent);
-                $('#yp-debit').text(data.debit);
-                $('#maturity_installment' + data.key).trigger('mouseenter');
+                _this.YpchangeInstallment(data.key);
+                $('#younited_popupzone').show();
             });
 
             $('.maturity_installment').on('click', function (e) {
@@ -98,14 +117,10 @@ define([
             });
 
             $('.maturity_installment').hover(function () {
-                    var data = $(this).data()
-                    $('.maturity_installment.selected').removeClass('selected');
-                    $(this).addClass('selected')
-                    $('#yp-maturity').text(_this.getTotalAmount(data.maturity));
-                    $('#yp-installment').text("x" + data.key);
-                }, function () {
-                }
-            );
+                var data = $(this).data()
+                _this.YpchangeInstallment(data.key);
+                $('#younited_popupzone').show();
+            });
         },
 
         /**
