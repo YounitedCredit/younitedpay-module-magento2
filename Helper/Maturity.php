@@ -405,6 +405,7 @@ class Maturity
         }
 
         $maturityConfig = $this->getConfigValue($price, $storeId);
+        $storeLocale = $this->getStore()->getLocaleCode() ?? 'fr_FR';
 
         /** @var \YounitedPaySDK\Model\OfferItem $offers */
         foreach ($response->getModel() as $offers) {
@@ -419,6 +420,7 @@ class Maturity
             $maturity['monthlyInstallmentAmount'] = $offers->getMonthlyInstallmentAmount();
             $maturity['creditTotalAmount'] = $offers->getCreditTotalAmount();
             $maturity['interestsTotalAmount'] = $offers->getInterestsTotalAmount();
+            $maturity['locale'] = $storeLocale;
 
             $maturities[$offers->getMaturityInMonths()] = $maturity;
         }

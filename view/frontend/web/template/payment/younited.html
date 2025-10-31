@@ -14,39 +14,80 @@
                        name="maturity"
                        class="radio mat_radio"
                        data-bind="attr: {'id': 'mat_' + maturity.installment}, value: maturity.installment, click:$parent.selectMaturity.bind($data, maturity.installment)">
-                <label data-bind="html: maturity.subTitle, attr: {'for': 'mat_' + maturity.installment}"
-                       class="label"></label>
+                <label data-bind="html: maturity.subTitle, attr: {'for': 'mat_' + maturity.installment}" class="label"></label>
                 <div class="yp-info" data-bind="attr: {'id': 'yp-info-' + maturity.installment}, visible: false">
-                    <p>
-                        <b>
-                            <span data-bind="i18n: 'Total amount due of'"></span>
-                            <span data-bind="text: maturity.creditTotalAmount"></span>€.
-                        </b>
-                        <span data-bind="i18n: 'You pay back'"></span>
-                        <span data-bind="text: maturity.installment"></span>
-                        <b>
-                            <span data-bind="i18n: 'installements of'"></span>
-                            <span data-bind="text: maturity.monthlyInstallmentAmount"></span>€
-                        </b>
-                        <span data-bind="i18n: 'over a period of'"></span>
-                        <span data-bind="text: maturity.installment"></span>
-                        <span data-bind="i18n: 'months'"></span>.
-                    </p>
-                    <p>
-                        <b>
-                            <span data-bind="i18n: 'Fixed Annual Percentage Rate (APR) of'"></span>
-                            <span data-bind="text: maturity.annualPercentageRate"></span>%.
-                        </b>
-                        <br>
-                        <span data-bind="i18n: 'Fixed borrowing rate of'"></span>
-                        <span data-bind="text: maturity.annualDebitRate"></span>%.
-                        <span data-bind="i18n: 'Interest and fees due of'"></span>
-                        <span data-bind="text: maturity.interestsTotalAmount"></span>€.
-                    </p>
-                    <p><b data-bind="i18n: 'Taking out a loan is a commitment with an obligation of repayment. Verify your ability to repay the loan before committing.'"></b></p>
                     <div class="yp-error messages">
                         <div class="message-error error message">
                             <p class="yp-error-phone" data-bind="text: $parent.getPhoneError()"></p>
+                        </div>
+                    </div>
+                    <div class="younitedpay-widget-root">
+                        <div class="yp-text-base yp-mt-4 yp-mb-5 yp-h4 yp-text-center">
+                            <span data-bind="i18n: 'Start paying in just 30 days !'"></span>
+                        </div>
+                        <div class="yp-flex yp-justify-center yp-align-center yp-font-bold yp-text-md yp-font-family-rg yp-mt-6 yp-mb-3">
+                            <span data-bind="i18n: 'Payment in'"></span>&nbsp;
+                            <span class="yp-pol-purpledark yp-pol-purple">
+                                <span data-bind="text: maturity.installment" class="yp-install-maturity-lite"></span>
+                                <span data-bind="i18n: 'times'"></span>
+                            </span>
+                        </div>
+                        <div class="yp-info-buy yp-flex yp-font-family-rg yp-mt-6 yp-justify-between yp-items-center">
+                            <p class="yp-flex yp-items-center yp-weight600 yp-pol-purpledark yp-text-20">
+                                <span data-bind="i18n: 'Your purchase for '"></span>&nbsp;
+                                <span data-bind="text: maturity.monthlyInstallmentAmount" 
+                                    class="yp-pol-purple yp-text-20 yp-font-bold yp-font-family-rg yp-install-amount"></span>&nbsp;&euro; / 
+                                <span data-bind="i18n: 'months'"></span>
+                            </p>
+                        </div>
+
+                        <div class="yp-border-prple yp-border-2 yp-p-3 yp-rounded-bg yp-mt-6">
+                            <div class="yp-mb-8 yp-text-lg yp-pol-purpledark">
+                                <div class="yp-flex yp-flex-row yp-justify-between yp-pol-purple yp-mb-2 yp-text-20 yp-weight600">
+                                    <span><b><span data-bind="i18n: 'Total amount due'"></span></b></span>
+                                    <span class="yp-mw85 yp-text-right">
+                                        <span class="yp-total" data-bind="text: maturity.creditTotalAmount"></span>&nbsp;€
+                                    </span>
+                                </div>
+                                <div class="yp-flex yp-flex-row yp-justify-between yp-mb-2">
+                                    <p class="yp-pol-purpledark yp-font-normal">&nbsp;&nbsp;&nbsp;<span data-bind="i18n: 'Total credit amount'"></span></p>
+                                    <p class="yp-weight600 yp-pol-purpledark yp-mw85 yp-text-right">
+                                        <span class="yp-amount" data-bind="text: maturity.requestedAmount"></span>&nbsp;€
+                                    </p>
+                                </div>
+                                <div class="yp-flex yp-flex-row yp-justify-between yp-pb-6">
+                                    <p class="yp-pol-purpledark yp-font-normal">&nbsp;&nbsp;&nbsp;
+                                        <span data-bind="i18n: 'Interest (excl. optional insurance)'"></span>
+                                    </p>
+                                    <p class="yp-weight600 yp-pol-purpledark yp-mw85 yp-text-right">
+                                        <span class="yp-interest" data-bind="text: maturity.interestsTotalAmount"></span>&nbsp;€
+                                    </p>
+                                </div>
+                            </div>
+                            <div class="yp-mt-6 block_contents block_content_range">
+                                <div class="yp-justify-between yp-flex yp-flex-row yp-mb-2 yp-text-20">
+                                    <span class="yp-weight600 yp-pol-purpledark" data-bind="i18n: 'Fixed APR'">
+                                        <!-- ko if: ( maturity.locale != "es_ES" ) -->
+                                            <br><span data-bind="i18n: '(excluding optional insurance)'"></span>
+                                        <!-- /ko -->
+                                    </span>
+                                    <span class="yp-weight600 yp-pol-purpledark yp-mw85 yp-text-right">
+                                        <span class="yp-taeg" data-bind="text: maturity.annualPercentageRate"></span> %
+                                    </span>
+                                </div>
+                                <div class="yp-justify-between yp-flex yp-flex-row yp-mb-2 yp-pol-purpledark yp-font-normal">
+                                    <span data-bind="i18n: 'Fixed lending rate'"></span>
+                                    <span class="yp-weight600 yp-mw85 yp-text-right">
+                                        <span class="yp-tdf" data-bind="text: maturity.annualDebitRate"></span> %
+                                    </span>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="yp-text-responsabilities yp-my-4">
+                            <p class="yp-weight600 yp-pol-purpledark yp-text-20"
+                                data-bind="i18n: 'Taking out a loan is a commitment with an obligation of repayment. Verify your ability to repay the loan before committing.'">
+                            </p>
                         </div>
                     </div>
                 </div>
