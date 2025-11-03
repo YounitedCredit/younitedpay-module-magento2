@@ -186,8 +186,8 @@ class Widget extends \Magento\Catalog\Block\Product\View
     public function getPageActive()
     {
         $pageActive = $this->getConfig(Config::XML_PATH_IS_ON_PRODUCT_PAGE);
-        $pageActive = $pageActive === '1' ? self::DISABLED : $pageActive;
-        $pageActive = $pageActive === '2' ? self::PRODUCT_ONLY : $pageActive;
+        $pageActive = $pageActive === '0' ? self::DISABLED : $pageActive;
+        $pageActive = $pageActive === '1' ? self::PRODUCT_ONLY : $pageActive;
 
         return $pageActive;
     }
