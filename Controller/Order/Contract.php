@@ -236,10 +236,10 @@ class Contract extends \Magento\Checkout\Controller\Onepage
         );
 
         $address = $order->getBillingAddress();
-
+        $phoneNumber = $address->getTelephone();
         $isInternationalPhone = $this->checkIfInternationalPhone($address->getTelephone(), $order);
         if ($isInternationalPhone !== true) {
-            return $isInternationalPhone;
+            $phoneNumber = '';
         }
 
         $street = implode(', ', $order->getBillingAddress()->getStreet());
@@ -266,7 +266,7 @@ class Contract extends \Magento\Checkout\Controller\Onepage
 
         $customerInfo = new PersonalInformation();
         $customerInfo->setAddress($customerAddress);
-        $customerInfo->setCellPhoneNumber($address->getTelephone());
+        $customerInfo->setCellPhoneNumber($phoneNumber);
         $customerInfo->setEmailAddress($order->getCustomerEmail());
         $customerInfo->setFirstName($order->getCustomerFirstname());
         $customerInfo->setLastName($order->getCustomerLastname());
@@ -408,8 +408,7 @@ class Contract extends \Magento\Checkout\Controller\Onepage
         }
         $this->isPhoneError = false;
         if (substr($phone, 0, 3) !== $defaultPhoneAreaCode) {
-            $this->isPhoneError = true;
-            return $this->redirectOnError($order, $phoneError);
+            return false;
         }
 
         return true;
