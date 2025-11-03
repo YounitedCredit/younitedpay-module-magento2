@@ -25,7 +25,7 @@
 <?php $product = $block->getProduct() ?>
 <?php if ($block->isEnabled() && $product && $product->getId() && $product->getTypeId() != 'grouped'): ?>
     <?php $installments = $block->getInstallments($product) ?>
-    <?php $defaultMaturity = 0 ?>
+    <?php $defaultMaturity = [] ?>
     <?php $defaultInstallment = 0 ?>
     <div class="younitedpay-widget-root" id="yp-widget"
          data-price="<?= $block->escapeHtml($block->getWidgetProductPrice($product)) ?>"
@@ -37,12 +37,13 @@
                     alt="<?= $block->escapeHtml(__("Younited Pay")) ?>">
                     <?php $i = 0; ?>
                     <?php foreach ($installments as $installment => $amount): ?>
-                        <?php $defaultMaturity = ($i == 0) ? $amount['monthlyInstallmentAmount'] : $defaultMaturity; ?>
+                        <?php $defaultMaturity = ($i == 0) ? $amount : $defaultMaturity; ?>
                         <?php $defaultInstallment = ($i == 0) ? $installment : $defaultInstallment; ?>
                         <?php $background_block = ($i == 0) ? ' yp-bg-black-btn' : ''; ?>
-                        <span class="yp-flex yp-flex-row yp-space-x-1 yp-mx-2 yp-mb-1 maturity_installment maturity_installment<?php $i . $background_block; ?>"
+                        <span class="yp-flex yp-flex-row yp-space-x-1 yp-mx-2 yp-mb-1 maturity_installment maturity_installment<?= $i . $background_block; ?>"
                             data-key="<?= $i ?>"
-                            data-maturity="<?= $block->escapeHtml($amount['monthlyInstallmentAmount']) ?>"
+                            data-maturity="<?= $block->escapeHtml($installment) ?>"
+                            data-amount="<?= $block->escapeHtml($amount['monthlyInstallmentAmount']) ?>"
                             data-initamount="<?= $block->escapeHtml($amount['requestedAmount']) ?>"
                             data-taeg="<?= $block->escapeHtml($amount['annualPercentageRate']) ?>"
                             data-tdf="<?= $block->escapeHtml($amount['annualDebitRate']) ?>"
@@ -63,23 +64,27 @@
                     <?php endforeach; ?>
             </div>
             <div class="yp-cursor-pointer yp-flex yp-flex-row yp-items-center yp-flex-wrap yp-text-xs yp-p-2 yp-pb-0">
-                <a href="#younited_popupzone" id="yp-kml">
+                <a href="#younited_popupzone" class="yp-kml">
                     <p><?= __("Click to learn more") ?></p>
                 </a>
             </div>
+            <p class="yp-pol-purpledark yp-weight600 yp-mt-4">
+                <?= __('Taking out a loan is a commitment with an obligation of repayment. Verify your ability to repay the loan before committing.') ?>
+            </p>
         </div>
-        <div id="younited_popupzone" style="display:none;">
-            <div class="popup-content">
-                <button id="yp-close-popup">
-                <svg width="14" height="14" viewBox="0 0 14 14" fill="#1C1C1C" class="yp-close-black" xmlns="http://www.w3.org/2000/svg">
-                    <path d="M8.4 7L13.7 1.7C14.1 1.3 14.1 0.7 13.7 0.3C13.3 -0.1 12.7 -0.1 12.3 0.3L7 5.6L1.7 0.3C1.3 -0.1 0.7 -0.1 0.3 0.3C-0.1 0.7 -0.1 1.3 0.3 1.7L5.6 7L0.3 12.3C-0.1 12.7 -0.1 13.3 0.3 13.7C0.5 13.9 0.7 14 1 14C1.3 14 1.5 13.9 1.7 13.7L7 8.4L12.3 13.7C12.5 13.9 12.8 14 13 14C13.2 14 13.5 13.9 13.7 13.7C14.1 13.3 14.1 12.7 13.7 12.3L8.4 7Z"></path>
-                </svg>
+        <div id="younited_popupzone" class="yp-inset-0 yp-flex yp-fixed yp-justify-center yp-items-center yp-z-100 yp-bg-black yp-bg-opacity-50" style="display:none!important;">
+            <div
+                class="yp-overflow-auto yp-relative yp-flex yp-flex-row yp-flex-wrap yp-rounded-sm yp-shadow-lg yp-w-screen yp-h-screen md:yp-h-580 lg:yp-w-11/12 md:yp-max-w-4xl yp-max-h-screen yp-bg-white">
+                <button class="younited_btnhide yp-opacity-100 yp-absolute yp-top-3 yp-right-4 yp-outline-none close-popup-you">
+                    <svg width="14" height="14" viewBox="0 0 14 14" fill="#1C1C1C" class="yp-close-black" xmlns="http://www.w3.org/2000/svg">
+                    <path d="M8.4 7L13.7 1.7C14.1 1.3 14.1 0.7 13.7 0.3C13.3 -0.1 12.7 -0.1 12.3 0.3L7 5.6L1.7 0.3C1.3 -0.1 0.7 -0.1 0.3 0.3C-0.1 0.7 -0.1 1.3 0.3 1.7L5.6 7L0.3 12.3C-0.1 12.7 -0.1 13.3 0.3 13.7C0.5 13.9 0.7 14 1 14C1.3 14 1.5 13.9 1.7 13.7L7 8.4L12.3 13.7C12.5 13.9 12.8 14 13 14C13.2 14 13.5 13.9 13.7 13.7C14.1 13.3 14.1 12.7 13.7 12.3L8.4 7Z" />
+                    </svg>
                 </button>
-                <div class="yp-left">
-                    <div class="yp-left-title">
-                        <span><?= $block->escapeHtml(__("Buy now and pay as you go")) ?></span>
+                <div class="yp-h-full yp-w-full md:yp-w-2/5 yp-border-lprple yp-bg-purple-light">
+                    <div class="yp-left-title-text yp-font-family-rg">
+                        <span class="yp-h3"><?= $block->escapeHtml(__("Buy now and pay as you go")) ?></span>
                     </div>
-                    <div class="yp-text yp-font-normal yp-pol-purpledark">
+                    <div class="yp-mt-7 yp-font-normal">
                         <span class="yp-step">
                             <span class="yp-linumber">1</span>
                             <span><?= __("At checkout step, select <b>Younited Pay</b>") ?></span>
@@ -97,30 +102,34 @@
                             <span><?= __("Receive a response <b>within seconds</b>") ?></span>
                         </span>
                     </div>
-                    <div class="yp-center">
-                        <img class="yp-popup-logo" alt="youpay" src="<?= $block->escapeHtml($block->getImageSrc('logo-younitedpay.png')) ?>" />
-                    </div>
+                    <p class="yp-mt-6">
+                        <span class="yp-inline-block yp-h-10"></span>
+                    </p>
+                    <p class="yp-mt-6">
+                        <span class="yp-inline-block yp-h-10"></span>
+                    </p>
+                    <span class="yp-flex yp-popup-logo yp-pl-2">
+                        <img class="lazyloaded" src="<?= $block->escapeHtml($block->getImageSrc('logo-younitedpay.png')) ?>" alt="youpay"
+                            data-ll-status="loaded" />
+                        <noscript>
+                            <img src="<?= $block->escapeHtml($block->getImageSrc('logo-younitedpay.png')) ?>" alt="youpay">
+                        </noscript>
+                    </span>
                 </div>
-                <div class="yp-right">
+                <div class="yp-right yp-p-6 yp-h-full yp-w-full md:yp-w-3/5 yp-pb-24 md:yp-pb-8 md:yp-pt-8 yp-flex yp-flex-col yp-align-center yp-bg-beige">
                     <div class="yp-flex-grow">
                         <div class="yp-text-base yp-mt-4 yp-mb-5 yp-h4 yp-text-center">
-                            <span data-bind="i18n: 'Start paying in just 30 days !'"></span>
+                            <span > <?= __('Start paying in just 30 days !') ?></span>
                         </div>
                         <div class="yp-flex yp-justify-center yp-mt-6">
                             <?php $i = 0; ?>
-                            <?php $defautAmount = [
-                                'requestedAmount' => 0,
-                                'interestsTotalAmount' => 0,
-                                'creditTotalAmount' => 0,
-                                'annualPercentageRate' => 0,
-                                'annualDebitRate' => 0
-                            ]; ?>
                             <?php foreach ($installments as $installment => $amount): ?>
                                 <?php $defautAmount = ($i == 0) ? $amount : $defautAmount ?>
                                 <?php $background_block = ($i == 0) ? ' yp-bg-black-btn' : ''; ?>
-                                <span class="yp-flex yp-flex-row yp-space-x-1 yp-mx-2 yp-mb-1 maturity_installment maturity_installment<?php $i . $background_block ?>"
+                                <span class="yp-flex yp-flex-row yp-space-x-1 yp-mx-2 yp-mb-1 maturity_installment maturity_installment<?= $i . $background_block ?>"
                                     data-key="<?= $i ?>"
-                                    data-maturity="<?= $block->escapeHtml($amount['monthlyInstallmentAmount']) ?>"
+                                    data-maturity="<?= $block->escapeHtml($installment) ?>"
+                                    data-amount="<?= $block->escapeHtml($amount['monthlyInstallmentAmount']) ?>"
                                     data-initamount="<?= $block->escapeHtml($amount['requestedAmount']) ?>"
                                     data-taeg="<?= $block->escapeHtml($amount['annualPercentageRate']) ?>"
                                     data-tdf="<?= $block->escapeHtml($amount['annualDebitRate']) ?>"
@@ -141,68 +150,72 @@
                             <?php endforeach; ?>
                         </div>
                         <div class="yp-flex yp-justify-center yp-align-center yp-font-bold yp-text-md yp-font-family-rg yp-mt-6 yp-mb-3">
-                            <span data-bind="i18n: 'Payment in'"></span>&nbsp;
+                            <span > <?= __('Payment in') ?></span>&nbsp;
                             <span class="yp-pol-purpledark yp-pol-purple">
-                                <span data-bind="text: maturity.installment" class="yp-install-maturity-lite"></span>
-                                <span data-bind="i18n: 'times'"></span>
+                                <span class="yp-install-maturity-lite"><?= $block->escapeHtml($defaultInstallment) ?></span>
+                                <span > <?= __('times') ?></span>
                             </span>
                         </div>
                         <div class="yp-info-buy yp-flex yp-font-family-rg yp-mt-6 yp-justify-between yp-items-center">
                             <p class="yp-flex yp-items-center yp-weight600 yp-pol-purpledark yp-text-20">
-                                <span data-bind="i18n: 'Your purchase for '"></span>&nbsp;
-                                <span data-bind="text: maturity.monthlyInstallmentAmount" 
-                                    class="yp-pol-purple yp-text-20 yp-font-bold yp-font-family-rg yp-install-amount"></span>&nbsp;&euro; / 
-                                <span data-bind="i18n: 'months'"></span>
+                                <span > <?= __('Your purchase for ') ?></span>&nbsp;
+                                <span class="yp-pol-purple yp-text-20 yp-font-bold yp-font-family-rg yp-install-amount">
+                                    <?= $block->escapeHtml($defaultMaturity['monthlyInstallmentAmount'] ?? 0) ?>
+                                </span>&nbsp;&euro; / 
+                                <span > <?= __('months') ?></span>
                             </p>
                         </div>
 
                         <div class="yp-border-prple yp-border-2 yp-p-3 yp-rounded-bg yp-mt-6">
                             <div class="yp-mb-8 yp-text-lg yp-pol-purpledark">
                                 <div class="yp-flex yp-flex-row yp-justify-between yp-pol-purple yp-mb-2 yp-text-20 yp-weight600">
-                                    <span><b><span data-bind="i18n: 'Total amount due'"></span></b></span>
+                                    <span><b><span > <?= __('Total amount due') ?></span></b></span>
                                     <span class="yp-mw85 yp-text-right">
-                                        <span class="yp-total" data-bind="text: maturity.creditTotalAmount"></span>&nbsp;€
+                                        <span class="yp-total" ><?= $block->escapeHtml($defaultMaturity['creditTotalAmount'] ?? 0)  ?></span>&nbsp;€
                                     </span>
                                 </div>
                                 <div class="yp-flex yp-flex-row yp-justify-between yp-mb-2">
-                                    <p class="yp-pol-purpledark yp-font-normal">&nbsp;&nbsp;&nbsp;<span data-bind="i18n: 'Total credit amount'"></span></p>
+                                    <p class="yp-pol-purpledark yp-font-normal">&nbsp;&nbsp;&nbsp;<span > <?= __('Total credit amount') ?></span></p>
                                     <p class="yp-weight600 yp-pol-purpledark yp-mw85 yp-text-right">
-                                        <span class="yp-amount" data-bind="text: maturity.requestedAmount"></span>&nbsp;€
+                                        <span class="yp-amount" ><?= $block->escapeHtml($defaultMaturity['requestedAmount'] ?? 0)  ?></span>&nbsp;€
                                     </p>
                                 </div>
                                 <div class="yp-flex yp-flex-row yp-justify-between yp-pb-6">
-                                    <p class="yp-pol-purpledark yp-font-normal">&nbsp;&nbsp;&nbsp;
-                                        <span data-bind="i18n: 'Interest (excl. optional insurance)'"></span>
-                                    </p>
+                                    <p class="yp-pol-purpledark yp-font-normal">&nbsp;&nbsp;&nbsp;<span > <?= __('Interest (excl. optional insurance)') ?></span></p>
                                     <p class="yp-weight600 yp-pol-purpledark yp-mw85 yp-text-right">
-                                        <span class="yp-interest" data-bind="text: maturity.interestsTotalAmount"></span>&nbsp;€
+                                        <span class="yp-interest" ><?= $block->escapeHtml($defaultMaturity['interestsTotalAmount'] ?? 0) ?></span>&nbsp;€
                                     </p>
                                 </div>
                             </div>
                             <div class="yp-mt-6 block_contents block_content_range">
                                 <div class="yp-justify-between yp-flex yp-flex-row yp-mb-2 yp-text-20">
-                                    <span class="yp-weight600 yp-pol-purpledark" data-bind="i18n: 'Fixed APR'">
-                                        <!-- ko if: ( maturity.locale != "es_ES" ) -->
-                                            <br><span data-bind="i18n: '(excluding optional insurance)'"></span>
-                                        <!-- /ko -->
+                                    <span class="yp-weight600 yp-pol-purpledark" > <?= __('Fixed APR') ?>
+                                        <?php if ($defaultMaturity['locale'] ?? '' != 'es'): ?>
+                                            <br><span > <?= __('(excluding optional insurance)') ?></span>
+                                        <?php endif ?>
                                     </span>
                                     <span class="yp-weight600 yp-pol-purpledark yp-mw85 yp-text-right">
-                                        <span class="yp-taeg" data-bind="text: maturity.annualPercentageRate"></span> %
+                                        <span class="yp-taeg" ><?= $block->escapeHtml($defaultMaturity['annualPercentageRate']?? 0) ?></span> %
                                     </span>
                                 </div>
                                 <div class="yp-justify-between yp-flex yp-flex-row yp-mb-2 yp-pol-purpledark yp-font-normal">
-                                    <span data-bind="i18n: 'Fixed lending rate'"></span>
+                                    <span > <?= __('Fixed lending rate') ?></span>
                                     <span class="yp-weight600 yp-mw85 yp-text-right">
-                                        <span class="yp-tdf" data-bind="text: maturity.annualDebitRate"></span> %
+                                        <span class="yp-tdf" ><?= $block->escapeHtml($defaultMaturity['annualDebitRate']?? 0) ?></span> %
                                     </span>
                                 </div>
                             </div>
                         </div>
 
                         <div class="yp-text-responsabilities yp-my-4">
-                            <p class="yp-weight600 yp-pol-purpledark yp-text-20"
-                                data-bind="i18n: 'Taking out a loan is a commitment with an obligation of repayment. Verify your ability to repay the loan before committing.'">
+                            <p class="yp-weight600 yp-pol-purpledark yp-text-20"> 
+                                <?= __('Taking out a loan is a commitment with an obligation of repayment. Verify your ability to repay the loan before committing.') ?>
                             </p>
+                        </div>
+                        <div class="yp-flex yp-justify-end">
+                            <button class="btn younited_btnhide yp-shadow-none yp-opacity-100 yp-mt-3 yp-right-4">
+                                <?= __('Close') ?>
+                            </button>
                         </div>
                     </div>
                 </div>

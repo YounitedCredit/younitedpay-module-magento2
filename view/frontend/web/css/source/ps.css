@@ -1184,6 +1184,10 @@
     letter-spacing: -0.03em!important;
 }
 
+.yp-shadow-none {
+    box-shadow: none !important
+}
+
 
 @media (min-width:768px) {
     .md\:yp-bg-transparent {
@@ -1313,7 +1317,7 @@
     border-color: #6200fe!important;
 }
 
-.hidden {
+.younitedpay-widget-root .hidden {
     display:none!important;
 }
 

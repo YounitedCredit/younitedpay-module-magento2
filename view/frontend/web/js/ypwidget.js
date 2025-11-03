@@ -43,9 +43,17 @@ define([
                 icon: this.options.loader
             });
 
-            $('#yp-close-popup').on('click', function (e) {
-                event.preventDefault();
-                $('#younited_popupzone').hide();
+            $('#younited_popupzone').on('click', function (e) {
+                e.preventDefault();
+                if (e.target === e.currentTarget) {
+                    // We are outside of div / span inside popup if different
+                    $('#younited_popupzone').addClass('hidden');
+                }
+            });
+
+            $('.younited_btnhide').on('click', function (e) {
+                e.preventDefault();
+                $('#younited_popupzone').addClass('hidden');
             });
 
             /**
@@ -93,7 +101,6 @@ define([
             $('.yp-total').text(totalAmount);
             $('.yp-interest').text(interestTotal);
             $('.yp-amount').text(initialAmount);
-            $('.yp-down-amount').text(downPaymentAmount);
         },
 
         createMainObservers: function createMainObservers() {
@@ -102,16 +109,12 @@ define([
             $('.blocks_maturities_popup').on('click', function (e) {
                 var data = $(this).data()
                 _this.YpchangeInstallment(data.key);
+                $('#younited_popupzone').removeClass('hidden');
                 $('#younited_popupzone').show();
             });
 
-            $('.maturity_installment').on('click', function (e) {
-                var contentTitle = $('.yp-left-title').html();
-                if (contentTitle.search('Achetez maintenant') > -1) {
-                    $('.yp-left-title').css('margin', '25px 0 28px 0');
-                } else {
-                    $('.yp-left-title').css('margin','');
-                }
+            $('.maturity_installment, .yp-kml').on('click', function (e) {
+                $('#younited_popupzone').removeClass('hidden');
                 $('#younited_popupzone').show();
                 $('#blocks_maturities_popup' + $(this).data('key')).trigger('click');
             });
@@ -119,7 +122,6 @@ define([
             $('.maturity_installment').hover(function () {
                 var data = $(this).data()
                 _this.YpchangeInstallment(data.key);
-                $('#younited_popupzone').show();
             });
         },
 
