@@ -108,6 +108,13 @@
                         <![CDATA[Comma separated IP list.]]>
                     </comment>
                 </field>
+                <field id="api_debug" translate="label" type="select" sortOrder="50" showInDefault="1" showInStore="1" showInWebsite="1">
+                    <label>Debug API calls</label>
+                    <source_model>Magento\Config\Model\Config\Source\Yesno</source_model>
+                    <comment>
+                        <![CDATA[When enabled, all requests responses will be in the logs.]]>
+                    </comment>
+                </field>
             </group>
         </section>
         <section id="younited_appearance" translate="label" type="text" sortOrder="20" showInDefault="1" showInWebsite="1" showInStore="1">
@@ -119,7 +126,7 @@
                 <label>General</label>
                 <field id="display_on_product_page" translate="label comment" type="select" sortOrder="10" showInDefault="1" showInStore="1" showInWebsite="1">
                     <label>Show monthly installments</label>
-                    <source_model>Magento\Config\Model\Config\Source\Yesno</source_model>
+                    <source_model>YounitedCredit\YounitedPay\Model\Config\Source\ProductCart</source_model>
                     <comment>
                         <![CDATA[If you wish only have theses informations on the cart you can select 'No' to hide it on product pages. This also disables the widget codes.]]>
                     </comment>

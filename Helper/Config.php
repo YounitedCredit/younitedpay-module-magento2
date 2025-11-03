@@ -34,6 +34,7 @@ class Config
 
     const XML_PATH_IS_IP_WHITELIST = 'younited_setup/general/enable_ip_whitelist';
     const XML_PATH_IP_WHITELIST = 'younited_setup/general/ip_whitelist';
+    const XML_PATH_API_DEBUG = 'younited_setup/general/api_debug';
     const XML_PATH_API_DEV_MODE = 'younited_setup/general/mode';
     const XML_PATH_API_CLIENT_ID = 'younited_setup/general/client_id';
     const XML_PATH_API_CLIENT_SECRET = 'younited_setup/general/client_secret';

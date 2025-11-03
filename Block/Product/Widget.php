@@ -20,11 +20,17 @@
 namespace YounitedCredit\YounitedPay\Block\Product;
 
 use Magento\Catalog\Api\ProductRepositoryInterface;
+use Magento\Checkout\Model\Session as CheckoutSession;
 use Magento\Store\Model\ScopeInterface;
 use YounitedCredit\YounitedPay\Helper\Config;
 
 class Widget extends \Magento\Catalog\Block\Product\View
 {
+    const DISABLED = 'disabled';
+    const PRODUCT_ONLY = 'product';
+    const CART_ONLY = 'cart';
+    const CART_AND_PRODUCT = 'both';
+
     /**
      * @var \Magento\Store\Api\Data\StoreInterface
      */
@@ -46,6 +52,11 @@ class Widget extends \Magento\Catalog\Block\Product\View
     protected $productPrice;
 
     /**
+     * @var CheckoutSession
+     */
+    protected $checkoutSession;
+
+    /**
      * Widget constructor.
      *
      * @param \Magento\Catalog\Block\Product\Context $context
@@ -59,6 +70,7 @@ class Widget extends \Magento\Catalog\Block\Product\View
      * @param ProductRepositoryInterface $productRepository
      * @param \Magento\Framework\Pricing\PriceCurrencyInterface $priceCurrency
      * @param \YounitedCredit\YounitedPay\Helper\Maturity $maturityHelper
+     * @param Magento\Checkout\Model\Session $checkoutSession
      * @param array $data
      */
     public function __construct(
@@ -73,6 +85,7 @@ class Widget extends \Magento\Catalog\Block\Product\View
         ProductRepositoryInterface $productRepository,
         \Magento\Framework\Pricing\PriceCurrencyInterface $priceCurrency,
         \YounitedCredit\YounitedPay\Helper\Maturity $maturityHelper,
+        CheckoutSession $checkoutSession,
         array $data = []
     ) {
         parent::__construct(
@@ -90,6 +103,7 @@ class Widget extends \Magento\Catalog\Block\Product\View
         );
 
         $this->maturityHelper = $maturityHelper;
+        $this->checkoutSession = $checkoutSession;
     }
 
     /**
@@ -107,6 +121,54 @@ class Widget extends \Magento\Catalog\Block\Product\View
     }
 
     /**
+     * Get Location argument
+     *
+     * @return string
+     */
+    public function getLocation()
+    {
+        $location = $this->getData('location') ?? 'cart';
+        return empty($location) === false ? $location : 'cart';
+    }
+
+    /**
+     * Get Price of product / cart / ajax amount
+     *
+     * @return float $price
+     */
+    public function getPrice()
+    {
+        $location = $this->getLocation();
+        switch ($location) {
+            case 'cart':
+                return (float) $this->checkoutSession->getQuote()->getGrandTotal() ?? 0;
+            case 'ajax':
+                return (float) $this->getData('amount') ?? 0;
+            default:
+                return (float) $this->getWidgetProductPrice($this->getProduct());
+        }
+    }
+
+    /**
+     * Get type of product / cart / ajax amount
+     *
+     * @return string
+     */
+    public function getType()
+    {
+        $location = $this->getLocation();
+        switch ($location) {
+            case 'cart':
+                return 'cart';
+            case 'ajax':
+                return ( $this->getData('type') ?? 'none' ) . '-' . $location;
+            default:
+                $product = $this->getProduct();
+                return $product->getTypeId() ?? 'none';
+        }
+    }
+
+    /**
      * Check if module is in developper mode
      *
      * @return bool
@@ -114,6 +176,20 @@ class Widget extends \Magento\Catalog\Block\Product\View
     public function isDevMode()
     {
         return $this->getConfig(Config::XML_PATH_API_DEV_MODE);
+    }
+
+    /**
+     * Return active configuration (page active = disabled | product | cart | both)
+     * 
+     * @return string
+     */
+    public function getPageActive()
+    {
+        $pageActive = $this->getConfig(Config::XML_PATH_IS_ON_PRODUCT_PAGE);
+        $pageActive = $pageActive === '1' ? self::DISABLED : $pageActive;
+        $pageActive = $pageActive === '2' ? self::PRODUCT_ONLY : $pageActive;
+
+        return $pageActive;
     }
 
     /**
@@ -126,13 +202,33 @@ class Widget extends \Magento\Catalog\Block\Product\View
         if ($this->getStore()->getCurrentCurrency()->getCode() !== 'EUR') {
             return false;
         }
-
-        if (!$this->getConfig(Config::XML_PATH_IS_ACTIVE) || !$this->getConfig(Config::XML_PATH_IS_ON_PRODUCT_PAGE)) {
+        
+        $pageActive = $this->getPageActive();
+        if (!$this->getConfig(Config::XML_PATH_IS_ACTIVE) || $pageActive === self::DISABLED) {
             return false;
         }
-        if ($this->getData('location')
-            && $this->getConfig(Config::XML_PATH_PRODUCT_PAGE_LOCATION) != $this->getData('location')) {
-            return false;
+
+        $location = $this->getLocation();
+        switch ($location) {
+            case 'cart':
+                if ($pageActive !== self::CART_ONLY && $pageActive !== self::CART_AND_PRODUCT) {
+                    return false;
+                }
+                break;
+            case 'ajax':
+                break;
+            default:
+                if ($location && $this->getConfig(Config::XML_PATH_PRODUCT_PAGE_LOCATION) != $location) {
+                    return false;
+                }
+                if ($pageActive !== self::PRODUCT_ONLY && $pageActive !== self::CART_AND_PRODUCT) {
+                    return false;
+                }
+                $product = $this->getProduct();
+                if (!$product->getId() || $product->getTypeId() === 'grouped') {
+                    return false;
+                }
+                break;
         }
 
         if ($this->getConfig(Config::XML_PATH_IS_IP_WHITELIST)) {
@@ -202,14 +298,14 @@ class Widget extends \Magento\Catalog\Block\Product\View
     /**
      * Get installments for spécified price
      *
-     * @param \Magento\Catalog\Model\Product $product
+     * @param \Magento\Catalog\Model\Product|null $product
      *
      * @return array|null
      * @throws \Magento\Framework\Exception\NoSuchEntityException
      */
-    public function getInstallments($product)
+    public function getInstallments()
     {
-        return $this->maturityHelper->getInstallments($this->getWidgetProductPrice($product), $this->getStoreCode());
+        return $this->maturityHelper->getInstallments((float) $this->getPrice(), $this->getStoreCode());
     }
 
     /**
@@ -223,8 +319,7 @@ class Widget extends \Magento\Catalog\Block\Product\View
     {
         if (!$this->productPrice) {
             if ($product->getTypeId() == 'configurable') {
-                $this->productPrice = (float)$product->getPriceInfo()->getPrice('regular_price')
-                    ->getMinRegularAmount()->getValue();
+                $this->productPrice = (float)$product->getPriceInfo()->getPrice('regular_price')->getMinRegularAmount()->getValue();
             } else {
                 if ($product->getTypeId() == 'bundle') {
                     /** @var \Magento\Bundle\Pricing\Price\BundleRegularPrice $priceInfo */

@@ -21,7 +21,7 @@ namespace YounitedCredit\YounitedPay\Block\Adminhtml\Form\Field;
 
 use Magento\Framework\View\Element\Context;
 use YounitedCredit\YounitedPay\Helper\Maturity;
-use YounitedPaySDK\Client;
+Use YounitedCredit\YounitedPay\Helper\YounitedClient;
 use YounitedPaySDK\Request\AvailableMaturitiesRequest;
 
 class Maturities extends \Magento\Framework\View\Element\Html\Select
@@ -92,7 +92,7 @@ class Maturities extends \Magento\Framework\View\Element\Html\Select
                 return [];
             }
 
-            $client = new Client();
+            $client = new YounitedClient();
             $request = new AvailableMaturitiesRequest();
             if ($credentials['mode'] === 'dev') {
                 $request = $request->enableSandbox();

@@ -23,6 +23,7 @@
         <younited_setup>
             <general>
                 <mode>dev</mode>
+                <api_debug>0</api_debug>
             </general>
         </younited_setup>
         <younited_appearance>

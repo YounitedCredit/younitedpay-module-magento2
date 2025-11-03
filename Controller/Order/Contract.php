@@ -24,7 +24,7 @@ use Magento\Customer\Api\CustomerRepositoryInterface;
 use Magento\Framework\UrlInterface;
 use Magento\Store\Model\Information;
 use YounitedCredit\YounitedPay\Helper\Config;
-use YounitedPaySDK\Client;
+Use YounitedCredit\YounitedPay\Helper\YounitedClient;
 use YounitedPaySDK\Model\Address;
 use YounitedPaySDK\Model\Basket;
 use YounitedPaySDK\Model\BasketItem;
@@ -72,7 +72,7 @@ class Contract extends \Magento\Checkout\Controller\Onepage
     protected $productMetadata;
 
     /**
-     * @var \Psr\Log\LoggerInterface
+     * @var \YounitedCredit\YounitedPay\Model\YounitedLogger
      */
     protected $logger;
 
@@ -105,7 +105,7 @@ class Contract extends \Magento\Checkout\Controller\Onepage
      * @param \Magento\Framework\Stdlib\DateTime\DateTime $date
      * @param UrlInterface $urlBuilder
      * @param \Magento\Framework\App\ProductMetadataInterface $productMetadata
-     * @param \Psr\Log\LoggerInterface $logger
+     * @param \YounitedCredit\YounitedPay\Model\YounitedLogger $logger
      */
     public function __construct(
         \Magento\Framework\App\Action\Context $context,
@@ -129,7 +129,7 @@ class Contract extends \Magento\Checkout\Controller\Onepage
         \Magento\Framework\Stdlib\DateTime\DateTime $date,
         UrlInterface $urlBuilder,
         \Magento\Framework\App\ProductMetadataInterface $productMetadata,
-        \Psr\Log\LoggerInterface $logger
+        \YounitedCredit\YounitedPay\Model\YounitedLogger $logger
     ) {
         $this->orderRepository = $orderRepository;
         $this->maturityHelper = $maturityHelper;
@@ -273,7 +273,7 @@ class Contract extends \Magento\Checkout\Controller\Onepage
 //        $customerInfo->setBirthDate($order->getCustomerDob());
 //        $customerInfo->setGenderCode($order->getCustomerGender());
 
-        $client = new Client();
+        $client = new YounitedClient();
         $body = new InitializeContract();
 
         $body->setBasket($cart);

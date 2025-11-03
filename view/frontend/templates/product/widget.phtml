@@ -22,46 +22,53 @@
  * @var $block \YounitedCredit\YounitedPay\Block\Product\Widget
  */
 ?>
-<?php $product = $block->getProduct() ?>
-<?php if ($block->isEnabled() && $product && $product->getId() && $product->getTypeId() != 'grouped'): ?>
-    <?php $installments = $block->getInstallments($product) ?>
+<?php $blockName = $block->getLocation(); ?>
+<?php $blockAvailable = false; ?>
+<?php $price = $block->getPrice(); ?>
+<?php $installments = $block->getInstallments(); ?>
+<?php $blockAvailable = $block->isEnabled(); ?>
+<?php $productType = $block->getType(); ?>
+<?php if ($blockAvailable): ?>
     <?php $defaultMaturity = [] ?>
     <?php $defaultInstallment = 0 ?>
     <div class="younitedpay-widget-root" id="yp-widget"
-         data-price="<?= $block->escapeHtml($block->getWidgetProductPrice($product)) ?>"
-         data-type="<?= $block->escapeHtml($product->getTypeId()) ?>"
+         data-location="<?= $block->escapeHtml($blockName) ?>"
+         data-price="<?= $block->escapeHtml($price) ?>"
+         data-page="<?= $block->escapeHtml($block->getPageActive()) ?>"
+         data-type="<?= $block->escapeHtml($productType) ?>"
         <?php if (empty($installments)): ?> style="display: none"<?php endif ?>>
         <div class="younited_block yp-pb-2 yp-pt-2 yp-my-2">
-            <div class="yp-cursor-pointer yp-flex yp-flex-row yp-items-center yp-flex-wrap">
-                <img class="yp-mb-2 yp-logo lazyloaded" src="<?= $block->escapeHtml($block->getImageSrc('logo-younitedpay.png')) ?>"
-                    alt="<?= $block->escapeHtml(__("Younited Pay")) ?>">
-                    <?php $i = 0; ?>
-                    <?php foreach ($installments as $installment => $amount): ?>
-                        <?php $defaultMaturity = ($i == 0) ? $amount : $defaultMaturity; ?>
-                        <?php $defaultInstallment = ($i == 0) ? $installment : $defaultInstallment; ?>
-                        <?php $background_block = ($i == 0) ? ' yp-bg-black-btn' : ''; ?>
-                        <span class="yp-flex yp-flex-row yp-space-x-1 yp-mx-2 yp-mb-1 maturity_installment maturity_installment<?= $i . $background_block; ?>"
-                            data-key="<?= $i ?>"
-                            data-maturity="<?= $block->escapeHtml($installment) ?>"
-                            data-amount="<?= $block->escapeHtml($amount['monthlyInstallmentAmount']) ?>"
-                            data-initamount="<?= $block->escapeHtml($amount['requestedAmount']) ?>"
-                            data-taeg="<?= $block->escapeHtml($amount['annualPercentageRate']) ?>"
-                            data-tdf="<?= $block->escapeHtml($amount['annualDebitRate']) ?>"
-                            data-totalamount="<?= $block->escapeHtml($amount['creditTotalAmount']) ?>"
-                            data-interesttotal="<?= $block->escapeHtml($amount['interestsTotalAmount']) ?>"
-                        >
-                            <span class="yp-inline-block yp-h-10">
-                                <span class="yp-inline-block yp-transition-all yp-border-opacity-100 yp-h-10 
-                                    blocks_maturity block_maturity<?= $i ?> yp-flex flexmiddle ">
-                                    <span class="yp-flex flexmiddle yp-p-2 yp-rounded-sm yp-transition-colors 
-                                    yp-duration-500 yp-select-none">
-                                        <?= $block->escapeHtml($installment) ?>x
-                                    </span>
+            <div class="yp-cursor-pointer yp-flex yp-flex-row yp-items-center yp-flex-wrap yp-block-content">
+                <?php $logoImg = 'logo-younitedpay' . ( $blockName === 'cart' ? '-btn' : '' ) . '.png'; ?>
+                <img class="yp-mb-2 yp-logo lazyloaded" src="<?= $block->escapeHtml($block->getImageSrc($logoImg)) ?>"
+                    alt="<?= $block->escapeHtml(__("Younited Pay")) ?>" />
+                <?php $i = 0; ?>
+                <?php foreach ($installments as $installment => $amount): ?>
+                    <?php $defaultMaturity = ($i == 0) ? $amount : $defaultMaturity; ?>
+                    <?php $defaultInstallment = ($i == 0) ? $installment : $defaultInstallment; ?>
+                    <?php $background_block = ($i == 0) ? ' yp-bg-black-btn' : ''; ?>
+                    <span class="yp-flex yp-flex-row yp-space-x-1 yp-mx-2 yp-mb-1 maturity_installment maturity_installment<?= $i . $background_block; ?>"
+                        data-key="<?= $i ?>"
+                        data-maturity="<?= $block->escapeHtml($installment) ?>"
+                        data-amount="<?= $block->escapeHtml($amount['monthlyInstallmentAmount']) ?>"
+                        data-initamount="<?= $block->escapeHtml($amount['requestedAmount']) ?>"
+                        data-taeg="<?= $block->escapeHtml($amount['annualPercentageRate']) ?>"
+                        data-tdf="<?= $block->escapeHtml($amount['annualDebitRate']) ?>"
+                        data-totalamount="<?= $block->escapeHtml($amount['creditTotalAmount']) ?>"
+                        data-interesttotal="<?= $block->escapeHtml($amount['interestsTotalAmount']) ?>"
+                    >
+                        <span class="yp-inline-block yp-h-10">
+                            <span class="yp-inline-block yp-transition-all yp-border-opacity-100 yp-h-10 
+                                blocks_maturity block_maturity<?= $i ?> yp-flex flexmiddle ">
+                                <span class="yp-flex flexmiddle yp-p-2 yp-rounded-sm yp-transition-colors 
+                                yp-duration-500 yp-select-none">
+                                    <?= $block->escapeHtml($installment) ?>x
                                 </span>
                             </span>
-                        </span> 
-                        <?php $i++; ?>
-                    <?php endforeach; ?>
+                        </span>
+                    </span> 
+                    <?php $i++; ?>
+                <?php endforeach; ?>
             </div>
             <div class="yp-cursor-pointer yp-flex yp-flex-row yp-items-center yp-flex-wrap yp-text-xs yp-p-2 yp-pb-0">
                 <a href="#younited_popupzone" class="yp-kml">

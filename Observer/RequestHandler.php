@@ -23,9 +23,9 @@ use Magento\Framework\Event\Observer;
 use Magento\Framework\Event\ObserverInterface;
 use Magento\Framework\Message\ManagerInterface;
 use Magento\Framework\Stdlib\DateTime\DateTime;
-use Psr\Log\LoggerInterface;
+use YounitedCredit\YounitedPay\Model\YounitedLogger;
 use YounitedCredit\YounitedPay\Helper\Maturity;
-use YounitedPaySDK\Client;
+Use YounitedCredit\YounitedPay\Helper\YounitedClient;
 
 abstract class RequestHandler implements ObserverInterface
 {
@@ -45,7 +45,7 @@ abstract class RequestHandler implements ObserverInterface
     protected $messageManager;
 
     /**
-     * @var LoggerInterface
+     * @var YounitedLogger
      */
     protected $logger;
 
@@ -55,13 +55,13 @@ abstract class RequestHandler implements ObserverInterface
      * @param Maturity $maturityHelper
      * @param DateTime $date
      * @param ManagerInterface $messageManager
-     * @param LoggerInterface $logger
+     * @param YounitedLogger $logger
      */
     public function __construct(
         Maturity $maturityHelper,
         DateTime $date,
         ManagerInterface $messageManager,
-        LoggerInterface $logger
+        YounitedLogger $logger
     ) {
         $this->maturityHelper = $maturityHelper;
         $this->date = $date;
@@ -100,7 +100,7 @@ abstract class RequestHandler implements ObserverInterface
         string $errorMessage = '',
         string $successMessage = ''
     ) {
-        $client = new Client();
+        $client = new YounitedClient();
         $credentials = $this->maturityHelper->getApiCredentials($storeId);
 
         $body->setContractReference($informations['Payment ID']);

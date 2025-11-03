@@ -24,7 +24,7 @@ use Magento\Framework\Exception\LocalizedException;
 use Magento\Framework\Serialize\Serializer\Json;
 use Magento\Store\Model\ScopeInterface;
 use Magento\Store\Model\Store;
-use YounitedPaySDK\Client;
+Use YounitedCredit\YounitedPay\Helper\YounitedClient;
 use YounitedPaySDK\Model\BestPrice;
 use YounitedPaySDK\Request\BestPriceRequest;
 
@@ -53,7 +53,7 @@ class Maturity
     protected $storeManager;
 
     /**
-     * @var \Psr\Log\LoggerInterface
+     * @var \YounitedCredit\YounitedPay\Model\YounitedLogger
      */
     protected $logger;
 
@@ -73,14 +73,14 @@ class Maturity
      * @param \Magento\Framework\App\Config\ScopeConfigInterface $scopeConfig
      * @param \Magento\Framework\Math\Random $mathRandom
      * @param \Magento\Store\Model\StoreManagerInterface $storeManager
-     * @param \Psr\Log\LoggerInterface $logger
+     * @param \YounitedCredit\YounitedPay\Model\YounitedLogger $logger
      * @param Json|null $serializer
      */
     public function __construct(
         \Magento\Framework\App\Config\ScopeConfigInterface $scopeConfig,
         \Magento\Framework\Math\Random $mathRandom,
         \Magento\Store\Model\StoreManagerInterface $storeManager,
-        \Psr\Log\LoggerInterface $logger,
+        \YounitedCredit\YounitedPay\Model\YounitedLogger $logger,
         Json $serializer = null
     ) {
         $this->scopeConfig = $scopeConfig;
@@ -378,7 +378,7 @@ class Maturity
             return $maturities;
         }
 
-        $client = new Client();
+        $client = new YounitedClient();
         $body = new BestPrice();
         $body->setBorrowedAmount($price);
 

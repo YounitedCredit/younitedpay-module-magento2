@@ -49,10 +49,9 @@ class MaturitiesConfig extends \Magento\Config\Block\System\Config\Form\Field\Fi
     public function __construct(
         Context $context,
         Maturity $maturityHelper,
-        array $data = [],
-        $secureRenderer = null
+        array $data = []
     ) {
-        parent::__construct($context, $data, $secureRenderer);
+        parent::__construct($context, $data);
         $this->maturityHelper = $maturityHelper;
     }
 
