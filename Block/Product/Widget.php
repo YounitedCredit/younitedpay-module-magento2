@@ -279,6 +279,11 @@ class Widget extends \Magento\Catalog\Block\Product\View
     public function getStoreCode()
     {
         if (!$this->storeCode) {
+            if ($this->getLocation() === 'ajax') {
+                $this->storeCode = $this->getData('store');
+            }
+        }
+        if (!$this->storeCode) {
             $this->storeCode = ($this->getStore()) ? $this->getStore()->getCode() : null;
         }
         return $this->storeCode;

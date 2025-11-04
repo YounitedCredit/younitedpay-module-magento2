@@ -88,7 +88,7 @@ define([
 
                 $.ajax({
                     'url': url,
-                    'type': 'POST',
+                    'type': 'GET',
                     'success': function (data) {
                         window.checkoutConfig.payment.younited.maturities = {}
                         for (const installment in data) {

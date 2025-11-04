@@ -16,11 +16,13 @@
                        data-bind="attr: {'id': 'mat_' + maturity.installment}, value: maturity.installment, click:$parent.selectMaturity.bind($data, maturity.installment)">
                 <label data-bind="html: maturity.subTitle, attr: {'for': 'mat_' + maturity.installment}" class="label"></label>
                 <div class="yp-info" data-bind="attr: {'id': 'yp-info-' + maturity.installment}, visible: false">
+                    <!-- ko if: ( $parent.getPhoneError() != '' ) -->
                     <div class="yp-error messages">
                         <div class="message-error error message">
                             <p class="yp-error-phone" data-bind="text: $parent.getPhoneError()"></p>
                         </div>
                     </div>
+                    <!-- /ko -->
                     <div class="younitedpay-widget-root">
                         <div class="yp-text-base yp-mt-4 yp-mb-5 yp-h4 yp-text-center">
                             <span data-bind="i18n: 'Start paying in just 30 days !'"></span>

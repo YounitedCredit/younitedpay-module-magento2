@@ -20,6 +20,7 @@
 namespace YounitedCredit\YounitedPay\Controller\Ajax;
 
 use Magento\Framework\App\Action\Context;
+use Magento\Framework\Controller\Result\JsonFactory;
 use Magento\Framework\Controller\Result\RawFactory;
 use Magento\Framework\View\LayoutFactory;
 
@@ -34,6 +35,11 @@ class Maturity extends \Magento\Framework\App\Action\Action
      * @var \Magento\Framework\Controller\Result\RawFactory
      */
     protected $resultRawFactory;
+
+    /**
+     * @var \Magento\Framework\Controller\Result\JsonFactory
+     */
+    protected $jsonResultFactory;
 
     /**
      * @var \Magento\Framework\View\Result\LayoutFactory
@@ -52,18 +58,21 @@ class Maturity extends \Magento\Framework\App\Action\Action
      * @param LayoutFactory $layoutFactory
      * @param \Magento\Framework\Controller\Result\RawFactory $resultRawFactory
      * @param \Magento\Framework\View\Result\LayoutFactory $resultLayoutFactory
+     * @param \Magento\Framework\Controller\Result\JsonFactory $jsonResultFactory
      * @param \YounitedCredit\YounitedPay\Helper\Maturity $maturityHelper
      */
     public function __construct(
         Context $context,
         RawFactory $resultRawFactory,
         LayoutFactory $layoutFactory,
+        JsonFactory $jsonResultFactory,
         \Magento\Framework\View\Result\LayoutFactory $resultLayoutFactory,
         \YounitedCredit\YounitedPay\Helper\Maturity $maturityHelper
     ) {
         $this->layoutFactory = $layoutFactory;
         parent::__construct($context);
         $this->resultRawFactory = $resultRawFactory;
+        $this->jsonResultFactory = $jsonResultFactory;
         $this->resultLayoutFactory = $resultLayoutFactory;
         $this->maturityHelper = $maturityHelper;
     }
@@ -75,8 +84,11 @@ class Maturity extends \Magento\Framework\App\Action\Action
      */
     public function execute()
     {
-        $layout = $this->layoutFactory->create();
         $request = $this->getRequest();
+        if (!$request->getParam('location')) {
+            return $this->executeCheckout();
+        }
+        $layout = $this->layoutFactory->create();
 
         /** @var \YounitedCredit\YounitedPay\Block\Product $block */
         $block = $layout->createBlock('YounitedCredit\YounitedPay\Block\Product\Widget');
@@ -84,7 +96,7 @@ class Maturity extends \Magento\Framework\App\Action\Action
 
         $resultRaw = $this->resultRawFactory->create();
 
-        $params = ['amount', 'type', 'location'];
+        $params = ['amount', 'type', 'location', 'store'];
         $data = ['ajax' => true];
         foreach ($params as $oneParam) {
             if (!$request->getParam($oneParam)) {
@@ -97,5 +109,24 @@ class Maturity extends \Magento\Framework\App\Action\Action
 
         $block->setData($data);
         return $resultRaw->setContents($block->toHtml());
+    }
+
+    private function executeCheckout()
+    {
+        $result = $this->jsonResultFactory->create();
+        $request = $this->getRequest();
+
+        if (!$request->getParam('amount') || !$request->getParam('store') || !$request->isAjax()) {
+            $result->setData([]);
+            return $result;
+        }
+
+        $data = $this->maturityHelper->getInstallments(
+            str_replace('-', '.', $request->getParam('amount')),
+            $request->getParam('store')
+        );
+
+        $result->setData($data);
+        return $result;
     }
 }
