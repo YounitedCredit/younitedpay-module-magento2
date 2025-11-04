@@ -22,7 +22,8 @@ namespace YounitedCredit\YounitedPay\Block\Adminhtml\Form\Field;
 use Magento\Framework\View\Element\Context;
 use YounitedCredit\YounitedPay\Helper\Maturity;
 Use YounitedCredit\YounitedPay\Helper\YounitedClient;
-use YounitedPaySDK\Request\AvailableMaturitiesRequest;
+use YounitedPaySDK\Request\BestPriceRequest;
+use YounitedPaySDK\Model\BestPrice;
 
 class Maturities extends \Magento\Framework\View\Element\Html\Select
 {
@@ -93,10 +94,12 @@ class Maturities extends \Magento\Framework\View\Element\Html\Select
             }
 
             $client = new YounitedClient();
-            $request = new AvailableMaturitiesRequest();
-            if ($credentials['mode'] === 'dev') {
-                $request = $request->enableSandbox();
-            }
+            $body = new BestPrice();
+            $body->setBorrowedAmount(3500);
+
+            $request = ($credentials['mode'] === 'dev')
+                ? (new BestPriceRequest())->enableSandbox()->setModel($body)
+                : (new BestPriceRequest())->setModel($body);
             try {
                 $response = $client->setCredential(
                     $credentials['clientId'],
@@ -104,11 +107,12 @@ class Maturities extends \Magento\Framework\View\Element\Html\Select
                 )->sendRequest($request);
 
                 if ($response->getStatusCode() == 200) {
-                    foreach ($response->getModel() as $val) {
+                    foreach ($response->getModel() as $oneOffer) {
+                        $val = $oneOffer->getMaturityInMonths();
                         $this->_maturities[$val] = $val . 'x';
                     }
                 }
-            } catch (Exception $e) {
+            } catch (\Exception $e) {
                 $this->_maturities = [];
             }
         }
