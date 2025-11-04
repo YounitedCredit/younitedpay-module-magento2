@@ -84,7 +84,7 @@ class Maturity extends \Magento\Framework\App\Action\Action
 
         $resultRaw = $this->resultRawFactory->create();
 
-        $params = ['amount', 'type', 'store', 'location'];
+        $params = ['amount', 'type', 'location'];
         $data = ['ajax' => true];
         foreach ($params as $oneParam) {
             if (!$request->getParam($oneParam)) {
@@ -93,12 +93,9 @@ class Maturity extends \Magento\Framework\App\Action\Action
             $data[$oneParam] = $request->getParam($oneParam);
             $data[$oneParam] = $oneParam === 'amount' ? str_replace('-', '.', $data[$oneParam]) : $data[$oneParam];
         }
+        $data['location'] = 'ajax';
 
-        if (!$request->isAjax()) {
-            return $resultRaw->setContents($block->toHtml());
-        }
-
-        $block->setData('data', $data);
+        $block->setData($data);
         return $resultRaw->setContents($block->toHtml());
     }
 }

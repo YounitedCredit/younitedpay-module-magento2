@@ -164,14 +164,14 @@ define([
                     // @see https://stackoverflow.com/questions/1862130/strip-all-non-numeric-characters-from-string-in-javascript
                     price += '';
                     price = price.replace('.', '-').replace(' ', '');
-                    var url = _this.options.url + 'amount/' + price + '/store/' + _this.options.store + '/';
+                    var url = _this.options.url + 'amount/' + price + '/';
                     url += 'type/' + type + '/location/' + location;
                     
                     setTimeout(function () {
                         _this.ld.loader('show');
                         $.ajax({
                             'url': url,
-                            'type': 'POST',
+                            'type': 'GET',
                             'success': function (data) {
                                 _this.updateDisplay(data);
                                 _this.ld.loader('hide');

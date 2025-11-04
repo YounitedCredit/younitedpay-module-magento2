@@ -378,6 +378,10 @@ class Maturity
             return $maturities;
         }
 
+        if ((float) $price < 1) {
+            return $maturities;
+        }
+
         $client = new YounitedClient();
         $body = new BestPrice();
         $body->setBorrowedAmount($price);

@@ -128,7 +128,7 @@ class Widget extends \Magento\Catalog\Block\Product\View
     public function getLocation()
     {
         $location = $this->getData('location') ?? 'cart';
-        return empty($location) === false ? $location : 'cart';
+        return empty($location) === false ? $location : 'ajax';
     }
 
     /**
@@ -145,6 +145,9 @@ class Widget extends \Magento\Catalog\Block\Product\View
             case 'ajax':
                 return (float) $this->getData('amount') ?? 0;
             default:
+                if ((bool) $this->getData('ajax') === true && (float) $this->getData('amount') >= 1) {
+                    return $this->getData('amount');
+                }
                 return (float) $this->getWidgetProductPrice($this->getProduct());
         }
     }
