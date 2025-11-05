@@ -418,12 +418,12 @@ class Maturity
             }
 
             $maturity = $maturityConfig[$offers->getMaturityInMonths()];
-            $maturity['requestedAmount'] = $offers->getRequestedAmount();
+            $maturity['requestedAmount'] = $this->formatPrice($offers->getRequestedAmount());
             $maturity['annualPercentageRate'] = (string) round((float) $offers->getAnnualPercentageRate() * 100, 2);
             $maturity['annualDebitRate'] = (string) round((float) $offers->getAnnualDebitRate() * 100, 2);
-            $maturity['monthlyInstallmentAmount'] = $offers->getMonthlyInstallmentAmount();
-            $maturity['creditTotalAmount'] = $offers->getCreditTotalAmount();
-            $maturity['interestsTotalAmount'] = $offers->getInterestsTotalAmount();
+            $maturity['monthlyInstallmentAmount'] = $this->formatPrice($offers->getMonthlyInstallmentAmount());
+            $maturity['creditTotalAmount'] = $this->formatPrice($offers->getCreditTotalAmount());
+            $maturity['interestsTotalAmount'] = $this->formatPrice($offers->getInterestsTotalAmount());
             $maturity['locale'] = $storeLocale;
 
             $maturities[$offers->getMaturityInMonths()] = $maturity;
@@ -448,6 +448,11 @@ class Maturity
         }
 
         return $this->scopeConfig->getValue($path, $scope, $storeId);
+    }
+
+    public function formatPrice($price)
+    {
+        return str_replace('.00', '', number_format(round($price, 2), 2, '.', ''));
     }
 
     /**
