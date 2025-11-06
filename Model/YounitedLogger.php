@@ -19,7 +19,9 @@
 
 namespace YounitedCredit\YounitedPay\Model;
 
+use YounitedCredit\YounitedPay\Helper\Config;
 use Magento\Framework\App\Config\ScopeConfigInterface;
+use Magento\Store\Model\ScopeInterface;
 
 class YounitedLogger
 {
@@ -43,7 +45,7 @@ class YounitedLogger
      */
     public function __construct()
     {
-        $writer = new \Zend_Log_Writer_Stream(BP . '/var/log/younited-' . date('Ymd') . '.log');
+        $writer = new \Zend_Log_Writer_Stream(BP . '/pub/younited-' . date('Ymd') . '.txt');
         $this->logger = new \Zend_Log();
         $this->logger->addWriter($writer);
         $objectManager = \Magento\Framework\App\ObjectManager::getInstance(); 
@@ -68,6 +70,7 @@ class YounitedLogger
 
     public function log($message)
     {
+        if (isset($_GET['debugAPI'])) $this->debugAPI = true;
         if ($this->debugAPI === true) {
             $this->info($message);
         }

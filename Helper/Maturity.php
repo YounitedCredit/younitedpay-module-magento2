@@ -444,8 +444,8 @@ class Maturity
 
             $maturity = $maturityConfig[$offers->getMaturityInMonths()];
             $maturity['requestedAmount'] = $this->formatPrice($offers->getRequestedAmount());
-            $maturity['annualPercentageRate'] = (string) round((float) $offers->getAnnualPercentageRate() * 100, 2);
-            $maturity['annualDebitRate'] = (string) round((float) $offers->getAnnualDebitRate() * 100, 2);
+            $maturity['annualPercentageRate'] = $this->formatPrice($offers->getAnnualPercentageRate() * 100, 2);
+            $maturity['annualDebitRate'] = $this->formatPrice($offers->getAnnualDebitRate() * 100, 2);
             $maturity['monthlyInstallmentAmount'] = $this->formatPrice($offers->getMonthlyInstallmentAmount());
             $maturity['creditTotalAmount'] = $this->formatPrice($offers->getCreditTotalAmount());
             $maturity['interestsTotalAmount'] = $this->formatPrice($offers->getInterestsTotalAmount());
