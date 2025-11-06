@@ -1,5 +1,4 @@
-<?xml version="1.0"?>
-<!--
+<?php
 /**
  * Copyright since 2022 Younited Credit
  *
@@ -17,12 +16,30 @@
  * @copyright 2022 Younited Credit
  * @license   https://opensource.org/licenses/AFL-3.0  Academic Free License (AFL 3.0)
  */
--->
-<config xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="urn:magento:framework:ObjectManager/etc/config.xsd">
-    <type name="Magento\Sales\Block\Adminhtml\Order\Create\Billing\Method\Form">
-        <plugin sortOrder="1" name="Younited_Adminhtml_Order_Create_BillingForm" type="YounitedCredit\YounitedPay\Plugin\Adminhtml\Order\Create\BillingFormPlugin"/>
-    </type>
-    <type name="Magento\Config\Model\Config">
-        <plugin name="admin_system_config_save_plugin" type="YounitedCredit\YounitedPay\Observer\ObserverConfig" sortOrder="1"/>
-    </type>
-</config>
+
+namespace YounitedCredit\YounitedPay\Model\Cache;
+
+class YounitedCache extends \Magento\Framework\Cache\Frontend\Decorator\TagScope
+{
+    /**
+     * Type Code for Cache
+     */
+    const TYPE_IDENTIFIER = 'younitedpay';
+
+    /**
+     * Tag of Cache
+     */
+    const CACHE_TAG = 'YOUNITEDPAY';
+
+    /**
+     * @param \Magento\Framework\App\Cache\Type\FrontendPool $cacheFrontendPool
+     */
+    public function __construct(
+        \Magento\Framework\App\Cache\Type\FrontendPool $cacheFrontendPool
+    ) {
+        parent::__construct(
+            $cacheFrontendPool->get(self::TYPE_IDENTIFIER),
+            self::CACHE_TAG
+        );
+    }
+}

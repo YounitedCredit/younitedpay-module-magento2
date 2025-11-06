@@ -1,33 +1,40 @@
 <?php
 /**
- * 2021 Floa BANK
+ * Copyright since 2022 Younited Credit
  *
- * THE MIT LICENSE
+ * NOTICE OF LICENSE
  *
- * Permission is hereby granted, free of charge, to any person obtaining a copy of this software and associated
- * documentation files (the "Software"), to deal in the Software without restriction, including without limitation
- * the rights to use, copy, modify, merge, publish, distribute, sublicense, and/or sell copies of the Software, and
- * to permit persons to whom the Software is furnished to do so, subject to the following conditions:
- * The above copyright notice and this permission notice shall be included in all copies or substantial portions of the
- * Software.
+ * This source file is subject to the Academic Free License (AFL 3.0)
+ * that is bundled with this package in the file LICENSE.md.
+ * It is also available through the world-wide-web at this URL:
+ * https://opensource.org/licenses/AFL-3.0
+ * If you did not receive a copy of the license and are unable to
+ * obtain it through the world-wide-web, please send an email
+ * to tech@202-ecommerce.com so we can send you a copy immediately.
  *
- * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE
- * WARRANTIES OF MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
- * AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF
- * CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS
- * IN THE SOFTWARE.
- *
- * @author    FLOA Bank
- * @copyright 2021 FLOA Bank
- * @license   https://opensource.org/licenses/MIT The MIT License
+ * @author     202 ecommerce <tech@202-ecommerce.com>
+ * @copyright 2022 Younited Credit
+ * @license   https://opensource.org/licenses/AFL-3.0  Academic Free License (AFL 3.0)
  */
 
 namespace YounitedCredit\YounitedPay\Model;
+
+use Magento\Framework\App\Config\ScopeConfigInterface;
 
 class YounitedLogger
 {
     /** @var \Zend_Log */
     private $logger;
+
+    /**
+     * @var ScopeConfigInterface
+     */
+    protected $scopeConfig;
+
+    /**
+     * @var bool
+     */
+    protected $debugAPI;
 
     /**
      * Construct
@@ -39,6 +46,9 @@ class YounitedLogger
         $writer = new \Zend_Log_Writer_Stream(BP . '/var/log/younited-' . date('Ymd') . '.log');
         $this->logger = new \Zend_Log();
         $this->logger->addWriter($writer);
+        $objectManager = \Magento\Framework\App\ObjectManager::getInstance(); 
+        $this->scopeConfig = $objectManager->get(ScopeConfigInterface::class);
+        $this->debugAPI = (bool) $this->scopeConfig->getValue(Config::XML_PATH_API_DEBUG, ScopeInterface::SCOPE_STORE);
     }
 
     public function info($message)
@@ -54,5 +64,12 @@ class YounitedLogger
     public function debug($message)
     {
         $this->logger->debug($message);
+    }
+
+    public function log($message)
+    {
+        if ($this->debugAPI === true) {
+            $this->info($message);
+        }
     }
 }

@@ -3,14 +3,11 @@
 namespace YounitedCredit\YounitedPay\Helper;
 
 use Magento\Framework\App\ProductMetadataInterface;
-use Magento\Framework\App\Config\ScopeConfigInterface;
 use Magento\Framework\App\ProductMetadata;
 use Magento\Framework\Module\ModuleList;
 use Magento\Framework\Module\ModuleListInterface;
-use Magento\Store\Model\ScopeInterface;
 use YounitedCredit\YounitedPay\Model\YounitedLogger;
-use YounitedPaySDK\Cache\Registry;
-use YounitedPaySDK\Cache\RegistryItem;
+use YounitedCredit\YounitedPay\Model\YounitedCacheHandler;
 use YounitedPaySDK\Client;
 use YounitedPaySDK\Exception\RequestException;
 use YounitedPaySDK\Request\AbstractRequest;
@@ -30,14 +27,14 @@ class YounitedClient extends Client
     private $clientSecret;
 
     /**
-     * @var string
-     */
-    private $cacheKey;
-
-    /**
      * @var YounitedLogger
      */
     private $logger;
+
+    /**
+     * @var YounitedCacheHandler
+     */
+    private $cacheHandler;
 
     /**
      * cURL handler
@@ -65,16 +62,6 @@ class YounitedClient extends Client
      */
     protected $productMetadata;
 
-    /**
-     * @var ScopeConfigInterface
-     */
-    protected $scopeConfig;
-
-    /**
-     * @var bool
-     */
-    protected $debugAPI;
-
     /** @var ModuleListInterface */
     protected $moduleList;
 
@@ -86,9 +73,8 @@ class YounitedClient extends Client
         $objectManager = \Magento\Framework\App\ObjectManager::getInstance(); 
         $this->productMetadata = $objectManager->get(ProductMetadata::class);
         $this->moduleList = $objectManager->get(ModuleList::class);
-        $this->scopeConfig = $objectManager->get(ScopeConfigInterface::class);;
-        $this->debugAPI = (bool) $this->scopeConfig->getValue(Config::XML_PATH_API_DEBUG, ScopeInterface::SCOPE_STORE);
         $this->logger = new YounitedLogger();
+        $this->cacheHandler = $objectManager->get(YounitedCacheHandler::class);
     }
 
     /**
@@ -115,14 +101,10 @@ class YounitedClient extends Client
      */
     private function getToken($tenantId)
     {
-        $cache = Registry::getInstance();
-        $this->cacheKey = 'token-' . base64_encode($this->clientId . $this->clientSecret);
-        if ($cache->hasItem($this->cacheKey)) {
-            /** @var RegistryItem */
-            $tokenCache = $cache->getItem($this->cacheKey);
-            if ($tokenCache->isExpired() === false) {
-                return $tokenCache->get();
-            }
+        $cacheKey = base64_encode($this->clientId . $this->clientSecret);
+        $cacheToken = $this->cacheHandler->getCache($cacheKey, 'token');
+        if ($cacheToken !== false) {
+             return $cacheToken;
         }
 
         $data['grant_type'] = 'client_credentials';
@@ -149,38 +131,23 @@ class YounitedClient extends Client
         $output = json_decode((string) $result, true);
 
         try {
-            $this->log('[younited pay] request token to : ' . 'https://login.microsoftonline.com/' . $tenantId . '/oauth2/v2.0/token');
-            $this->log('[younited pay] response : ' . $result);
+            $this->logger->log('[younited pay] request token to : ' . 'https://login.microsoftonline.com/' . $tenantId . '/oauth2/v2.0/token');
+            $this->logger->log('[younited pay] response : ' . ( empty($output['access_token']) === false ? substr($output['access_token'], 0,5) . '*****' : 'error'));
         } catch (\Exception $e) {
-            $this->log('[younited pay] exception response : ' . $e->getTraceAsString());   
+            $this->logger->log('[younited pay] exception response : ' . $e->getTraceAsString());   
         }
 
         if (empty($output['access_token']) === true) {
             return false;
         }
 
+        $this->cacheHandler->setCache($cacheKey, 'token', $output['access_token'], (int) $output['expires_in']);
         $this->setTokenCache(
             $output['access_token'],
             (int) $output['expires_in'] + (new \DateTime())->getTimestamp()
         );
 
         return $output['access_token'];
-    }
-
-    /**
-     * @param string $token
-     * @param int $expiration
-     *
-     * @return void
-     */
-    public function setTokenCache($token, $expiration)
-    {
-        $expiration = (new \DateTime())->setTimestamp((int) $expiration);
-        $cache = Registry::getInstance();
-        $cache
-            ->getItem($this->cacheKey)
-            ->set($token)
-            ->expiresAt($expiration);
     }
 
     /**
@@ -262,54 +229,19 @@ class YounitedClient extends Client
      */
     protected function createOptions(AbstractRequest $request, ResponseBuilder $response)
     {
-        $options = $this->options;
-
-        // These options default to false and cannot be changed on set up.
-        // The options should be provided with the request instead.
-        $options[CURLOPT_FOLLOWLOCATION] = false;
-        $options[CURLOPT_HEADER]         = false;
-        $options[CURLOPT_RETURNTRANSFER] = false;
-        $options[CURLOPT_SSLVERSION]     = CURL_SSLVERSION_TLSv1_2;
+        $options = parent::createOptions($request, $response);
+        
         $options[CURLOPT_TIMEOUT]        = 20;
         $options[CURLOPT_CONNECTTIMEOUT] = 8;
 
-        $this->log('[younited pay] request to : ' . (string) $request->getUri());
-
-        try {
-            $options[CURLOPT_HTTP_VERSION] = $this->getProtocolVersion($request->getProtocolVersion());
-        } catch (\UnexpectedValueException $e) {
-            throw new RequestException($e->getMessage(), $request);
-        }
-        $options[CURLOPT_URL] = (string) $request->getUri();
-
-        $options = $this->addRequestBodyOptions($request, $options);
-
-        $options[CURLOPT_HTTPHEADER] = $this->createHeaders($request, $options);
-
-        if ($request->getUri()->getUserInfo()) {
-            $options[CURLOPT_USERPWD] = $request->getUri()->getUserInfo();
-        }
-
-        $options[CURLOPT_HEADERFUNCTION] = function ($ch, $data) use ($response) {
-            $clean_data = trim($data);
-
-            if ($clean_data !== '') {
-                if (strpos(strtoupper($clean_data), 'HTTP/') === 0) {
-                    $response->setStatus($clean_data)->getResponse();
-                } else {
-                    $response->addHeader($clean_data);
-                }
-            }
-
-            return strlen($data);
-        };
+        $this->logger->log('[younited pay] request to : ' . (string) $request->getUri());
 
         $options[CURLOPT_WRITEFUNCTION] = function ($ch, $data) use ($response, $options) {
             if (empty($response->getResponse()->getBody()) === false) {
                 try {
-                    $this->log('[younited pay] response : ' . $data);
+                    $this->logger->log('[younited pay] response : ' . $data);
                 } catch (\Exception $e) {
-                    $this->log('[younited pay] exception response : ' . $e->getTraceAsString());   
+                    $this->logger->log('[younited pay] exception response : ' . $e->getTraceAsString());   
                 }
 
                 return $response->getResponse()->getBody()->write($data);
@@ -318,12 +250,5 @@ class YounitedClient extends Client
         };
 
         return $options;
-    }
-
-    private function log($message)
-    {
-        if ($this->debugAPI === true) {
-            $this->logger->info($message);
-        }
     }
 }

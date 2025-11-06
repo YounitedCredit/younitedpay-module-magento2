@@ -36,13 +36,14 @@
          data-price="<?= $block->escapeHtml($price) ?>"
          data-page="<?= $block->escapeHtml($block->getPageActive()) ?>"
          data-type="<?= $block->escapeHtml($productType) ?>"
-        <?php if (empty($installments)): ?> style="display: none"<?php endif ?>>
+        <?php if (empty($installments) || is_array($installments) === false): ?> style="display: none"<?php endif ?>>
         <div class="younited_block yp-pb-2 yp-pt-2 yp-my-2">
             <div class="yp-cursor-pointer yp-flex yp-flex-row yp-items-center yp-flex-wrap yp-block-content">
                 <?php $logoImg = 'logo-younitedpay' . ( $blockName === 'cart' ? '-btn' : '' ) . '.png'; ?>
                 <img class="yp-mb-2 yp-logo lazyloaded" src="<?= $block->escapeHtml($block->getImageSrc($logoImg)) ?>"
                     alt="<?= $block->escapeHtml(__("Younited Pay")) ?>" />
                 <?php $i = 0; ?>
+                <?php if (empty($installments) === false && is_array($installments)): ?>
                 <?php foreach ($installments as $installment => $amount): ?>
                     <?php $defaultMaturity = ($i == 0) ? $amount : $defaultMaturity; ?>
                     <?php $defaultInstallment = ($i == 0) ? $installment : $defaultInstallment; ?>
@@ -69,6 +70,7 @@
                     </span> 
                     <?php $i++; ?>
                 <?php endforeach; ?>
+                <?php endif ?>
             </div>
             <div class="yp-cursor-pointer yp-flex yp-flex-row yp-items-center yp-flex-wrap yp-text-xs yp-p-2 yp-pb-0">
                 <a href="#younited_popupzone" class="yp-kml">
@@ -129,6 +131,7 @@
                             <span > <?= __('Start paying in just 30 days !') ?></span>
                         </div>
                         <div class="yp-flex yp-justify-center yp-mt-6">
+                            <?php if (empty($installments) === false && is_array($installments)): ?>
                             <?php $i = 0; ?>
                             <?php foreach ($installments as $installment => $amount): ?>
                                 <?php $defautAmount = ($i == 0) ? $amount : $defautAmount ?>
@@ -155,6 +158,7 @@
                                 </span> 
                                 <?php $i++; ?>
                             <?php endforeach; ?>
+                            <?php endif; ?>
                         </div>
                         <div class="yp-flex yp-justify-center yp-align-center yp-font-bold yp-text-md yp-font-family-rg yp-mt-6 yp-mb-3">
                             <span > <?= __('Payment in') ?></span>&nbsp;

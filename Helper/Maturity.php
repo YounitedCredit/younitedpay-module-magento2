@@ -25,6 +25,7 @@ use Magento\Framework\Serialize\Serializer\Json;
 use Magento\Store\Model\ScopeInterface;
 use Magento\Store\Model\Store;
 Use YounitedCredit\YounitedPay\Helper\YounitedClient;
+use YounitedCredit\YounitedPay\Model\YounitedCacheHandler;
 use YounitedPaySDK\Model\BestPrice;
 use YounitedPaySDK\Request\BestPriceRequest;
 
@@ -63,6 +64,16 @@ class Maturity
     protected $store;
 
     /**
+     * @var YounitedCacheHandler
+     */
+    protected $cacheHandler;
+
+    /**
+     * @var bool
+     */
+    protected $debugAPI = false;
+
+    /**
      * @var array
      */
     protected $maturityCache = [];
@@ -74,6 +85,7 @@ class Maturity
      * @param \Magento\Framework\Math\Random $mathRandom
      * @param \Magento\Store\Model\StoreManagerInterface $storeManager
      * @param \YounitedCredit\YounitedPay\Model\YounitedLogger $logger
+     * @param YounitedCacheHandler $cacheHandler
      * @param Json|null $serializer
      */
     public function __construct(
@@ -81,13 +93,16 @@ class Maturity
         \Magento\Framework\Math\Random $mathRandom,
         \Magento\Store\Model\StoreManagerInterface $storeManager,
         \YounitedCredit\YounitedPay\Model\YounitedLogger $logger,
+        YounitedCacheHandler $cacheHandler,
         Json $serializer = null
     ) {
         $this->scopeConfig = $scopeConfig;
         $this->mathRandom = $mathRandom;
         $this->storeManager = $storeManager;
         $this->logger = $logger;
+        $this->cacheHandler = $cacheHandler;
         $this->serializer = $serializer ?: ObjectManager::getInstance()->get(Json::class);
+        $this->debugAPI = (bool) $this->scopeConfig->getValue(Config::XML_PATH_API_DEBUG, ScopeInterface::SCOPE_STORE);
     }
 
     /**
@@ -373,6 +388,17 @@ class Maturity
     {
         $maturities = [];
         $credentials = $this->getApiCredentials($storeId);
+        $storeLocale = $this->getStore()->getLocaleCode() ?? 'fr_FR';
+
+        $cacheKey = $credentials['mode'] . '_' . $credentials['clientId'] . '_' . (string) $price;
+        $cacheOffers = $this->cacheHandler->getCache($cacheKey, 'offers');
+        if (empty($cacheOffers) === false) {
+            $this->logger->log('Retrieving cache offers for key ' . $cacheKey);
+            foreach ($cacheOffers as &$oneCacheOffer) {
+                $oneCacheOffer['locale'] = $storeLocale;
+            }
+            return $cacheOffers;
+        }
 
         if ($credentials === false) {
             return $maturities;
@@ -409,7 +435,6 @@ class Maturity
         }
 
         $maturityConfig = $this->getConfigValue($price, $storeId);
-        $storeLocale = $this->getStore()->getLocaleCode() ?? 'fr_FR';
 
         /** @var \YounitedPaySDK\Model\OfferItem $offers */
         foreach ($response->getModel() as $offers) {
@@ -427,6 +452,13 @@ class Maturity
             $maturity['locale'] = $storeLocale;
 
             $maturities[$offers->getMaturityInMonths()] = $maturity;
+        }
+
+        if (empty($maturities) === false) {
+            $this->logger->log('Offers in cache for key ' . $cacheKey);
+            $this->cacheHandler->setCache($cacheKey, 'offers', $maturities);
+        } else {
+            $this->logger->log('No offers to put in cache for key ' . $cacheKey);
         }
 
         return $maturities;
