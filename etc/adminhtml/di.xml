@@ -22,4 +22,7 @@
     <type name="Magento\Sales\Block\Adminhtml\Order\Create\Billing\Method\Form">
         <plugin sortOrder="1" name="Younited_Adminhtml_Order_Create_BillingForm" type="YounitedCredit\YounitedPay\Plugin\Adminhtml\Order\Create\BillingFormPlugin"/>
     </type>
+    <type name="Magento\Config\Model\Config">
+        <plugin name="admin_system_config_save_plugin" type="YounitedCredit\YounitedPay\Observer\ObserverConfig" sortOrder="1"/>
+    </type>
 </config>

@@ -27,9 +27,10 @@ use Magento\Framework\Message\ManagerInterface;
 use Magento\Framework\Stdlib\DateTime\DateTime;
 use Magento\Sales\Api\Data\OrderPaymentInterface;
 use Magento\Store\Model\ScopeInterface;
-use Psr\Log\LoggerInterface;
+use YounitedCredit\YounitedPay\Model\YounitedLogger;
 use YounitedCredit\YounitedPay\Helper\Config;
 use YounitedCredit\YounitedPay\Helper\Maturity;
+use YounitedCredit\YounitedPay\Observer\RequestHandler;
 use YounitedPaySDK\Model\ActivateContract;
 use YounitedPaySDK\Model\ConfirmContract;
 use YounitedPaySDK\Request\ActivateContractRequest;
@@ -48,14 +49,14 @@ class ValidateCredit extends RequestHandler
      * @param Maturity $maturityHelper
      * @param DateTime $date
      * @param ManagerInterface $messageManager
-     * @param LoggerInterface $logger
+     * @param YounitedLogger $logger
      * @param ScopeConfigInterface $scopeConfig
      */
     public function __construct(
         Maturity $maturityHelper,
         DateTime $date,
         ManagerInterface $messageManager,
-        LoggerInterface $logger,
+        YounitedLogger $logger,
         ScopeConfigInterface $scopeConfig
     ) {
         parent::__construct($maturityHelper, $date, $messageManager, $logger);

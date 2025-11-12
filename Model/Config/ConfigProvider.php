@@ -128,12 +128,6 @@ class ConfigProvider implements ConfigProviderInterface
             'general/country/default',
             \Magento\Store\Model\ScopeInterface::SCOPE_STORE
         );
-        $phoneError = __('Cell Phone number is not french and in international format (+33XXXXXXXXX). Please update your phone number of your address and try again.');
-        if (strtoupper($countryCode) === 'ES') {
-            $defaultPhoneAreaCode = '+34';
-            $phoneError = __('Cell Phone number is not spanish and in international format (+34XXXXXXXXX). Please update your phone number of your address and try again.');
-        }
-
 
         return [
             'payment' => [
@@ -148,7 +142,7 @@ class ConfigProvider implements ConfigProviderInterface
                         ->getUrl(),
                     'maturities' => $this->maturityHelper->getInstallments($grandTotal, $this->getStoreCode()),
                     'phoneAreaCode' => $defaultPhoneAreaCode,
-                    'phoneError' => $phoneError,
+                    'phoneError' => '',
                 ]
             ]
         ];

@@ -18,8 +18,9 @@
 define([
     'jquery',
     'loader',
-    'mage/translate'
-], function ($, $t) {
+    'mage/translate',
+    'Magento_Customer/js/customer-data'
+], function ($, loader, $t, customerData) {
     'use strict';
 
     $.widget('younited.widget', {
@@ -41,11 +42,6 @@ define([
             this.ld = $(this.options.loaderField);
             this.ld.loader({
                 icon: this.options.loader
-            });
-
-            $('#yp-close-popup').on('click', function (e) {
-                event.preventDefault();
-                $('#younited_popupzone').hide();
             });
 
             /**
@@ -70,101 +66,74 @@ define([
             });
         },
 
+        YpchangeInstallment: function(key)
+        {
+            var actualOffer = parseInt(key);
+            var maturityZone = $($.find('.maturity_installment' + actualOffer.toString()));
+            var infoInstallmentAmount = maturityZone.attr('data-amount');
+            var currentMaturity = parseInt(maturityZone.attr('data-maturity'));
+            var initialAmount = maturityZone.attr('data-initamount');
+            var taeg = maturityZone.attr('data-taeg');
+            var tdf = maturityZone.attr('data-tdf');
+            var totalAmount = maturityZone.attr('data-totalamount');
+            var interestTotal = maturityZone.attr('data-interesttotal');
+            var infoInstallmentMaturity = currentMaturity + 'x';
+            
+            $('.maturity_installment').removeClass('yp-bg-black-btn');
+            $('.maturity_installment' + key).addClass('yp-bg-black-btn');
+
+            $('.yp-install-amount').text(infoInstallmentAmount + " €");
+            $('.yp-install-maturity').text(infoInstallmentMaturity);
+            $('.yp-tdf').text(tdf);
+            $('.yp-taeg').text(taeg);
+            $('.yp-total').text(totalAmount);
+            $('.yp-interest').text(interestTotal);
+            $('.yp-amount').text(initialAmount);
+        },
+
         createMainObservers: function createMainObservers() {
             var _this = this;
 
             $('.blocks_maturities_popup').on('click', function (e) {
                 var data = $(this).data()
-                $('.blocks_maturities_popup').removeClass('selected');
-                $(this).addClass('selected');
-                $('#popup-maturity').text(_this.getTotalAmount(data.maturity));
-                $('#yp-amount').text(_this.getTotalAmount(data.amount));
-                $('#yp-cost').text(_this.getTotalAmount(data.interests));
-                $('#yp-total').text(_this.getTotalAmount(data.total));
-                $('#yp-percent').text(data.percent);
-                $('#yp-debit').text(data.debit);
-                $('#maturity_installment' + data.key).trigger('mouseenter');
+                _this.YpchangeInstallment(data.key);
+                $('#younited_popupzone').removeClass('hidden');
+                $('#younited_popupzone').show();
             });
 
-            $('.maturity_installment').on('click', function (e) {
-                var contentTitle = $('.yp-left-title').html();
-                if (contentTitle.search('Achetez maintenant') > -1) {
-                    $('.yp-left-title').css('margin', '25px 0 28px 0');
-                } else {
-                    $('.yp-left-title').css('margin','');
-                }
+            $('.maturity_installment, .yp-kml').on('click', function (e) {
+                $('#younited_popupzone').removeClass('hidden');
                 $('#younited_popupzone').show();
                 $('#blocks_maturities_popup' + $(this).data('key')).trigger('click');
             });
 
             $('.maturity_installment').hover(function () {
-                    var data = $(this).data()
-                    $('.maturity_installment.selected').removeClass('selected');
-                    $(this).addClass('selected')
-                    $('#yp-maturity').text(_this.getTotalAmount(data.maturity));
-                    $('#yp-installment').text("x" + data.key);
-                }, function () {
+                var data = $(this).data()
+                _this.YpchangeInstallment(data.key);
+            });
+
+            $('#younited_popupzone').on('click', function (e) {
+                e.preventDefault();
+                if (e.target === e.currentTarget) {
+                    // We are outside of div / span inside popup if different
+                    $('#younited_popupzone').addClass('hidden');
                 }
-            );
+            });
+
+            $('.younited_btnhide').on('click', function (e) {
+                e.preventDefault();
+                $('#younited_popupzone').addClass('hidden');
+            });
         },
 
         /**
          * Update display on price change only for configurable products
          */
-        updateDisplay: function updateDisplay(price) {
-            var _this = this,
-                maturities = this.maturities[price]
-            var count = 0;
-            for (const installment in maturities) {
-                count++;
-                var installementBlock = $('#maturity_installment' + installment);
-                if (installementBlock.length > 0) {
-                    // Exists, update
-                    installementBlock.data('maturity', maturities[installment].monthlyInstallmentAmount);
-                } else {
-                    // Doesn't exists, create
-                    var elem = $(`<div class="maturity_installment" id="maturity_installment${installment}" data-key="${installment}"
-                            data-maturity="${maturities[installment].monthlyInstallmentAmount}">
-                                <span>${installment}x</span>
-                       </div>`);
+        updateDisplay: function updateDisplay(data) {
+            var _this = this;
+            $('.younitedpay-widget-root').html(data);
 
-                    var placed = false;
-                    $( ".maturity_installment" ).each(function( index ) {
-                        if ($(this).data('key') > installment && placed === false) {
-                            $(this).before(elem)
-                            placed = true;
-                        }
-                    });
-
-                    if (!placed) {
-                        elem.appendTo("#yp-current-maturities");
-                    }
-                }
-
-                var installementPopupBlock = $('#blocks_maturities_popup' + installment);
-                if (installementPopupBlock.length > 0) {
-                    // Exists, update
-                    installementPopupBlock.data('maturity', maturities[installment].monthlyInstallmentAmount);
-                    installementPopupBlock.data('amount', price);
-                    installementPopupBlock.data('percent', maturities[installment].annualPercentageRate);
-                    installementPopupBlock.data('debit', maturities[installment].annualDebitRate);
-                    installementPopupBlock.data('total', maturities[installment].creditTotalAmount);
-                    installementPopupBlock.data('interests', maturities[installment].interestsTotalAmount);
-                } else {
-                    // Doesn't exists, create
-                    $(`<li class="blocks_maturities_popup"
-                                    id="blocks_maturities_popup${installment}"
-                                    data-key="${installment}"
-                                    data-maturity="${maturities[installment].monthlyInstallmentAmount}"
-                                    data-amount="${price}"
-                                    data-percent="${maturities[installment].annualPercentageRate}"
-                                    data-debit="${maturities[installment].annualDebitRate}"
-                                    data-total="${maturities[installment].creditTotalAmount}"
-                                    data-interests="${maturities[installment].interestsTotalAmount}">
-                                    <span class="">${installment} ${$.mage.__('months')}</span>
-                                </li>`).appendTo("#yp-popup-maturities");
-                }
-            }
+            const count = $('.maturity_installment').length;
 
             if (count === 0) {
                 _this.ld.hide();
@@ -173,17 +142,6 @@ define([
                 _this.ld.show();
                 $('#yp-widget').show();
             }
-
-            // Loop existing objetcs to remove useless ones
-            $('.maturity_installment').each(function (i, obj) {
-                if (typeof _this.maturities[price][$(obj).data('key')] == 'undefined') $(obj).remove();
-            });
-
-            $('.blocks_maturities_popup').each(function (i, obj) {
-                if (typeof _this.maturities[price][$(obj).data('key')] == 'undefined') $(obj).remove();
-            });
-
-            $('#yp-widget').data('price', price)
 
             // Recreate observers
             this.createMainObservers();
@@ -197,6 +155,8 @@ define([
             var _this = this;
             if (typeof price != 'undefined') {
                 var currentPrice = parseFloat($('#yp-widget').data('price')).toFixed(2);
+                var type = $('#yp-widget').data('type');
+                var location = $('#yp-widget').data('location');
                 price = price.replace(/[^\d.,-]/g, '');
                 var qty = parseFloat($(this.options.qtyField).val())
                 price = (parseFloat(price) * qty).toFixed(2);
@@ -204,36 +164,23 @@ define([
                     // @see https://stackoverflow.com/questions/1862130/strip-all-non-numeric-characters-from-string-in-javascript
                     price += '';
                     price = price.replace('.', '-').replace(' ', '');
-                    var url = _this.options.url + 'amount/' + price + '/store/' + _this.options.store + '/'
-
-
-                    if (typeof _this.maturities[price] != 'undefined') {
-                        _this.updateDisplay(price);
-                    } else {
-                        this.requestId++;
-                        var currentId = this.requestId;
-
-                        setTimeout(function () {
-                            if (currentId == _this.requestId) {
-                                _this.ld.loader('show');
-                                $.ajax({
-                                    'url': url,
-                                    'type': 'POST',
-                                    'success': function (data) {
-                                        _this.maturities[price] = {}
-                                        for (const installment in data) {
-                                            _this.maturities[price][installment] = data[installment];
-                                        }
-                                        _this.updateDisplay(price);
-                                        _this.ld.loader('hide');
-                                    }, 'error': function (request, error) {
-                                        console.log("Request error: " + JSON.stringify(request));
-                                        _this.ld.loader('hide');
-                                    }
-                                });
+                    var url = _this.options.url + 'amount/' + price + '/store/' + _this.options.store;
+                    url += '/type/' + type + '/location/' + location;
+                    
+                    setTimeout(function () {
+                        _this.ld.loader('show');
+                        $.ajax({
+                            'url': url,
+                            'type': 'GET',
+                            'success': function (data) {
+                                _this.updateDisplay(data);
+                                _this.ld.loader('hide');
+                            }, 'error': function (request, error) {
+                                console.log("Request error: " + JSON.stringify(request));
+                                _this.ld.loader('hide');
                             }
-                        }, 500);
-                    }
+                        });
+                    }, 500);
                 }
             }
         },

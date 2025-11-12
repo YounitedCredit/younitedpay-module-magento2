@@ -24,7 +24,8 @@ use Magento\Framework\Exception\LocalizedException;
 use Magento\Framework\Serialize\Serializer\Json;
 use Magento\Store\Model\ScopeInterface;
 use Magento\Store\Model\Store;
-use YounitedPaySDK\Client;
+Use YounitedCredit\YounitedPay\Helper\YounitedClient;
+use YounitedCredit\YounitedPay\Model\YounitedCacheHandler;
 use YounitedPaySDK\Model\BestPrice;
 use YounitedPaySDK\Request\BestPriceRequest;
 
@@ -53,7 +54,7 @@ class Maturity
     protected $storeManager;
 
     /**
-     * @var \Psr\Log\LoggerInterface
+     * @var \YounitedCredit\YounitedPay\Model\YounitedLogger
      */
     protected $logger;
 
@@ -61,6 +62,16 @@ class Maturity
      * @var \Magento\Store\Model\Store
      */
     protected $store;
+
+    /**
+     * @var YounitedCacheHandler
+     */
+    protected $cacheHandler;
+
+    /**
+     * @var bool
+     */
+    protected $debugAPI = false;
 
     /**
      * @var array
@@ -73,21 +84,25 @@ class Maturity
      * @param \Magento\Framework\App\Config\ScopeConfigInterface $scopeConfig
      * @param \Magento\Framework\Math\Random $mathRandom
      * @param \Magento\Store\Model\StoreManagerInterface $storeManager
-     * @param \Psr\Log\LoggerInterface $logger
+     * @param \YounitedCredit\YounitedPay\Model\YounitedLogger $logger
+     * @param YounitedCacheHandler $cacheHandler
      * @param Json|null $serializer
      */
     public function __construct(
         \Magento\Framework\App\Config\ScopeConfigInterface $scopeConfig,
         \Magento\Framework\Math\Random $mathRandom,
         \Magento\Store\Model\StoreManagerInterface $storeManager,
-        \Psr\Log\LoggerInterface $logger,
+        \YounitedCredit\YounitedPay\Model\YounitedLogger $logger,
+        YounitedCacheHandler $cacheHandler,
         Json $serializer = null
     ) {
         $this->scopeConfig = $scopeConfig;
         $this->mathRandom = $mathRandom;
         $this->storeManager = $storeManager;
         $this->logger = $logger;
+        $this->cacheHandler = $cacheHandler;
         $this->serializer = $serializer ?: ObjectManager::getInstance()->get(Json::class);
+        $this->debugAPI = (bool) $this->scopeConfig->getValue(Config::XML_PATH_API_DEBUG, ScopeInterface::SCOPE_STORE);
     }
 
     /**
@@ -373,12 +388,27 @@ class Maturity
     {
         $maturities = [];
         $credentials = $this->getApiCredentials($storeId);
+        $storeLocale = $this->getStore()->getLocaleCode() ?? 'fr_FR';
+
+        $cacheKey = $credentials['mode'] . '_' . $credentials['clientId'] . '_' . (string) $price;
+        $cacheOffers = $this->cacheHandler->getCache($cacheKey, 'offers');
+        if (empty($cacheOffers) === false) {
+            $this->logger->log('Retrieving cache offers for key ' . $cacheKey);
+            foreach ($cacheOffers as &$oneCacheOffer) {
+                $oneCacheOffer['locale'] = $storeLocale;
+            }
+            return $cacheOffers;
+        }
 
         if ($credentials === false) {
             return $maturities;
         }
 
-        $client = new Client();
+        if ((float) $price < 1) {
+            return $maturities;
+        }
+
+        $client = new YounitedClient();
         $body = new BestPrice();
         $body->setBorrowedAmount($price);
 
@@ -413,14 +443,22 @@ class Maturity
             }
 
             $maturity = $maturityConfig[$offers->getMaturityInMonths()];
-            $maturity['requestedAmount'] = $offers->getRequestedAmount();
-            $maturity['annualPercentageRate'] = (string) round((float) $offers->getAnnualPercentageRate() * 100, 2);
-            $maturity['annualDebitRate'] = (string) round((float) $offers->getAnnualDebitRate() * 100, 2);
-            $maturity['monthlyInstallmentAmount'] = $offers->getMonthlyInstallmentAmount();
-            $maturity['creditTotalAmount'] = $offers->getCreditTotalAmount();
-            $maturity['interestsTotalAmount'] = $offers->getInterestsTotalAmount();
+            $maturity['requestedAmount'] = $this->formatPrice($offers->getRequestedAmount());
+            $maturity['annualPercentageRate'] = $this->formatPrice($offers->getAnnualPercentageRate() * 100, 2);
+            $maturity['annualDebitRate'] = $this->formatPrice($offers->getAnnualDebitRate() * 100, 2);
+            $maturity['monthlyInstallmentAmount'] = $this->formatPrice($offers->getMonthlyInstallmentAmount());
+            $maturity['creditTotalAmount'] = $this->formatPrice($offers->getCreditTotalAmount());
+            $maturity['interestsTotalAmount'] = $this->formatPrice($offers->getInterestsTotalAmount());
+            $maturity['locale'] = $storeLocale;
 
             $maturities[$offers->getMaturityInMonths()] = $maturity;
+        }
+
+        if (empty($maturities) === false) {
+            $this->logger->log('Offers in cache for key ' . $cacheKey);
+            $this->cacheHandler->setCache($cacheKey, 'offers', $maturities);
+        } else {
+            $this->logger->log('No offers to put in cache for key ' . $cacheKey);
         }
 
         return $maturities;
@@ -442,6 +480,11 @@ class Maturity
         }
 
         return $this->scopeConfig->getValue($path, $scope, $storeId);
+    }
+
+    public function formatPrice($price)
+    {
+        return str_replace('.00', '', number_format(round($price, 2), 2, '.', ''));
     }
 
     /**

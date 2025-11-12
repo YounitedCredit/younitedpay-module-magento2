@@ -28,9 +28,10 @@ use Magento\Framework\Message\ManagerInterface;
 use Magento\Framework\Stdlib\DateTime\DateTime;
 use Magento\Sales\Api\CreditmemoRepositoryInterface;
 use Magento\Sales\Api\Data\OrderPaymentInterface;
-use Psr\Log\LoggerInterface;
+use YounitedCredit\YounitedPay\Model\YounitedLogger;
 use YounitedCredit\YounitedPay\Helper\Config;
 use YounitedCredit\YounitedPay\Helper\Maturity;
+use YounitedCredit\YounitedPay\Observer\RequestHandler;
 use YounitedPaySDK\Model\CancelContract;
 use YounitedPaySDK\Model\WithdrawContract;
 use YounitedPaySDK\Request\CancelContractRequest;
@@ -57,7 +58,7 @@ class WithdrawCredit extends RequestHandler
      * @param ScopeConfigInterface $scopeConfig
      * @param DateTime $date
      * @param ManagerInterface $messageManager
-     * @param LoggerInterface $logger
+     * @param YounitedLogger $logger
      */
     public function __construct(
         Maturity $maturityHelper,
@@ -66,7 +67,7 @@ class WithdrawCredit extends RequestHandler
         ScopeConfigInterface $scopeConfig,
         DateTime $date,
         ManagerInterface $messageManager,
-        LoggerInterface $logger
+        YounitedLogger $logger
     ) {
         parent::__construct($maturityHelper, $date, $messageManager, $logger);
 

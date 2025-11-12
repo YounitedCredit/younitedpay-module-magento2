@@ -28,7 +28,7 @@ use Magento\Framework\DB\Transaction;
 use Magento\Sales\Model\Order\Email\Sender\InvoiceSender;
 use Magento\Sales\Model\Service\InvoiceService;
 use YounitedCredit\YounitedPay\Helper\Config;
-use YounitedPaySDK\Client;
+Use YounitedCredit\YounitedPay\Helper\YounitedClient;
 use YounitedPaySDK\Model\LoadContract;
 use YounitedPaySDK\Request\LoadContractRequest;
 
@@ -55,7 +55,7 @@ class Successold extends \Magento\Checkout\Controller\Onepage
     protected $invoiceSender;
 
     /**
-     * @var \Psr\Log\LoggerInterface
+     * @var \YounitedCredit\YounitedPay\Model\YounitedLogger
      */
     protected $logger;
 
@@ -85,7 +85,7 @@ class Successold extends \Magento\Checkout\Controller\Onepage
      * @param InvoiceService $invoiceService
      * @param InvoiceSender $invoiceSender
      * @param Transaction $transaction
-     * @param \Psr\Log\LoggerInterface $logger
+     * @param \YounitedCredit\YounitedPay\Model\YounitedLogger $logger
      * @param \YounitedCredit\YounitedPay\Helper\Maturity $maturityHelper
      */
     public function __construct(
@@ -107,7 +107,7 @@ class Successold extends \Magento\Checkout\Controller\Onepage
         InvoiceService $invoiceService,
         InvoiceSender $invoiceSender,
         Transaction $transaction,
-        \Psr\Log\LoggerInterface $logger,
+        \YounitedCredit\YounitedPay\Model\YounitedLogger $logger,
         \YounitedCredit\YounitedPay\Helper\Maturity $maturityHelper
     ) {
         $this->orderRepository = $orderRepository;
@@ -226,7 +226,7 @@ class Successold extends \Magento\Checkout\Controller\Onepage
      */
     protected function isContractConfirmed($order)
     {
-        $client = new Client();
+        $client = new YounitedClient();
         $body = new LoadContract();
         $request = new LoadContractRequest();
         $credentials = $this->maturityHelper->getApiCredentials($order->getStoreId());

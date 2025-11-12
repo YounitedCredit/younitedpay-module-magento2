@@ -24,7 +24,7 @@ use Magento\Framework\App\Request\InvalidRequestException;
 use Magento\Framework\App\RequestInterface;
 use Magento\Framework\Controller\Result\JsonFactory;
 use YounitedCredit\YounitedPay\Helper\Config;
-use YounitedPaySDK\Client;
+Use YounitedCredit\YounitedPay\Helper\YounitedClient;
 use YounitedPaySDK\Model\LoadContract;
 use YounitedPaySDK\Request\LoadContractRequest;
 
@@ -36,7 +36,7 @@ class Webhook extends Action implements \Magento\Framework\App\CsrfAwareActionIn
     protected $maturityHelper;
 
     /**
-     * @var \Psr\Log\LoggerInterface
+     * @var \YounitedCredit\YounitedPay\Model\YounitedLogger
      */
     protected $logger;
 
@@ -68,7 +68,7 @@ class Webhook extends Action implements \Magento\Framework\App\CsrfAwareActionIn
      * @param \Magento\Sales\Api\OrderRepositoryInterface $orderRepository
      * @param \Magento\Sales\Model\RefundOrder $refundOrder
      * @param \Magento\Sales\Model\Order\Creditmemo\ItemCreationFactory $itemCreationFactory
-     * @param \Psr\Log\LoggerInterface $logger
+     * @param \YounitedCredit\YounitedPay\Model\YounitedLogger $logger
      * @param \Magento\Framework\App\Action\Context $context
      */
     public function __construct(
@@ -77,7 +77,7 @@ class Webhook extends Action implements \Magento\Framework\App\CsrfAwareActionIn
         \Magento\Sales\Api\OrderRepositoryInterface $orderRepository,
         \Magento\Sales\Model\RefundOrder $refundOrder,
         \Magento\Sales\Model\Order\Creditmemo\ItemCreationFactory $itemCreationFactory,
-        \Psr\Log\LoggerInterface $logger,
+        \YounitedCredit\YounitedPay\Model\YounitedLogger $logger,
         \Magento\Framework\App\Action\Context $context
     ) {
         $this->resultJsonFactory = $resultJsonFactory;
@@ -114,7 +114,7 @@ class Webhook extends Action implements \Magento\Framework\App\CsrfAwareActionIn
                 $informations = $payment->getAdditionalInformation();
 
                 // We look at yp contract to be sure that it is CANCELED
-                $client = new Client();
+                $client = new YounitedClient();
                 $body = new LoadContract();
                 $request = new LoadContractRequest();
                 $credentials = $this->maturityHelper->getApiCredentials($order->getStoreId());

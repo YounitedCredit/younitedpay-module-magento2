@@ -1,0 +1,1422 @@
+/**
+ * Copyright since 2022 Younited Credit
+ *
+ * NOTICE OF LICENSE
+ *
+ * This source file is subject to the Academic Free License (AFL 3.0)
+ * that is bundled with this package in the file LICENSE.md.
+ * It is also available through the world-wide-web at this URL:
+ * https://opensource.org/licenses/AFL-3.0
+ * If you did not receive a copy of the license and are unable to
+ * obtain it through the world-wide-web, please send an email
+ * to tech@202-ecommerce.com so we can send you a copy immediately.
+ *
+ * @author	 202 ecommerce <tech@202-ecommerce.com>
+ * @copyright 2022 Younited Credit
+ * @license   https://opensource.org/licenses/AFL-3.0  Academic Free License (AFL 3.0)
+*/
+
+.maturity_installment {
+   color: #1C1C1C;
+   text-align: center;
+   font-size: 14px;
+   font-style: normal;
+   font-weight: 700;
+   line-height: 150%; /* 21px */
+   border-radius: 999px;
+   background: #DEE2E6;
+   cursor:pointer;
+}
+
+.yp-bg-black-btn {
+    background-color: #1C1C1C;
+    color: #FFF;
+}
+
+.maturity_installment :first-child {
+    width:52px;
+}
+
+#younited_popupzone .maturity_installment9999 :first-child, #checkout .maturity_installment9999 :first-child {
+    width:auto;
+}
+
+
+.younitedpay_infoinstallment {
+    width: 100%;
+    padding-left: 15px;
+    font-size: 20px;
+    font-weight: bolder;
+    display: flex;
+    align-items: center;
+    color: #564C5D !important;
+}
+
+.flexmiddle {
+    justify-content: center;
+    align-items: center;
+}
+
+
+.younitedpay-widget-root img {
+    border-style: none
+}
+
+.younitedpay-widget-root button,
+.younitedpay-widget-root input,
+.younitedpay-widget-root optgroup,
+.younitedpay-widget-root select,
+.younitedpay-widget-root textarea {
+    font-family: inherit;
+    font-size: 100%;
+    line-height: 1.15;
+    margin: 0
+}
+
+.younitedpay-widget-root button,
+.younitedpay-widget-root input {
+    overflow: visible
+}
+
+.younitedpay-widget-root button,
+.younitedpay-widget-root select {
+    text-transform: none
+}
+
+.younitedpay-widget-root [type=button],
+.younitedpay-widget-root button {
+    -webkit-appearance: button
+}
+
+.younitedpay-widget-root [type=button]::-moz-focus-inner,
+.younitedpay-widget-root button::-moz-focus-inner {
+    border-style: none;
+    padding: 0
+}
+
+.younitedpay-widget-root [type=button]:-moz-focusring,
+.younitedpay-widget-root button:-moz-focusring {
+    outline: 1px dotted ButtonText
+}
+
+.younitedpay-widget-root fieldset {
+    padding: .35em .75em .625em
+}
+
+.younitedpay-widget-root legend {
+    box-sizing: border-box;
+    color: inherit;
+    display: table;
+    max-width: 100%;
+    padding: 0;
+    white-space: normal
+}
+
+.younitedpay-widget-root progress {
+    vertical-align: baseline
+}
+
+.younitedpay-widget-root textarea {
+    overflow: auto
+}
+
+.younitedpay-widget-root [type=number]::-webkit-inner-spin-button,
+.younitedpay-widget-root [type=number]::-webkit-outer-spin-button {
+    height: auto
+}
+
+.younitedpay-widget-root ::-webkit-file-upload-button {
+    -webkit-appearance: button;
+    font: inherit
+}
+
+.younitedpay-widget-root details {
+    display: block
+}
+
+.younitedpay-widget-root summary {
+    display: list-item
+}
+
+.younitedpay-widget-root template {
+    display: none
+}
+
+.younitedpay-widget-root blockquote,
+.younitedpay-widget-root dd,
+.younitedpay-widget-root dl,
+.younitedpay-widget-root figure,
+.younitedpay-widget-root h1,
+.younitedpay-widget-root h2,
+.younitedpay-widget-root h3,
+.yp-h4,
+.younitedpay-widget-root h5,
+.younitedpay-widget-root h6,
+.younitedpay-widget-root hr,
+.younitedpay-widget-root p,
+.younitedpay-widget-root pre {
+    margin: 0
+}
+
+.younitedpay-widget-root button {
+    background-color: transparent;
+    background-image: none
+}
+
+.younitedpay-widget-root button:focus {
+    outline: 1px dotted;
+    outline: 5px auto -webkit-focus-ring-color
+}
+
+.yp-right .younited_btnhide {    
+    padding: 10px 12px !important;
+    border-radius: 4px;
+    border: 1px solid #1C1C1C;
+    background: #1C1C1C;
+    color: white;
+    font-size: 16px;
+}
+
+.younitedpay-widget-root fieldset {
+    margin: 0;
+    padding: 0
+}
+
+.younitedpay-widget-root ol,
+.younitedpay-widget-root ul {
+    list-style: none;
+    margin: 0;
+    padding: 0
+}
+
+.younitedpay-widget-root html {    
+    line-height: 1.5
+}
+
+.younitedpay-widget-root *,
+.younitedpay-widget-root :after,
+.younitedpay-widget-root :before {
+    box-sizing: border-box;
+    border: 0 solid #e2e8f0;
+    white-space: normal;
+}
+
+.younitedpay-widget-root hr {
+    border-top-width: 1px
+}
+
+.younitedpay-widget-root img {
+    border-style: solid
+}
+
+.younitedpay-widget-root textarea {
+    resize: vertical
+}
+
+.younitedpay-widget-root input:-ms-input-placeholder,
+.younitedpay-widget-root textarea:-ms-input-placeholder {
+    color: #a0aec0
+}
+
+.younitedpay-widget-root input::-moz-placeholder,
+.younitedpay-widget-root textarea::-moz-placeholder {
+    color: #a0aec0
+}
+
+.younitedpay-widget-root input::placeholder,
+.younitedpay-widget-root textarea::placeholder {
+    color: #a0aec0
+}
+
+.younitedpay-widget-root button {
+    cursor: pointer
+}
+
+.younitedpay-widget-root table {
+    border-collapse: collapse
+}
+
+.yp-h4 {
+    font-size: 1.125rem;
+    font-weight:700;
+}
+
+.younitedpay-widget-root h1,
+.younitedpay-widget-root h2,
+.younitedpay-widget-root h3,
+.younitedpay-widget-root h5,
+.younitedpay-widget-root h6 {
+    font-size: inherit;
+    font-weight: inherit
+}
+
+.younitedpay-widget-root a {
+    color: inherit;
+    text-decoration: inherit
+}
+
+.younitedpay-widget-root button,
+.younitedpay-widget-root input,
+.younitedpay-widget-root optgroup,
+.younitedpay-widget-root select,
+.younitedpay-widget-root textarea {
+    padding: 0;
+    line-height: inherit;
+    color: inherit
+}
+
+.younitedpay-widget-root code,
+.younitedpay-widget-root kbd,
+.younitedpay-widget-root pre,
+.younitedpay-widget-root samp {
+    font-family: Menlo, Monaco, Consolas, Liberation Mono, Courier New, monospace
+}
+
+.younitedpay-widget-root audio,
+.younitedpay-widget-root canvas,
+.younitedpay-widget-root embed,
+.younitedpay-widget-root iframe,
+.younitedpay-widget-root img,
+.younitedpay-widget-root object,
+.younitedpay-widget-root svg,
+.younitedpay-widget-root video {
+    display: block;
+    vertical-align: middle
+}
+
+.younitedpay-widget-root img,
+.younitedpay-widget-root video {
+    max-width: 100%;
+    height: auto
+}
+
+.younitedpay-widget-root * {
+    -webkit-font-smoothing: antialiased !important;
+    -moz-osx-font-smoothing: grayscale !important;
+    -webkit-text-size-adjust: 100% !important;
+    line-height: normal !important;
+    margin: 0 !important;
+    padding: 0 !important;
+    letter-spacing: normal;
+    font-family: Roboto, sans-serif;
+}
+
+.younitedpay-widget-root button:focus,
+.younitedpay-widget-root button:hover,
+.younitedpay-widget-root input[type=button]:focus,
+.younitedpay-widget-root input[type=button]:hover {
+    text-decoration: none
+}
+
+.yp-space-x-1>:not(template)~:not(template) {
+    --space-x-reverse: 0 !important;
+    margin-right: calc(4px*var(--space-x-reverse)) !important;
+    margin-left: calc(4px*(1 - var(--space-x-reverse))) !important
+}
+
+.yp-space-y-2>:not(template)~:not(template) {
+    --space-y-reverse: 0 !important;
+    margin-top: calc(8px*(1 - var(--space-y-reverse))) !important;
+    margin-bottom: calc(8px*var(--space-y-reverse)) !important
+}
+
+.yp-space-x-3>:not(template)~:not(template) {
+    --space-x-reverse: 0 !important;
+    margin-right: calc(12px*var(--space-x-reverse)) !important;
+    margin-left: calc(12px*(1 - var(--space-x-reverse))) !important
+}
+
+.yp-space-y-4>:not(template)~:not(template) {
+    --space-y-reverse: 0 !important;
+    margin-top: calc(16px*(1 - var(--space-y-reverse))) !important;
+    margin-bottom: calc(16px*var(--space-y-reverse)) !important
+}
+
+.yp-bg-black {
+    --bg-opacity: 1 !important;
+    background-color: #000 !important;
+    background-color: rgba(0, 0, 0, var(--bg-opacity)) !important
+}
+
+.yp-bg-white {
+    --bg-opacity: 1 !important;
+    background-color: #fff !important;
+    background-color: rgba(255, 255, 255, var(--bg-opacity)) !important
+}
+
+.yp-bg-red {
+    --bg-opacity: 1 !important;
+    background-color: #ff414d !important;
+    background-color: rgba(255, 65, 77, var(--bg-opacity)) !important
+}
+
+.yp-bg-orange-900 {
+    --bg-opacity: 1 !important;
+    background-color: #9c4221 !important;
+    background-color: rgba(156, 66, 33, var(--bg-opacity)) !important
+}
+
+.yp-bg-blue {
+    --bg-opacity: 1 !important;
+    background-color: #00425e !important;
+    background-color: rgba(0, 66, 94, var(--bg-opacity)) !important
+}
+
+.yp-bg-beige {
+    --bg-opacity: 1 !important;
+    background-color: #fff7f0 !important;
+    background-color: rgba(255, 247, 240, var(--bg-opacity)) !important
+}
+
+.yp-group:hover .group-hover\:yp-bg-red {
+    --bg-opacity: 1 !important;
+    background-color: #ff414d !important;
+    background-color: rgba(255, 65, 77, var(--bg-opacity)) !important
+}
+
+.yp-bg-gradient-to-b {
+    background-image: linear-gradient(180deg, var(--gradient-color-stops)) !important
+}
+
+.yp-from-red {
+    --gradient-from-color: #ff414d !important;
+    --gradient-color-stops: var(--gradient-from-color), var(--gradient-to-color, rgba(255, 65, 77, 0)) !important
+}
+
+.yp-via-red {
+    --gradient-via-color: #ff414d !important;
+    --gradient-color-stops: var(--gradient-from-color), var(--gradient-via-color), var(--gradient-to-color, rgba(255, 65, 77, 0)) !important
+}
+
+.yp-to-red-700 {
+    --gradient-to-color: #d42e39 !important
+}
+
+.yp-bg-opacity-25 {
+    --bg-opacity: 0.25 !important
+}
+
+.yp-bg-opacity-50 {
+    --bg-opacity: 0.5 !important
+}
+
+.yp-border-transparent {
+    border-color: transparent !important
+}
+
+.yp-border-red {
+    --border-opacity: 1 !important;
+    border-color: #ff414d !important;
+    border-color: rgba(255, 65, 77, var(--border-opacity)) !important
+}
+
+.yp-border-orange-900 {
+    --border-opacity: 1 !important;
+    border-color: #9c4221 !important;
+    border-color: rgba(156, 66, 33, var(--border-opacity)) !important
+}
+
+.yp-border-orange {
+    --border-opacity: 1 !important;
+    border-color: #fdaf6f !important;
+    border-color: rgba(253, 175, 111, var(--border-opacity)) !important
+}
+
+.yp-border-light {
+    --border-opacity: 1 !important;
+    border-color: #DDDBDF !important;
+}
+
+.yp-border-black {
+  border-color: black!important;
+}
+
+.yp-pol-white {
+  color: white!important;
+}
+
+.yp-pol-purple {
+  color: #C5A1FE!important;
+}
+
+.yp-pol-purpledark {
+    color: #564C5D;
+}
+
+.yp-pol-black {
+  color: black!important;
+}
+
+.yp-pol-grey {
+    color: #7a7a7a!important;
+}
+
+.yp-border-blue {
+  border-color: #6a8af5!important;
+}
+
+.yp-border-opacity-0 {
+    --border-opacity: 0 !important
+}
+
+.yp-border-opacity-50 {
+    --border-opacity: 0.5 !important
+}
+
+.yp-border-opacity-100 {
+    --border-opacity: 1 !important
+}
+
+.yp-rounded-sm {
+    border-radius: 2px !important
+}
+
+.yp-rounded-md {
+    border-radius: 6px !important
+}
+
+.yp-rounded-bg {
+    border-radius: 8px !important
+}
+
+.yp-border {
+    border-width: 1px !important
+}
+
+.yp-border-2 {
+    border-width: 2px !important
+}
+
+.payment-options .yp-border-2 {
+    border: solid 1px;
+}
+
+.yp-border-b-2 {
+    border-bottom-width: 2px !important
+}
+
+.yp-cursor-pointer {
+    cursor: pointer !important
+}
+
+.yp-inline-block {
+    display: inline-block !important;
+}
+
+.yp-inline {
+    display: inline !important;
+}
+
+.yp-flex {
+    display: flex !important
+}
+
+.yp-flex-row {
+    flex-direction: row !important
+}
+
+.yp-flex-col {
+    flex-direction: column !important
+}
+
+.yp-flex-wrap {
+    flex-wrap: wrap !important
+}
+
+.yp-items-center {
+    align-items: center !important
+}
+
+.yp-justify-end {
+    justify-content: flex-end !important
+}
+
+.yp-justify-start {
+    justify-content: flex-start !important
+}
+
+.yp-justify-center {
+    justify-content: center !important
+}
+
+.yp-justify-between {
+    justify-content: space-between !important
+}
+
+.yp-flex-grow {
+    flex-grow: 1 !important
+}
+
+.yp-font-light {
+    font-weight: 300 !important
+}
+
+.yp-font-normal {
+    font-weight: 400 !important;
+    font-size: 16px!important;
+}
+
+.yp-font-bold {
+    font-weight: 700 !important;
+    font-size: 18px!important;
+}
+
+.yp-font-family-rg {
+    font-style: normal !important;
+}
+
+.yp-h-4 {
+    height: 16px !important
+}
+
+.yp-h-5 {
+    height: 20px !important
+}
+
+.yp-h-6 {
+    height: 24px !important
+}
+
+.yp-h-7 {
+    height: 28px !important
+}
+
+.yp-h-8 {
+    height: 32px !important
+}
+
+.yp-h-10 {
+    height: 40px !important
+}
+
+.yp-h-12 {
+    height: 48px !important
+}
+
+.yp-h-full {
+    height: 100% !important;
+    padding:40px!important;
+}
+
+.yp-h-screen {
+    height: 100vh !important
+}
+
+.yp-text-xs {
+    font-size: 12px !important
+}
+
+.yp-text-sm {
+    font-size: 14px !important
+}
+
+.yp-text-md {
+    font-size: 16px !important
+}
+
+.yp-text-base {
+    font-size: 18px !important;
+    font-weight: 700!important;
+}
+
+.yp-text-lg {
+    font-size: 18px !important
+}
+
+.yp-text-20 {
+    font-size: 20px !important
+}
+
+.yp-text-xl {
+    font-size: 24px !important
+}
+
+.yp-text-3xl {
+    font-size: 30px !important
+}
+
+.yp-text-4xl {
+    font-size: 35px !important
+}
+
+.yp-text-5xl {
+    font-size: 44px !important
+}
+
+.yp-leading-relaxed {
+    line-height: 1.625 !important
+}
+
+.yp-my-1 {
+    margin-top: 4px !important;
+    margin-bottom: 4px !important
+}
+
+.yp-my-2 {
+    margin-top: 8px !important;
+    margin-bottom: 8px !important
+}
+
+.yp-mx-1 {
+    margin-left: 4px !important;
+    margin-right: 4px !important
+}
+
+.yp-mx-2 {
+    margin-left: 8px !important;
+    margin-right: 8px !important
+}
+
+.yp-my-4 {
+    margin-top: 16px !important;
+    margin-bottom: 16px !important
+}
+
+.yp-my-8 {
+    margin-top: 32px !important;
+    margin-bottom: 32px !important
+}
+
+.yp-my-10 {
+    margin-top: 40px !important;
+    margin-bottom: 40px !important
+}
+
+.yp-mb-1 {
+    margin-bottom: 4px !important
+}
+
+.yp-mb-2 {
+    margin-bottom: 8px !important
+}
+
+.yp-mb-3 {
+    margin-bottom: 12px !important
+}
+
+.yp-mr-2 {
+    margin-right: 6px !important
+}
+
+.yp-mr-3 {
+    margin-right: 12px !important
+}
+
+.yp-left-title-text {
+    margin-top:54px !important;
+}
+
+.yp-mb-5 {
+    margin-bottom: 20px !important
+}
+
+.yp-mt-3 {
+    margin-top: 12px !important
+}
+
+.yp-mt-4 {
+    margin-top: 18px !important
+}
+
+.yp-mt-6 {
+    margin-top: 24px !important
+}
+
+.yp-mt-7 {
+    margin-top: 28px !important
+}
+
+.yp-mt-8 {
+    margin-top: 32px !important
+}
+
+.yp-mt-9 {
+    margin-top: 36px !important
+}
+
+.yp-mt-16 {
+    margin-top: 64px !important
+}
+
+.yp-mt-20 {
+    margin-top: 80px!important
+}
+
+.yp-mt-26 {
+    margin-top: 108px !important;
+}
+
+.yp-mt-32 {
+    margin-top: 128px !important
+}
+
+.yp-mt-48 {
+    margin-top: 192px !important
+}
+
+.yp-max-h-screen {
+    max-height: 100vh !important
+}
+
+.yp-opacity-0 {
+    opacity: 0 !important
+}
+
+.yp-opacity-15 {
+    opacity: .15 !important
+}
+
+.yp-opacity-25 {
+    opacity: .25 !important
+}
+
+.yp-opacity-50 {
+    opacity: .5 !important
+}
+
+.yp-opacity-100,
+.focus\:yp-opacity-100:focus,
+.hover\:yp-opacity-100:hover {
+    opacity: 1 !important
+}
+
+.yp-outline-none {
+    outline: 2px solid transparent !important;
+    outline-offset: 2px !important
+}
+
+.yp-overflow-auto {
+    overflow: auto !important
+}
+
+.yp-popup-logo {
+    justify-content: center;
+}
+
+.yp-popup-logo img {
+    width: 95px;
+}
+
+.yp-p-1 {
+    padding: 4px !important
+}
+
+.yp-p-2 {
+    padding: 8px !important
+}
+
+.yp-p-3 {
+    padding: 12px !important
+}
+
+.yp-p-4 {
+    padding: 16px !important
+}
+
+.yp-p-6 {
+    padding: 24px !important
+}
+
+.yp-p-8 {
+    padding: 32px !important
+}
+
+.yp-pb-0 {
+    padding-bottom: 0 !important
+}
+
+.yp-pl-1 {
+    padding-left: 4px !important
+}
+
+.yp-pl-2 {
+    padding-left: 8px !important
+}
+
+.yp-pl-3 {
+    padding-left: 12px !important
+}
+
+.yp-pl-4 {
+    padding-left: 16px !important
+}
+
+.yp-pl-5 {
+    padding-left: 20px !important
+}
+
+.yp-pl-6 {
+    padding-left: 24px !important
+}
+
+.yp-pt-2 {
+    padding-top: 8px !important
+}
+
+.yp-pt-3 {
+    padding-top: 12px !important
+}
+
+.yp-pb-2 {
+    padding-bottom: 8px !important
+}
+
+.yp-pt-4 {
+    padding-top: 16px !important
+}
+
+.yp-pb-4 {
+    padding-bottom: 16px !important
+}
+
+.yp-pr-4 {
+    padding-right: 16px !important
+}
+
+.yp-pt-4 {
+    padding-top: 16px !important
+}
+
+.yp-pt-6 {
+    padding-top: 24px !important
+}
+
+.yp-pb-6 {
+    padding-bottom: 24px !important
+}
+
+.yp-px-6 {
+    padding-left: 24px !important;
+    padding-right: 24px !important;
+}
+
+.yp-pr-6 {
+    padding-right: 24px !important
+}
+
+.yp-pl-8 {
+    padding-left: 32px !important
+}
+
+.yp-pb-24 {
+    padding-bottom: 96px !important
+}
+
+.yp-fixed {
+    position: fixed !important
+}
+
+.yp-absolute {
+    position: absolute !important
+}
+
+.yp-relative {
+    position: relative !important
+}
+
+.yp-inset-0 {
+    top: 0 !important;
+    bottom: 0 !important;
+    left: 0 !important
+}
+
+.yp-inset-0,
+.yp-right-0 {
+    right: 0 !important
+}
+
+.yp-bottom-0 {
+    bottom: 0 !important
+}
+
+.yp-left-0 {
+    left: 0 !important
+}
+
+.yp-top-3 {
+    top: 40px !important
+}
+
+.yp-right-4 {
+    right: 32px !important
+}
+
+.yp-shadow-lg {
+    box-shadow: 0 10px 15px -3px rgba(0, 0, 0, .1), 0 4px 6px -2px rgba(0, 0, 0, .05) !important
+}
+
+.yp-shadow-xl {
+    box-shadow: 0 20px 25px -5px rgba(0, 0, 0, .1), 0 10px 10px -5px rgba(0, 0, 0, .04) !important
+}
+
+.yp-shadow-above-md {
+    box-shadow: 0 -4px 6px -1px rgba(0, 0, 0, .1), 0 -2px 4px -1px rgba(0, 0, 0, .06) !important
+}
+
+.focus\:yp-shadow-outline-red:focus,
+.hover\:yp-shadow-outline-red:hover {
+    box-shadow: 0 0 0 3px rgba(255, 65, 77, .5) !important
+}
+
+.yp-text-right {
+    text-align: right !important
+}
+
+.yp-text-center {
+    text-align: center !important
+}
+
+.yp-text-white {
+    --text-opacity: 1 !important;
+    color: #fff !important;
+    color: rgba(255, 255, 255, var(--text-opacity)) !important
+}
+
+.yp-text-orange-900 {
+    --text-opacity: 1 !important;
+    color: #9c4221 !important;
+    color: rgba(156, 66, 33, var(--text-opacity)) !important
+}
+
+.yp-text-blue {
+    --text-opacity: 1 !important;
+    color: #00425e !important;
+    color: rgba(0, 66, 94, var(--text-opacity)) !important
+}
+
+.yp-uppercase {
+    text-transform: uppercase !important
+}
+
+.yp-capitalize {
+    text-transform: capitalize !important
+}
+
+.yp-underline {
+    text-decoration: underline !important
+}
+
+.yp-select-none {
+    -webkit-user-select: none !important;
+    -moz-user-select: none !important;
+    -ms-user-select: none !important;
+    user-select: none !important
+}
+
+.yp-w-8 {
+    width: 32px !important
+}
+
+.yp-w-full {
+    width: 100% !important
+}
+
+.yp-w-screen {
+    width: 100vw !important
+}
+
+.yp-z-50 {
+    z-index: 50 !important
+}
+
+.yp-z-100 {
+    z-index: 1000 !important
+}
+
+.yp-transform {
+    --transform-translate-x: 0 !important;
+    --transform-translate-y: 0 !important;
+    --transform-rotate: 0 !important;
+    --transform-skew-x: 0 !important;
+    --transform-skew-y: 0 !important;
+    --transform-scale-x: 1 !important;
+    --transform-scale-y: 1 !important;
+    transform: translateX(var(--transform-translate-x)) translateY(var(--transform-translate-y)) rotate(var(--transform-rotate)) skewX(var(--transform-skew-x)) skewY(var(--transform-skew-y)) scaleX(var(--transform-scale-x)) scaleY(var(--transform-scale-y)) !important
+}
+
+.focus\:yp-scale-125:focus,
+.hover\:yp-scale-125:hover {
+    --transform-scale-x: 1.25 !important;
+    --transform-scale-y: 1.25 !important
+}
+
+.yp-transition-all {
+    transition-property: all !important
+}
+
+.yp-transition-colors {
+    transition-property: background-color, border-color, color, fill, stroke !important
+}
+
+.yp-transition-opacity {
+    transition-property: opacity !important
+}
+
+.yp-transition-transform {
+    transition-property: transform !important
+}
+
+.yp-duration-100 {
+    transition-duration: .1s !important
+}
+
+.yp-duration-200 {
+    transition-duration: .2s !important
+}
+
+.yp-duration-500 {
+    transition-duration: .5s !important
+}
+
+@-webkit-keyframes spin {
+    to {
+        transform: rotate(1turn)
+    }
+}
+
+@keyframes spin {
+    to {
+        transform: rotate(1turn)
+    }
+}
+
+@-webkit-keyframes ping {
+
+    75%,
+    to {
+        transform: scale(2);
+        opacity: 0
+    }
+}
+
+@keyframes ping {
+
+    75%,
+    to {
+        transform: scale(2);
+        opacity: 0
+    }
+}
+
+@-webkit-keyframes pulse {
+    50% {
+        opacity: .5
+    }
+}
+
+@keyframes pulse {
+    50% {
+        opacity: .5
+    }
+}
+
+@-webkit-keyframes bounce {
+
+    0%,
+    to {
+        transform: translateY(-25%);
+        -webkit-animation-timing-function: cubic-bezier(.8, 0, 1, 1);
+        animation-timing-function: cubic-bezier(.8, 0, 1, 1)
+    }
+
+    50% {
+        transform: none;
+        -webkit-animation-timing-function: cubic-bezier(0, 0, .2, 1);
+        animation-timing-function: cubic-bezier(0, 0, .2, 1)
+    }
+}
+
+@keyframes bounce {
+
+    0%,
+    to {
+        transform: translateY(-25%);
+        -webkit-animation-timing-function: cubic-bezier(.8, 0, 1, 1);
+        animation-timing-function: cubic-bezier(.8, 0, 1, 1)
+    }
+
+    50% {
+        transform: none;
+        -webkit-animation-timing-function: cubic-bezier(0, 0, .2, 1);
+        animation-timing-function: cubic-bezier(0, 0, .2, 1)
+    }
+}
+
+.yp-animate-pulse {
+    -webkit-animation: pulse 2s cubic-bezier(.4, 0, .6, 1) infinite !important;
+    animation: pulse 2s cubic-bezier(.4, 0, .6, 1) infinite !important
+}
+
+.younitedpay-widget-root {
+    --text-opacity: 1!important;
+    color: #000000!important;
+}
+
+
+.yp-step {
+    display:flex!important;
+    align-items: center!important;
+    margin-bottom:20px!important;
+}
+
+.yp-linumber {
+    background-color: #c5a1fe;
+    color: #564c5d;
+    padding: 8px 14px!important;
+    margin-right: 12px!important;
+}
+
+.plan-pill-multiplier {
+    width: 10px;
+    margin-left: -2px !important;
+    padding-top: 0 !important
+}
+
+.younitedpay_logo {
+    display: flex;
+    max-height: 30px;
+}
+
+.yp-h3 {
+    font-size: 38px!important;
+    font-weight: 500;
+    line-height: 45px;
+    letter-spacing: -0.03em!important;
+}
+
+.yp-shadow-none {
+    box-shadow: none !important
+}
+
+
+@media (min-width:768px) {
+    .md\:yp-bg-transparent {
+        background-color: transparent !important
+    }
+
+    .md\:yp-max-w-4xl {
+        max-width: 1015px !important
+    }
+
+    .md\:yp-p-0 {
+        padding: 0 !important
+    }
+
+    .md\:yp-pt-8 {
+        padding-top: 32px !important
+    }
+
+    .md\:yp-pb-8 {
+        padding-bottom: 32px !important
+    }
+
+    .md\:yp-relative {
+        position: relative !important
+    }
+
+    .md\:yp-shadow-none {
+        box-shadow: none !important
+    }
+
+    .md\:yp-w-1\/2 {
+        width: 50% !important;
+    }
+
+    .md\:yp-w-2\/5 {
+        width: 32% !important;
+    }
+
+    .md\:yp-w-3\/5 {
+        width: 68% !important;
+    }
+
+    .md\:yp-h-800 {
+        height: 800px !important
+    }
+
+    .md\:yp-h-640 {
+        height: 640px !important
+    }
+
+    .md\:yp-h-580 {
+        height: auto !important
+    }
+    
+    .yp-mobile {
+        display:none!important;
+    }
+}
+
+@media (min-width:1024px) {
+    .lg\:yp-w-11\/12 {
+        width: 91.666667% !important
+    }
+}
+
+.yp-right {
+    --bg-opacity: 1;
+    background-color: white!important;
+    background-repeat: no-repeat;
+    background-position: 100%
+}
+
+.yp-hr {
+    background-color: #DDDBDF;
+    height:2.5px;
+    width:100%;
+    margin: 15px 0 25px!important;
+}
+
+.yp-weight600 {
+    font-weight: 600!important;
+}
+
+.yp-border-lprple {
+    border-color: #F9F5FF!important;
+}
+
+.yp-border-white {
+    background-color: white!important;
+}
+
+.yp-border-prple {
+    border-color: #c5a1fe !important;
+}
+
+.yp-border-purple-bright {
+    border-color: #6200fe!important;
+}
+
+.yp-bg-prple {
+    background-color: #c5a1fe !important;
+}
+
+.yp-bg-prple-mensuality {
+    background-color: #EFE6FF !important;
+}
+
+.yp-bg-prple-grey {
+    background-color: #f4ecff !important;
+}
+
+.yp-bg-purple-light {
+    background: #f9f5ff;
+}
+
+.yp-rel-2 {
+    position:relative;
+    top:2px;
+}
+
+.yp-close-black:hover {
+    fill: #6200fe;
+}
+
+.yp-mensuality-selected, .blocks_maturities_popup:hover span {
+    color: #6200fe!important;
+    border-color: #6200fe!important;
+}
+
+.younitedpay-widget-root .hidden {
+    display:none!important;
+}
+
+.yp-logo {
+    max-height:50px;
+}
+
+.yp-mw85 {
+    min-width: 85px;
+}
+
+.widget_border {
+    border-radius: 8px;
+    border: 1px solid #1C1C1C;
+}
+
+.yp-plus, .yp-minus {    
+    border-radius: 16px;
+    background: #C5A1FE !important;
+    color: white !important;
+    font-size: 26px !important;
+    width: 32px;
+    height: 32px;
+    display: inline;
+}
+
+input[type=range].yp-custom-range {
+    -webkit-appearance: none !important;
+    appearance: none !important;
+    padding: 0 !important;
+    font: inherit;
+    outline: none;
+    height: 8px;
+    color: #C5A1FE;
+    background: #C5A1FE;
+    cursor: pointer;
+    box-sizing: border-box;
+    border-radius: 8px;
+    flex-grow: 1;
+}
+
+input[type=range].yp-custom-range::-moz-range-thumb {
+    padding: 0.25em;
+    width: 24px;
+    height: 24px;
+    border: none;
+    background-color: #C5A1FE;
+    transition: .2s ease-in-out;
+    border-radius: 50%;
+}
+input[type=range].yp-custom-range::-ms-thumb {
+    padding: 0.25em;
+    width: 24px;
+    height: 24px;
+    border: none;
+    background-color: #C5A1FE;
+    transition: .2s ease-in-out;
+    border-radius: 50%;
+}
+
+input[type=range].yp-custom-range::-webkit-slider-thumb {
+    -webkit-appearance: none;
+    appearance: none; 
+    width: 24px;
+    height: 24px;
+    border: none;
+    background-color: #C5A1FE;
+    transition: .2s ease-in-out;
+    border-radius: 50%;
+}
+
+@media (max-width:768px) {
+    .yp-info-buy, .yp-info-buy p {
+        display:block!important;
+    }
+    .yp-font-normal {
+        font-size: 14px;
+    }
+    .yp-right .younited_btnhide {    
+        width:100%;
+    }
+    .yp-popup-logo img {
+        width: auto;
+    }
+    input[type=range].yp-custom-range::-moz-range-thumb {
+        width: 32px;
+        height: 32px;
+    }
+    input[type=range].yp-custom-range::-ms-thumb {
+        width: 32px;
+        height: 32px;
+    }
+    
+    input[type=range].yp-custom-range::-webkit-slider-thumb {
+        width: 32px;
+        height: 32px;
+    }
+}
+
+#yp-kml {
+    text-decoration: underline!important;
+}

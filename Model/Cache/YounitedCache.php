@@ -1,5 +1,4 @@
-<?xml version="1.0"?>
-<!--
+<?php
 /**
  * Copyright since 2022 Younited Credit
  *
@@ -17,15 +16,30 @@
  * @copyright 2022 Younited Credit
  * @license   https://opensource.org/licenses/AFL-3.0  Academic Free License (AFL 3.0)
  */
--->
-<config xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="urn:magento:framework:Module/etc/module.xsd">
-    <module name="YounitedCredit_YounitedPay" setup_version="2.0.0">
-        <sequence>
-            <module name="Magento_Sales"/>
-            <module name="Magento_Payment"/>
-            <module name="Magento_Checkout"/>
-            <module name="Magento_Directory" />
-            <module name="Magento_Config" />
-        </sequence>
-    </module>
-</config>
+
+namespace YounitedCredit\YounitedPay\Model\Cache;
+
+class YounitedCache extends \Magento\Framework\Cache\Frontend\Decorator\TagScope
+{
+    /**
+     * Type Code for Cache
+     */
+    const TYPE_IDENTIFIER = 'younitedpay';
+
+    /**
+     * Tag of Cache
+     */
+    const CACHE_TAG = 'YOUNITEDPAY';
+
+    /**
+     * @param \Magento\Framework\App\Cache\Type\FrontendPool $cacheFrontendPool
+     */
+    public function __construct(
+        \Magento\Framework\App\Cache\Type\FrontendPool $cacheFrontendPool
+    ) {
+        parent::__construct(
+            $cacheFrontendPool->get(self::TYPE_IDENTIFIER),
+            self::CACHE_TAG
+        );
+    }
+}
