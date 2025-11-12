@@ -34,7 +34,7 @@ class Withdrawn extends \Magento\Framework\App\Action\Action
     protected $orderManagement;
 
     /**
-     * @var \Psr\Log\LoggerInterface
+     * @var \YounitedCredit\YounitedPay\Model\YounitedLogger
      */
     protected $logger;
 
@@ -49,14 +49,14 @@ class Withdrawn extends \Magento\Framework\App\Action\Action
      * @param JsonFactory $resultJsonFactory
      * @param \YounitedCredit\YounitedPay\Helper\Maturity $maturityHelper
      * @param \Magento\Sales\Api\OrderManagementInterface $orderManagement
-     * @param \Psr\Log\LoggerInterface $logger
+     * @param \YounitedCredit\YounitedPay\Model\YounitedLogger $logger
      * @param \Magento\Framework\App\Action\Context $context
      */
     public function __construct(
         JsonFactory $resultJsonFactory,
         \YounitedCredit\YounitedPay\Helper\Maturity $maturityHelper,
         \Magento\Sales\Api\OrderManagementInterface $orderManagement,
-        \Psr\Log\LoggerInterface $logger,
+        \YounitedCredit\YounitedPay\Model\YounitedLogger $logger,
         \Magento\Framework\App\Action\Context $context
     ) {
         $this->resultJsonFactory = $resultJsonFactory;

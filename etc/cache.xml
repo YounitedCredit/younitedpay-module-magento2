@@ -1,0 +1,7 @@
+<?xml version="1.0"?>
+<config xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="urn:magento:framework:Cache/etc/cache.xsd">
+    <type name="younitedpay" translate="label,description" instance="YounitedCredit\YounitedPay\Model\Cache\YounitedCache">
+        <label>Younited Pay Cache</label>
+        <description>Cache for offers and token - 1 hour in Magento2 native caching system.</description>
+    </type>
+</config>

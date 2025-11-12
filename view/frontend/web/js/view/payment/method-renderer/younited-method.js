@@ -88,7 +88,7 @@ define([
 
                 $.ajax({
                     'url': url,
-                    'type': 'POST',
+                    'type': 'GET',
                     'success': function (data) {
                         window.checkoutConfig.payment.younited.maturities = {}
                         for (const installment in data) {
@@ -104,7 +104,7 @@ define([
                         _this.maturities = [];
                         for (const installment in window.checkoutConfig.payment.younited.maturities) {
                             var maturity = window.checkoutConfig.payment.younited.maturities[installment];
-                            var monthlyInstallmentAmount = maturity.monthlyInstallmentAmount.toFixed(2);
+                            var monthlyInstallmentAmount = maturity.monthlyInstallmentAmount;
                             maturity.installment = parseInt(installment);
 
                             maturity.annualDebitRate = maturity.annualDebitRate;

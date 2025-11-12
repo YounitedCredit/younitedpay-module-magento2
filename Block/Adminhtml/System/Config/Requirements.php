@@ -21,7 +21,7 @@ namespace YounitedCredit\YounitedPay\Block\Adminhtml\System\Config;
 
 use Magento\Store\Model\ScopeInterface;
 use YounitedCredit\YounitedPay\Helper\Config;
-use YounitedPaySDK\Client;
+Use YounitedCredit\YounitedPay\Helper\YounitedClient;
 use YounitedPaySDK\Model\BestPrice;
 use YounitedPaySDK\Request\BestPriceRequest;
 
@@ -194,7 +194,7 @@ class Requirements extends \Magento\Config\Block\System\Config\Form\Field
             return false;
         }
 
-        $client = new Client();
+        $client = new YounitedClient();
         $body = new BestPrice();
         $body->setBorrowedAmount(149.01);
 
