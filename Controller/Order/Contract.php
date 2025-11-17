@@ -289,6 +289,7 @@ class Contract extends \Magento\Checkout\Controller\Onepage
         if ($credentials['mode'] == 'dev') {
             $request = $request->enableSandbox();
         }
+        $this->logger->log('[younited pay] Body contract' . json_encode($body->jsonSerialize()));
 
         try {
             $response = $client->setCredential(
@@ -381,7 +382,7 @@ class Contract extends \Magento\Checkout\Controller\Onepage
 
         if ($this->isPhoneError === false) {
             try {
-                $this->orderManagement->cancel($order->getQuoteId());
+                $this->orderManagement->cancel($order->getEntityId());
             } catch (\Exception $e) {
                 // Do nothing
                 $this->messageManager->addErrorMessage(__('Cannot cancel order.'));
