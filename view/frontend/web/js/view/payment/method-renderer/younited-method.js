@@ -55,13 +55,8 @@ define([
                 .replace(' ', '')
                 .slice(0, 3)
 
-            if (indicative != window.checkoutConfig.payment.younited.phoneAreaCode) {
-                $('.yp-error').show()
-                $('#yp-checkout').prop("disabled", true);
-            } else {
-                $('.yp-error').hide()
-                $('#yp-checkout').prop("disabled", false);
-            }
+            $('.yp-error').hide()
+            $('#yp-checkout').prop("disabled", false);
         },
 
         /**

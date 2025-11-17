@@ -45,7 +45,7 @@ class YounitedLogger
      */
     public function __construct()
     {
-        $writer = new \Zend_Log_Writer_Stream(BP . '/pub/younited-' . date('Ymd') . '.txt');
+        $writer = new \Zend_Log_Writer_Stream(BP . '/var/log/younited-' . date('Ymd') . '.log');
         $this->logger = new \Zend_Log();
         $this->logger->addWriter($writer);
         $objectManager = \Magento\Framework\App\ObjectManager::getInstance(); 

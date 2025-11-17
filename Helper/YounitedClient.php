@@ -211,6 +211,12 @@ class YounitedClient extends Client
         }
         curl_close($this->ch);
 
+        try {
+            $this->logger->log('[younited pay] response : ' . json_encode($response->getResponse()->getModel()));
+        } catch (\Exception $e) {
+            $this->logger->log('[younited pay] exception response : ' . $e->getTraceAsString());   
+        }
+
         // Get the response
         return $response->getResponse();
     }
@@ -238,12 +244,6 @@ class YounitedClient extends Client
 
         $options[CURLOPT_WRITEFUNCTION] = function ($ch, $data) use ($response, $options) {
             if (empty($response->getResponse()->getBody()) === false) {
-                try {
-                    $this->logger->log('[younited pay] response : ' . $data);
-                } catch (\Exception $e) {
-                    $this->logger->log('[younited pay] exception response : ' . $e->getTraceAsString());   
-                }
-
                 return $response->getResponse()->getBody()->write($data);
             }
             return 0;
