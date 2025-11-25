@@ -384,10 +384,13 @@ class Maturity
      * @return array|null
      * @throws \Magento\Framework\Exception\NoSuchEntityException
      */
-    public function getInstallments(float $price, $storeId)
+    public function getInstallments(?float $price, $storeId)
     {
         $maturities = [];
         $credentials = $this->getApiCredentials($storeId);
+        if ($credentials === false) {
+            return $maturities;
+        }
         $storeLocale = $this->getStore()->getLocaleCode() ?? 'fr_FR';
 
         $cacheKey = $credentials['mode'] . '_' . $credentials['clientId'] . '_' . (string) $price;
