@@ -21,6 +21,7 @@ namespace YounitedCredit\YounitedPay\Helper;
 
 use Magento\Framework\App\ObjectManager;
 use Magento\Framework\Exception\LocalizedException;
+use Magento\Framework\Locale\Resolver;
 use Magento\Framework\Serialize\Serializer\Json;
 use Magento\Store\Model\ScopeInterface;
 use Magento\Store\Model\Store;
@@ -79,6 +80,11 @@ class Maturity
     protected $maturityCache = [];
 
     /**
+     * @var \Magento\Framework\Locale\Resolver
+     */
+    protected $localeResolver;
+
+    /**
      * Maturity constructor.
      *
      * @param \Magento\Framework\App\Config\ScopeConfigInterface $scopeConfig
@@ -86,6 +92,7 @@ class Maturity
      * @param \Magento\Store\Model\StoreManagerInterface $storeManager
      * @param \YounitedCredit\YounitedPay\Model\YounitedLogger $logger
      * @param YounitedCacheHandler $cacheHandler
+     * @param \Magento\Framework\Locale\Resolver $localeResolver
      * @param Json|null $serializer
      */
     public function __construct(
@@ -94,6 +101,7 @@ class Maturity
         \Magento\Store\Model\StoreManagerInterface $storeManager,
         \YounitedCredit\YounitedPay\Model\YounitedLogger $logger,
         YounitedCacheHandler $cacheHandler,
+        Resolver $localeResolver,
         Json $serializer = null
     ) {
         $this->scopeConfig = $scopeConfig;
@@ -101,6 +109,7 @@ class Maturity
         $this->storeManager = $storeManager;
         $this->logger = $logger;
         $this->cacheHandler = $cacheHandler;
+        $this->localeResolver = $localeResolver;
         $this->serializer = $serializer ?: ObjectManager::getInstance()->get(Json::class);
         $this->debugAPI = (bool) $this->scopeConfig->getValue(Config::XML_PATH_API_DEBUG, ScopeInterface::SCOPE_STORE);
     }
@@ -391,7 +400,7 @@ class Maturity
         if ($credentials === false) {
             return $maturities;
         }
-        $storeLocale = $this->getStore()->getLocaleCode() ?? 'fr_FR';
+        $storeLocale = strstr($this->localeResolver->getLocale(), '_', true) ?? 'fr_Fallback';
 
         $cacheKey = $credentials['mode'] . '_' . $credentials['clientId'] . '_' . (string) $price;
         $cacheOffers = $this->cacheHandler->getCache($cacheKey, 'offers');
