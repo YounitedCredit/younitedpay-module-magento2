@@ -60,7 +60,7 @@ class YounitedLogger
 
     public function warning($message)
     {
-        $this->logger->warning($message);
+        $this->logger->warn($message);
     }
 
     public function debug($message)

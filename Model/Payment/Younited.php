@@ -279,6 +279,10 @@ class Younited extends \Magento\Payment\Model\Method\AbstractMethod
             return false;
         }
 
+        if (empty($quote->getData('grand_total'))) {
+            return false;
+        }
+
         $maturities = $this->maturityHelper->getInstallments($quote->getData('grand_total'), $quote->getStoreId());
         if (!$maturities || empty($maturities)) {
             return false;

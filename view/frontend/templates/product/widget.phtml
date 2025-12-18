@@ -31,6 +31,7 @@
 <?php if ($blockAvailable): ?>
     <?php $defaultMaturity = [] ?>
     <?php $defaultInstallment = 0 ?>
+    <?php $currentLocale = 'fr' ?>
     <div class="younitedpay-widget-root" id="yp-widget"
          data-location="<?= $block->escapeHtml($blockName) ?>"
          data-price="<?= $block->escapeHtml($price) ?>"
@@ -70,16 +71,29 @@
                     </span> 
                     <?php $i++; ?>
                 <?php endforeach; ?>
+                <?php $currentLocale = strtolower(substr($defaultMaturity['locale'], 0, 2)) ?>
                 <?php endif ?>
-            </div>
-            <div class="yp-cursor-pointer yp-flex yp-flex-row yp-items-center yp-flex-wrap yp-text-xs yp-p-2 yp-pb-0">
-                <a href="#younited_popupzone" class="yp-kml">
-                    <p><?= __("Click to learn more") ?></p>
-                </a>
-            </div>
-            <p class="yp-pol-purpledark yp-weight600 yp-mt-4">
-                <?= __('Taking out a loan is a commitment with an obligation of repayment. Verify your ability to repay the loan before committing.') ?>
-            </p>
+                <?php if ($currentLocale != 'it'): ?>
+                    </div>
+                    <div class="yp-cursor-pointer yp-flex yp-flex-row yp-items-center yp-flex-wrap yp-text-xs yp-p-2 yp-pb-0">
+                        <a href="#younited_popupzone" class="yp-kml">
+                            <p><?= __("Click to learn more") ?></p>
+                        </a>
+                    </div>
+                    <p class="yp-pol-purpledark yp-weight600 yp-mt-4">
+                        <?= __('Taking out a loan is a commitment with an obligation of repayment. Verify your ability to repay the loan before committing.') ?>
+                    </p>
+                <?php else: ?>
+                    <span class="yp-justify-start yp-flex-row yp-space-x-1 yp-mx-2 yp-mb-1 yp-pl-3">
+                    <span class="yp-h-7 yp-flex yp-items-center">
+                        <span class="younitedpay_infoinstallment yp-install-amount">
+                            <?= $block->escapeHtml($defaultMaturity['monthlyInstallmentAmount'] ?? 0) ?> €
+                        </span>&nbsp;
+                        <span>/</span>&nbsp;
+                        <span><?= __('months') ?></span>
+                    </span>
+                    </div>
+                <?php endif ?>
         </div>
         <div id="younited_popupzone" class="yp-inset-0 yp-flex yp-fixed yp-justify-center yp-items-center yp-z-100 yp-bg-black yp-bg-opacity-50" style="display:none!important;">
             <div
@@ -201,7 +215,7 @@
                             <div class="yp-mt-6 block_contents block_content_range">
                                 <div class="yp-justify-between yp-flex yp-flex-row yp-mb-2 yp-text-20">
                                     <span class="yp-weight600 yp-pol-purpledark" > <?= __('Fixed APR') ?>
-                                        <?php if ($defaultMaturity['locale'] ?? '' != 'es'): ?>
+                                        <?php if ($currentLocale != 'es'): ?>
                                             <br><span > <?= __('(excluding optional insurance)') ?></span>
                                         <?php endif ?>
                                     </span>
