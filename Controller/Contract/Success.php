@@ -150,6 +150,7 @@ class Success extends \Magento\Checkout\Controller\Onepage implements \Magento\F
             $order = $this->orderRepository->get($orderId);
             $resultJson = $this->resultJsonFactory->create();
             $accepted = true;
+            $message = 'Order processed successfully';
             if ($this->isContractConfirmed($order) === false) {
                 $this->logger->debug('[younited pay] - on granted URL refused no contract confirmed');
                 $message = 'Contract not confirmed';
@@ -162,7 +163,6 @@ class Success extends \Magento\Checkout\Controller\Onepage implements \Magento\F
                     $accepted = false;
                     $message = 'Error during order processing: ' . $e->getMessage();
                 }
-                $message = 'Order processed successfully';
             }
             return $resultJson->setData(['response_code' => 200, 'accepted' => $accepted, 'message' => $message]);
         } else {
