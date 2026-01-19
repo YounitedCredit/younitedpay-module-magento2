@@ -146,13 +146,25 @@ class Successold extends \Magento\Checkout\Controller\Onepage
     {
         $orderId = $this->getRequest()->getParam('order', false);
         if ($orderId !== false) {
+            // We are in the webhook case
             $order = $this->orderRepository->get($orderId);
+            $resultJson = $this->resultJsonFactory->create();
+            $accepted = true;
+            $message = 'Order processed successfully';
             if ($this->isContractConfirmed($order) === false) {
                 $this->logger->debug('[younited pay] - on granted URL refused no contract confirmed');
-                $resultJson = $this->resultJsonFactory->create();
-
-                return $resultJson->setData(['response_code' => 200, 'accepted' => false]);
+                $message = 'Contract not confirmed';
+                $accepted = false;
+            } else {
+                try {
+                    $this->executeOrder($order);
+                } catch (\Exception $e) {
+                    $this->logger->debug('[younited pay] - executeOrder exception: ' . $e->getMessage());
+                    $accepted = false;
+                    $message = 'Error during order processing: ' . $e->getMessage();
+                }
             }
+            return $resultJson->setData(['response_code' => 200, 'accepted' => $accepted, 'message' => $message]);
         } else {
             // Mettre la commande en processing
             $session = $this->getOnepage()->getCheckout();
