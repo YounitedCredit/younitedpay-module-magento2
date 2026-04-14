@@ -102,7 +102,7 @@ class Maturity
         \YounitedCredit\YounitedPay\Model\YounitedLogger $logger,
         YounitedCacheHandler $cacheHandler,
         Resolver $localeResolver,
-        Json $serializer = null
+        ?Json $serializer = null
     ) {
         $this->scopeConfig = $scopeConfig;
         $this->mathRandom = $mathRandom;
@@ -443,7 +443,8 @@ class Maturity
                 return [];
             }
         } catch (\Exception $e) {
-            return __('Exception: ') . $e->getMessage() . $e->getFile() . ':' . $e->getLine() . $e->getTraceAsString();
+            $this->logger->debug('Exception: ' . $e->getMessage() . $e->getFile() . ':' . $e->getLine() . $e->getTraceAsString());
+            return [];
         }
 
         $maturityConfig = $this->getConfigValue($price, $storeId);

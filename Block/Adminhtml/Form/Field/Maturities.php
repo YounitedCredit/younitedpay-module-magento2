@@ -73,11 +73,11 @@ class Maturities extends \Magento\Framework\View\Element\Html\Select
     /**
      * Retrieve allowed maturities
      *
-     * @param int $maturity return name by customer group id
+     * @param int|null $maturity return name by customer group id
      *
-     * @return array|string
+     * @return array|string|null
      */
-    protected function getMaturities($maturity = null)
+    protected function getMaturities(int|null $maturity = null)
     {
         if ($this->_maturities === null) {
             $this->_maturities = [];

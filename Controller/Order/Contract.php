@@ -237,7 +237,7 @@ class Contract extends \Magento\Checkout\Controller\Onepage
 
         $address = $order->getBillingAddress();
         $phoneNumber = $address->getTelephone();
-        $isInternationalPhone = $this->checkIfInternationalPhone($address->getTelephone(), $order);
+        $isInternationalPhone = $this->checkIfInternationalPhone($address->getTelephone());
         if ($isInternationalPhone !== true) {
             $phoneNumber = '';
         }
@@ -395,7 +395,7 @@ class Contract extends \Magento\Checkout\Controller\Onepage
     /** 
      * Check if phone number of billing address is in expected format
     */
-    private function checkIfInternationalPhone(string $phone, $order)
+    private function checkIfInternationalPhone(string $phone)
     {
         $defaultPhoneAreaCode = '+33';
         $countryCode = $this->scopeConfig->getValue(
@@ -409,6 +409,9 @@ class Contract extends \Magento\Checkout\Controller\Onepage
         }
         $this->isPhoneError = false;
         if (substr($phone, 0, 3) !== $defaultPhoneAreaCode) {
+            return false;
+        }
+        if (!preg_match('/^\+\d{11,14}$/', $phone)) {
             return false;
         }
 

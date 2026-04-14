@@ -28,7 +28,7 @@ use Magento\Framework\DB\Transaction;
 use Magento\Sales\Model\Order\Email\Sender\InvoiceSender;
 use Magento\Sales\Model\Service\InvoiceService;
 use YounitedCredit\YounitedPay\Helper\Config;
-Use YounitedCredit\YounitedPay\Helper\YounitedClient;
+use YounitedCredit\YounitedPay\Helper\YounitedClient;
 use YounitedPaySDK\Model\LoadContract;
 use YounitedPaySDK\Request\LoadContractRequest;
 
@@ -65,6 +65,16 @@ class Success extends \Magento\Checkout\Controller\Onepage implements \Magento\F
     protected $maturityHelper;
 
     /**
+     * @var \Magento\Quote\Api\CartRepositoryInterface
+     */
+    protected $cartRepository;
+
+    /**
+     * @var \Magento\Sales\Api\OrderManagementInterface
+     */
+    protected $orderManagement;
+
+    /**
      * Success constructor.
      *
      * @param Context $context
@@ -87,6 +97,8 @@ class Success extends \Magento\Checkout\Controller\Onepage implements \Magento\F
      * @param Transaction $transaction
      * @param \YounitedCredit\YounitedPay\Model\YounitedLogger $logger
      * @param \YounitedCredit\YounitedPay\Helper\Maturity $maturityHelper
+     * @param \Magento\Sales\Api\OrderManagementInterface $orderManagement
+     * @param \Magento\Quote\Api\CartRepositoryInterface $cartRepository
      */
     public function __construct(
         Context $context,
@@ -108,14 +120,18 @@ class Success extends \Magento\Checkout\Controller\Onepage implements \Magento\F
         InvoiceSender $invoiceSender,
         Transaction $transaction,
         \YounitedCredit\YounitedPay\Model\YounitedLogger $logger,
-        \YounitedCredit\YounitedPay\Helper\Maturity $maturityHelper
+        \YounitedCredit\YounitedPay\Helper\Maturity $maturityHelper,
+        \Magento\Sales\Api\OrderManagementInterface $orderManagement,
+        \Magento\Quote\Api\CartRepositoryInterface $cartRepository
     ) {
         $this->orderRepository = $orderRepository;
         $this->invoiceService = $invoiceService;
         $this->transaction = $transaction;
         $this->invoiceSender = $invoiceSender;
+        $this->cartRepository = $cartRepository;
         $this->logger = $logger;
         $this->maturityHelper = $maturityHelper;
+        $this->orderManagement = $orderManagement;
 
         parent::__construct(
             $context,
@@ -174,6 +190,40 @@ class Success extends \Magento\Checkout\Controller\Onepage implements \Magento\F
 
             $orderId = $session->getLastOrderId();
             $order = $this->orderRepository->get($orderId);
+            if ($this->isContractConfirmed($order) === false) {
+                $this->logger->debug('[younited pay] - success URL refused no contract confirmed');
+                $message = 'Payment not confirmed - cannot validate order';
+                $accepted = false;
+
+                $session = $this->getOnepage()->getCheckout();
+                if (!$this->_objectManager->get(\Magento\Checkout\Model\Session\SuccessValidator::class)->isValid()) {
+                    return $this->resultRedirectFactory->create()->setPath('checkout/cart');
+                }
+
+                $orderId = $session->getLastOrderId();
+                $order = $this->orderRepository->get($orderId);
+
+                $this->messageManager->addErrorMessage($message);
+                $quote = $this->cartRepository->get($order->getQuoteId());
+                $quote->setIsActive(true);
+                $this->cartRepository->save($quote);
+                $this->getOnepage()->getCheckout()->replaceQuote($quote)->unsLastRealOrderId();
+
+                try {
+                    $this->orderManagement->cancel($orderId);
+                } catch (\Exception $e) {
+                    // Do nothing
+                    $this->logger->debug(
+                        sprintf(
+                            '[younited pay] - cannot cancel order with Id %s: %s', 
+                            $orderId, 
+                            $e->getMessage()
+                        )
+                    );
+                }
+
+                return $this->resultRedirectFactory->create()->setPath('checkout/cart');
+            }
         }
 
         return $this->executeOrder($order);
@@ -257,7 +307,7 @@ class Success extends \Magento\Checkout\Controller\Onepage implements \Magento\F
             $credentials['clientSecret']
         )->sendRequest($request);
 
-        $statusOrderDone = ['INITIALIZED', 'GRANTED', 'CONFIRMED'];
+        $statusOrderDone = ['GRANTED', 'CONFIRMED', 'FINANCED'];
         if ($response->getStatusCode() == 200) {
             $output = json_decode($response->getBody(), true);
             if (isset($output['status']) && in_array($output['status'], $statusOrderDone) === true) {
