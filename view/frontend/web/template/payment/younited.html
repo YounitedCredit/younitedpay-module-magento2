@@ -14,7 +14,10 @@
                        name="maturity"
                        class="radio mat_radio"
                        data-bind="attr: {'id': 'mat_' + maturity.installment}, value: maturity.installment, click:$parent.selectMaturity.bind($data, maturity.installment)">
-                <label data-bind="html: maturity.subTitle, attr: {'for': 'mat_' + maturity.installment}" class="label"></label>
+                <label>
+                    <span data-bind="text: maturity.feesTxt"></span>
+                    <img data-bind="attr: {'src': maturity.logoSrc}" alt="Younited Pay">
+                </label>
                 <div class="yp-info" data-bind="attr: {'id': 'yp-info-' + maturity.installment}, visible: false">
                     <!-- ko if: ( $parent.getPhoneError() != '' ) -->
                     <div class="yp-error messages">

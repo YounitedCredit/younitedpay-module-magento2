@@ -45,7 +45,7 @@ abstract class Contract extends \Magento\Checkout\Controller\Onepage
     protected $cartRepository;
 
     /**
-     * @var \YounitedCredit\YounitedPay\Model\YounitedLogger
+     * @var \YounitedCredit\YounitedPay\Model\Logger\YounitedLogger
      */
     protected $logger;
 
@@ -70,7 +70,7 @@ abstract class Contract extends \Magento\Checkout\Controller\Onepage
      * @param \YounitedCredit\YounitedPay\Helper\Maturity $maturityHelper
      * @param \Magento\Sales\Api\OrderManagementInterface $orderManagement
      * @param \Magento\Quote\Api\CartRepositoryInterface $cartRepository
-     * @param \YounitedCredit\YounitedPay\Model\YounitedLogger $logger
+     * @param \YounitedCredit\YounitedPay\Model\Logger\YounitedLogger $logger
      */
     public function __construct(
         \Magento\Framework\App\Action\Context $context,
@@ -91,7 +91,7 @@ abstract class Contract extends \Magento\Checkout\Controller\Onepage
         \YounitedCredit\YounitedPay\Helper\Maturity $maturityHelper,
         \Magento\Sales\Api\OrderManagementInterface $orderManagement,
         \Magento\Quote\Api\CartRepositoryInterface $cartRepository,
-        \YounitedCredit\YounitedPay\Model\YounitedLogger $logger
+        \YounitedCredit\YounitedPay\Model\Logger\YounitedLogger $logger
     ) {
         parent::__construct(
             $context,

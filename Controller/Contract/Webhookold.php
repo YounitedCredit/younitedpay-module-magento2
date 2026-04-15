@@ -27,6 +27,7 @@ use YounitedCredit\YounitedPay\Helper\Config;
 use YounitedCredit\YounitedPay\Helper\YounitedClient;
 use YounitedPaySDK\Model\LoadContract;
 use YounitedPaySDK\Request\LoadContractRequest;
+use YounitedPaySDK\Response\AbstractResponse;
 
 class Webhookold extends Action
 {
@@ -36,7 +37,7 @@ class Webhookold extends Action
     protected $maturityHelper;
 
     /**
-     * @var \YounitedCredit\YounitedPay\Model\YounitedLogger
+     * @var \YounitedCredit\YounitedPay\Model\Logger\YounitedLogger
      */
     protected $logger;
 
@@ -66,6 +67,11 @@ class Webhookold extends Action
     protected $orderManagement;
 
     /**
+     * @var YounitedClient
+     */
+    private $client;
+
+    /**
      * Webhook constructor.
      *
      * @param JsonFactory $resultJsonFactory
@@ -73,9 +79,10 @@ class Webhookold extends Action
      * @param \Magento\Sales\Api\OrderRepositoryInterface $orderRepository
      * @param \Magento\Sales\Model\RefundOrder $refundOrder
      * @param \Magento\Sales\Model\Order\Creditmemo\ItemCreationFactory $itemCreationFactory
-     * @param \YounitedCredit\YounitedPay\Model\YounitedLogger $logger
+     * @param \YounitedCredit\YounitedPay\Model\Logger\YounitedLogger $logger
      * @param \Magento\Framework\App\Action\Context $context
      * @param \Magento\Sales\Api\OrderManagementInterface $orderManagement
+     * @param YounitedClient $client
      */
     public function __construct(
         JsonFactory $resultJsonFactory,
@@ -83,9 +90,10 @@ class Webhookold extends Action
         \Magento\Sales\Api\OrderRepositoryInterface $orderRepository,
         \Magento\Sales\Model\RefundOrder $refundOrder,
         \Magento\Sales\Model\Order\Creditmemo\ItemCreationFactory $itemCreationFactory,
-        \YounitedCredit\YounitedPay\Model\YounitedLogger $logger,
+        \YounitedCredit\YounitedPay\Model\Logger\YounitedLogger $logger,
         \Magento\Framework\App\Action\Context $context,
-        \Magento\Sales\Api\OrderManagementInterface $orderManagement
+        \Magento\Sales\Api\OrderManagementInterface $orderManagement,
+        YounitedClient $client
     ) {
         $this->resultJsonFactory = $resultJsonFactory;
         $this->maturityHelper = $maturityHelper;
@@ -93,6 +101,7 @@ class Webhookold extends Action
         $this->refundOrder = $refundOrder;
         $this->itemCreationFactory = $itemCreationFactory;
         $this->logger = $logger;
+        $this->client = $client;
         $this->orderManagement = $orderManagement;
 
         parent::__construct($context);
@@ -109,11 +118,11 @@ class Webhookold extends Action
         $orderId = $this->getRequest()->getParam('order');
 
         if ($action != "cancel") {
-            return $this->returnResponse("Order with id " . $orderId . " - webhook action is not treated: " . $action, 400);
+            return $this->returnResponse(400, false,"Order with id " . $orderId . " - webhook action is not treated: " . $action);
         }
 
         if (!$orderId || empty($orderId)) {
-            return $this->returnResponse("Order id not provided for webhook with action cancel", 400);
+            return $this->returnResponse(400, false, "Order id not provided for webhook with action cancel");
         }
 
         try {
@@ -123,17 +132,32 @@ class Webhookold extends Action
         }
 
         if (!$order || !$order->getPayment() || !$order->getId()) {
-            return $this->returnResponse('No order or no payment found', 404);
+            return $this->returnResponse(404, false, 'No order or no payment found');
+        }
+
+        $credentials = $this->maturityHelper->getApiCredentials($order->getStoreId());
+        $webHookSecret = $credentials['webHookSecret'] ?? null;
+        if (empty($webHookSecret)) {
+            $this->logger->debug('[younited pay] - webhook refused no secret configured for store with id ' . $order->getStoreId());
+            return $this->returnResponse(400, false, "Webhook secret is not configured for this store");
+        }
+
+        $client = $this->client->setCredential('', $webHookSecret);
+
+        /** @var AbstractResponse $response */
+        $response = $client->retrieveCallbackResponse();
+        if ($response->getStatusCode() === 401) {
+            $this->logger->debug('[younited pay] - Webhook is not valid - invalid secret or bad signature.');
+            return $this->returnResponse(401, false, "Webhook is not valid - invalid secret or bad signature.");
         }
 
         $payment = $order->getPayment();
         $informations = $payment->getAdditionalInformation();
 
         // We look at yp contract to be sure that it is CANCELED
-        $client = new YounitedClient();
+        $client = $this->client;
         $body = new LoadContract();
         $request = new LoadContractRequest();
-        $credentials = $this->maturityHelper->getApiCredentials($order->getStoreId());
 
         $body->setContractReference($informations['Payment ID']);
         $request = $request->setModel($body);
@@ -155,8 +179,9 @@ class Webhookold extends Action
         }
 
         $message = 'Contract already canceled';
-        if ($informations['Payment Status'] != Config::CREDIT_STATUS_CANCELED) {
-            $message = 'Contract not canceled on API response : ' . $informations['Payment Status'];
+        $debugMessage = 'Status on API response : ' . ($output['status'] ?? 'Unknown');
+        if ($isContractCanceled === false) {
+            $message = 'Contract not canceled on API response.';
         }
         if ($isContractCanceled && $informations['Payment Status'] != Config::CREDIT_STATUS_CANCELED) {
             if ($order->canCreditMemo()) {
@@ -185,14 +210,22 @@ class Webhookold extends Action
             $order->getPayment()->setAdditionalInformation($informations);
         }
 
-        return $this->returnResponse($message, 200);
+        return $this->returnResponse(200, true, $message, $debugMessage);
     }
 
-    private function returnResponse($message, $responseCode)
+    /**
+     * Return response for Webhooks
+     * @param mixed $code - HTTP response code
+     * @param mixed $accepted - if the webhook is accepted or not
+     * @param mixed $message - message to log and return in response
+     * @param mixed $debugMessage - debug message only logged and not returned in response
+     * @return \Magento\Framework\Controller\Result\Json
+     */
+    protected function returnResponse($code = 200, $accepted = true, $message = '', $debugMessage = '')
     {
-        $this->logger->debug($message);
+        $this->logger->debug($message . (empty($debugMessage) === false ? ' - ' . $debugMessage : ''));
         $resultJson = $this->resultJsonFactory->create();
-        return $resultJson->setData(['message' => $message, 'response_code' => $responseCode]);
+        return $resultJson->setData(['response_code' => $code, 'accepted' => $accepted, 'message' => $message]);
     }
 
     /**

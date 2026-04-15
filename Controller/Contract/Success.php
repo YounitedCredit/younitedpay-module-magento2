@@ -31,6 +31,7 @@ use YounitedCredit\YounitedPay\Helper\Config;
 use YounitedCredit\YounitedPay\Helper\YounitedClient;
 use YounitedPaySDK\Model\LoadContract;
 use YounitedPaySDK\Request\LoadContractRequest;
+use YounitedPaySDK\Response\AbstractResponse;
 
 class Success extends \Magento\Checkout\Controller\Onepage implements \Magento\Framework\App\CsrfAwareActionInterface
 {
@@ -55,7 +56,7 @@ class Success extends \Magento\Checkout\Controller\Onepage implements \Magento\F
     protected $invoiceSender;
 
     /**
-     * @var \YounitedCredit\YounitedPay\Model\YounitedLogger
+     * @var \YounitedCredit\YounitedPay\Model\Logger\YounitedLogger
      */
     protected $logger;
 
@@ -73,6 +74,11 @@ class Success extends \Magento\Checkout\Controller\Onepage implements \Magento\F
      * @var \Magento\Sales\Api\OrderManagementInterface
      */
     protected $orderManagement;
+
+    /**
+     * @var YounitedClient
+     */
+    private $client;
 
     /**
      * Success constructor.
@@ -95,10 +101,11 @@ class Success extends \Magento\Checkout\Controller\Onepage implements \Magento\F
      * @param InvoiceService $invoiceService
      * @param InvoiceSender $invoiceSender
      * @param Transaction $transaction
-     * @param \YounitedCredit\YounitedPay\Model\YounitedLogger $logger
+     * @param \YounitedCredit\YounitedPay\Model\Logger\YounitedLogger $logger
      * @param \YounitedCredit\YounitedPay\Helper\Maturity $maturityHelper
      * @param \Magento\Sales\Api\OrderManagementInterface $orderManagement
      * @param \Magento\Quote\Api\CartRepositoryInterface $cartRepository
+     * @param YounitedClient $client
      */
     public function __construct(
         Context $context,
@@ -119,16 +126,18 @@ class Success extends \Magento\Checkout\Controller\Onepage implements \Magento\F
         InvoiceService $invoiceService,
         InvoiceSender $invoiceSender,
         Transaction $transaction,
-        \YounitedCredit\YounitedPay\Model\YounitedLogger $logger,
+        \YounitedCredit\YounitedPay\Model\Logger\YounitedLogger $logger,
         \YounitedCredit\YounitedPay\Helper\Maturity $maturityHelper,
         \Magento\Sales\Api\OrderManagementInterface $orderManagement,
-        \Magento\Quote\Api\CartRepositoryInterface $cartRepository
+        \Magento\Quote\Api\CartRepositoryInterface $cartRepository,
+        YounitedClient $client
     ) {
         $this->orderRepository = $orderRepository;
         $this->invoiceService = $invoiceService;
         $this->transaction = $transaction;
         $this->invoiceSender = $invoiceSender;
         $this->cartRepository = $cartRepository;
+        $this->client = $client;
         $this->logger = $logger;
         $this->maturityHelper = $maturityHelper;
         $this->orderManagement = $orderManagement;
@@ -164,69 +173,82 @@ class Success extends \Magento\Checkout\Controller\Onepage implements \Magento\F
         if ($orderId !== false) {
             // We are in the webhook case
             $order = $this->orderRepository->get($orderId);
-            $resultJson = $this->resultJsonFactory->create();
-            $accepted = true;
-            $message = 'Order processed successfully';
+            $credentials = $this->maturityHelper->getApiCredentials($order->getStoreId());
+            $webHookSecret = $credentials['webHookSecret'] ?? null;
+            if (empty($webHookSecret)) {
+                $this->logger->debug('[younited pay] - webhook refused no secret configured for store with id ' . $order->getStoreId());
+                return $this->returnResponse(400, false, "Webhook secret is not configured for this store");
+            }
+
+            $client = $this->client->setCredential('', $webHookSecret);
+
+            /** @var AbstractResponse $response */
+            $response = $client->retrieveCallbackResponse();
+            if ($response->getStatusCode() === 401) {
+                $this->logger->debug('[younited pay] - Webhook is not valid - invalid secret or bad signature.');
+                return $this->returnResponse(401, false, "Webhook is not valid - invalid secret or bad signature.");
+            }
+
             if ($this->isContractConfirmed($order) === false) {
                 $this->logger->debug('[younited pay] - on granted URL refused no contract confirmed');
-                $message = 'Contract not confirmed';
-                $accepted = false;
-            } else {
-                try {
-                    $this->executeOrder($order);
-                } catch (\Exception $e) {
-                    $this->logger->debug('[younited pay] - executeOrder exception: ' . $e->getMessage());
-                    $accepted = false;
-                    $message = 'Error during order processing: ' . $e->getMessage();
-                }
+                $message = 'Contract not confirmed - bad status returned by API';
+                return $this->returnResponse(200, true, $message);
             }
-            return $resultJson->setData(['response_code' => 200, 'accepted' => $accepted, 'message' => $message]);
-        } else {
-            // Mettre la commande en processing
-            $session = $this->getOnepage()->getCheckout();
-            if (!$this->_objectManager->get(\Magento\Checkout\Model\Session\SuccessValidator::class)->isValid()) {
-                return $this->resultRedirectFactory->create()->setPath('checkout/cart');
+            
+            $message = 'Order processed successfully';
+            try {
+                $this->executeOrder($order);
+            } catch (\Exception $e) {
+                $this->logger->debug('executeOrder exception: ' . $e->getMessage());
+                $message = 'Error during order processing: ' . $e->getMessage();
             }
+            return $this->returnResponse(200, true, $message);
+        } 
 
-            $orderId = $session->getLastOrderId();
-            $order = $this->orderRepository->get($orderId);
-            if ($this->isContractConfirmed($order) === false) {
-                $this->logger->debug('[younited pay] - success URL refused no contract confirmed');
-                $message = 'Payment not confirmed - cannot validate order';
-                $accepted = false;
-
-                $session = $this->getOnepage()->getCheckout();
-                if (!$this->_objectManager->get(\Magento\Checkout\Model\Session\SuccessValidator::class)->isValid()) {
-                    return $this->resultRedirectFactory->create()->setPath('checkout/cart');
-                }
-
-                $orderId = $session->getLastOrderId();
-                $order = $this->orderRepository->get($orderId);
-
-                $this->messageManager->addErrorMessage($message);
-                $quote = $this->cartRepository->get($order->getQuoteId());
-                $quote->setIsActive(true);
-                $this->cartRepository->save($quote);
-                $this->getOnepage()->getCheckout()->replaceQuote($quote)->unsLastRealOrderId();
-
-                try {
-                    $this->orderManagement->cancel($orderId);
-                } catch (\Exception $e) {
-                    // Do nothing
-                    $this->logger->debug(
-                        sprintf(
-                            '[younited pay] - cannot cancel order with Id %s: %s', 
-                            $orderId, 
-                            $e->getMessage()
-                        )
-                    );
-                }
-
-                return $this->resultRedirectFactory->create()->setPath('checkout/cart');
-            }
+        // User redirect case - we check contract and if not confirmed we cancel order and redirect to cart with error message
+        $session = $this->getOnepage()->getCheckout();
+        if (!$this->_objectManager->get(\Magento\Checkout\Model\Session\SuccessValidator::class)->isValid()) {
+            return $this->resultRedirectFactory->create()->setPath('checkout/cart');
         }
 
-        return $this->executeOrder($order);
+        $orderId = $session->getLastOrderId();
+        $order = $this->orderRepository->get($orderId);
+        if ($this->isContractConfirmed($order) === true) {
+            return $this->executeOrder($order);
+        }
+        
+        // Contract is not confirmed, we cancel the order and redirect to cart with error message
+        $this->logger->debug('[younited pay] - success URL refused no contract confirmed');
+        $message = 'Payment not confirmed - cannot validate order';
+
+        $session = $this->getOnepage()->getCheckout();
+        if (!$this->_objectManager->get(\Magento\Checkout\Model\Session\SuccessValidator::class)->isValid()) {
+            return $this->resultRedirectFactory->create()->setPath('checkout/cart');
+        }
+
+        $orderId = $session->getLastOrderId();
+        $order = $this->orderRepository->get($orderId);
+
+        $this->messageManager->addErrorMessage($message);
+        $quote = $this->cartRepository->get($order->getQuoteId());
+        $quote->setIsActive(true);
+        $this->cartRepository->save($quote);
+        $this->getOnepage()->getCheckout()->replaceQuote($quote)->unsLastRealOrderId();
+
+        try {
+            $this->orderManagement->cancel($orderId);
+        } catch (\Exception $e) {
+            // Do nothing
+            $this->logger->debug(
+                sprintf(
+                    '[younited pay] - cannot cancel order with Id %s: %s', 
+                    $orderId, 
+                    $e->getMessage()
+                )
+            );
+        }
+
+        return $this->resultRedirectFactory->create()->setPath('checkout/cart');
     }
 
     /**
@@ -288,7 +310,7 @@ class Success extends \Magento\Checkout\Controller\Onepage implements \Magento\F
      */
     protected function isContractConfirmed($order)
     {
-        $client = new YounitedClient();
+        $client = $this->client;
         $body = new LoadContract();
         $request = new LoadContractRequest();
         $credentials = $this->maturityHelper->getApiCredentials($order->getStoreId());
@@ -316,6 +338,19 @@ class Success extends \Magento\Checkout\Controller\Onepage implements \Magento\F
         }
 
         return false;
+    }
+
+    /**
+     * Return response for Webhooks
+     * @param mixed $code - HTTP response code
+     * @param mixed $accepted - if the webhook is accepted or not
+     * @param mixed $message - message to log and return in response
+     * @return \Magento\Framework\Controller\Result\Json
+     */
+    protected function returnResponse($code = 200, $accepted = true, $message = '')
+    {
+        $resultJson = $this->resultJsonFactory->create();
+        return $resultJson->setData(['response_code' => $code, 'accepted' => $accepted, 'message' => $message]);
     }
 
     /**

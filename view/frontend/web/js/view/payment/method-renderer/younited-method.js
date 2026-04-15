@@ -105,11 +105,9 @@ define([
                             maturity.annualDebitRate = maturity.annualDebitRate;
                             maturity.annualPercentageRate = maturity.annualPercentageRate;
 
-                            var feesTxt = maturity.annualDebitRate ? feesMessage : feesWithoutMessage;
-                            maturity.subTitle = `<span>` +
-                                feesTxt.replace('%1', installment).replace('%2', monthlyInstallmentAmount) +
-                                `</span>` +
-                                `<img src="${window.checkoutConfig.payment.younited.logo}" alt="Younited Pay">`;
+                            maturity.feesTxt = maturity.annualDebitRate ? feesMessage : feesWithoutMessage;
+                            maturity.feesTxt = maturity.feesTxt.replace('%1', installment).replace('%2', monthlyInstallmentAmount);
+                            maturity.logoSrc = window.checkoutConfig.payment.younited.logo;
 
                             _this.maturities.push(maturity)
                         }

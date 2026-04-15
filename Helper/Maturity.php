@@ -55,7 +55,7 @@ class Maturity
     protected $storeManager;
 
     /**
-     * @var \YounitedCredit\YounitedPay\Model\YounitedLogger
+     * @var \YounitedCredit\YounitedPay\Model\Logger\YounitedLogger
      */
     protected $logger;
 
@@ -85,28 +85,36 @@ class Maturity
     protected $localeResolver;
 
     /**
+     * @var YounitedClient
+     */
+    private $client;
+
+    /**
      * Maturity constructor.
      *
      * @param \Magento\Framework\App\Config\ScopeConfigInterface $scopeConfig
      * @param \Magento\Framework\Math\Random $mathRandom
      * @param \Magento\Store\Model\StoreManagerInterface $storeManager
-     * @param \YounitedCredit\YounitedPay\Model\YounitedLogger $logger
+     * @param \YounitedCredit\YounitedPay\Model\Logger\YounitedLogger $logger
      * @param YounitedCacheHandler $cacheHandler
      * @param \Magento\Framework\Locale\Resolver $localeResolver
+     * @param YounitedClient $client
      * @param Json|null $serializer
      */
     public function __construct(
         \Magento\Framework\App\Config\ScopeConfigInterface $scopeConfig,
         \Magento\Framework\Math\Random $mathRandom,
         \Magento\Store\Model\StoreManagerInterface $storeManager,
-        \YounitedCredit\YounitedPay\Model\YounitedLogger $logger,
+        \YounitedCredit\YounitedPay\Model\Logger\YounitedLogger $logger,
         YounitedCacheHandler $cacheHandler,
         Resolver $localeResolver,
+        YounitedClient $client,
         ?Json $serializer = null
     ) {
         $this->scopeConfig = $scopeConfig;
         $this->mathRandom = $mathRandom;
         $this->storeManager = $storeManager;
+        $this->client = $client;
         $this->logger = $logger;
         $this->cacheHandler = $cacheHandler;
         $this->localeResolver = $localeResolver;
@@ -369,6 +377,11 @@ class Maturity
             $storeId,
             $scope
         );
+        $webHookSecret = $this->getConfig(
+            Config::XML_PATH_API_SECRET_WEBHOOK . $production,
+            $storeId,
+            $scope
+        );
 
         if (!$clientId || !$clientSecret) {
             $this->logger->warning(__('Please check your Magento configuration client_id'
@@ -381,6 +394,7 @@ class Maturity
             'mode' => $mode,
             'clientId' => $clientId,
             'clientSecret' => $clientSecret,
+            'webHookSecret' => $webHookSecret,
         ];
     }
 
@@ -420,7 +434,7 @@ class Maturity
             return $maturities;
         }
 
-        $client = new YounitedClient();
+        $client = $this->client;
         $body = new BestPrice();
         $body->setBorrowedAmount($price);
 
