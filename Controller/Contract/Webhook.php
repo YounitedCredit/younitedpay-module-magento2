@@ -25,6 +25,7 @@ use Magento\Framework\App\RequestInterface;
 use Magento\Framework\Controller\Result\JsonFactory;
 use YounitedCredit\YounitedPay\Helper\Config;
 use YounitedCredit\YounitedPay\Helper\YounitedClient;
+use YounitedPaySDK\Client;
 use YounitedPaySDK\Model\LoadContract;
 use YounitedPaySDK\Request\LoadContractRequest;
 use YounitedPaySDK\Response\AbstractResponse;
@@ -143,7 +144,8 @@ class Webhook extends Action implements \Magento\Framework\App\CsrfAwareActionIn
             return $this->returnResponse(400, false, "Webhook secret is not configured for this store");
         }
 
-        $client = $this->client->setCredential('', $webHookSecret);
+        $client = new Client();
+        $client->setCredential('', $webHookSecret);
 
         /** @var AbstractResponse $response */
         $response = $client->retrieveCallbackResponse();
@@ -184,8 +186,14 @@ class Webhook extends Action implements \Magento\Framework\App\CsrfAwareActionIn
         if ($isContractCanceled === false) {
             $message = 'Contract not canceled on API response.';
         }
-        if ($isContractCanceled && $informations['Payment Status'] != Config::CREDIT_STATUS_CANCELED) {
-            if ($order->canCreditMemo()) {
+        if ($isContractCanceled && $informations['Payment Status'] !== Config::CREDIT_STATUS_CANCELED) {
+            $orderWithMemo = false;
+            try {
+                $orderWithMemo = $order->canCreditMemo();
+            } catch(\Exception $e) {
+                // Do nothing => we will only cancel the order without refund if we cannot check credit memo
+            }
+            if ($orderWithMemo === true) {
                 // We have an invoice : refund
                 $itemIdsToRefund = [];
                 /** @var \Magento\Sales\Api\Data\OrderItemInterface $item */
@@ -200,8 +208,17 @@ class Webhook extends Action implements \Magento\Framework\App\CsrfAwareActionIn
                 $message = "Refunding order with id " . $orderId . " after contract cancellation.";
             } else {
                 // We do not have an invoice: cancel
-                $this->orderManagement->cancel($orderId);
                 $message = "Cancelling (no memo so no refund) of order with id " . $orderId . " after contract cancellation.";
+                try {
+                    $canceled = $this->orderManagement->cancel($orderId);
+                    if ($canceled === false) {
+                        $this->logger->debug('[younited pay] - Cannot cancel order with id ' . $orderId);
+                    }
+                } catch (\Exception $e) {
+                    // Do nothing
+                    $this->logger->debug('[younited pay] - Cannot cancel order with id ' . $orderId);
+                    $this->logger->debug('[younited pay] - debug cancel order exception : ' . $e->getMessage());
+                }
             }
 
             $payment = $order->getPayment();
