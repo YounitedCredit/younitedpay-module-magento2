@@ -29,6 +29,7 @@ use Magento\Sales\Model\Order\Email\Sender\InvoiceSender;
 use Magento\Sales\Model\Service\InvoiceService;
 use YounitedCredit\YounitedPay\Helper\Config;
 use YounitedCredit\YounitedPay\Helper\YounitedClient;
+use YounitedPaySDK\Client;
 use YounitedPaySDK\Model\LoadContract;
 use YounitedPaySDK\Request\LoadContractRequest;
 use YounitedPaySDK\Response\AbstractResponse;
@@ -181,7 +182,8 @@ class Successold extends \Magento\Checkout\Controller\Onepage
                 return $this->returnResponse(400, false, "Webhook secret is not configured for this store");
             }
 
-            $client = $this->client->setCredential('', $webHookSecret);
+            $client = new Client();
+            $client->setCredential('', $webHookSecret);
 
             /** @var AbstractResponse $response */
             $response = $client->retrieveCallbackResponse();
