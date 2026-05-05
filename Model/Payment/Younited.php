@@ -131,8 +131,8 @@ class Younited extends \Magento\Payment\Model\Method\AbstractMethod
         \Magento\Payment\Model\Method\Logger $logger,
         \Magento\Store\Model\StoreManagerInterface $storeManager,
         Maturity $maturityHelper,
-        array $data = [],
-        DirectoryHelper $directory = null
+        ?DirectoryHelper $directory = null,
+        array $data = []
     ) {
         parent::__construct(
             $context,
@@ -264,7 +264,7 @@ class Younited extends \Magento\Payment\Model\Method\AbstractMethod
      *
      * @return bool
      */
-    public function isAvailable(\Magento\Quote\Api\Data\CartInterface $quote = null)
+    public function isAvailable(?\Magento\Quote\Api\Data\CartInterface $quote = null)
     {
         if (!$quote) {
             return false;

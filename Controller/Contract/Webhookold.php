@@ -24,9 +24,11 @@ use Magento\Framework\App\Request\InvalidRequestException;
 use Magento\Framework\App\RequestInterface;
 use Magento\Framework\Controller\Result\JsonFactory;
 use YounitedCredit\YounitedPay\Helper\Config;
-Use YounitedCredit\YounitedPay\Helper\YounitedClient;
+use YounitedCredit\YounitedPay\Helper\YounitedClient;
+use YounitedPaySDK\Client;
 use YounitedPaySDK\Model\LoadContract;
 use YounitedPaySDK\Request\LoadContractRequest;
+use YounitedPaySDK\Response\AbstractResponse;
 
 class Webhookold extends Action
 {
@@ -36,7 +38,7 @@ class Webhookold extends Action
     protected $maturityHelper;
 
     /**
-     * @var \YounitedCredit\YounitedPay\Model\YounitedLogger
+     * @var \YounitedCredit\YounitedPay\Model\Logger\YounitedLogger
      */
     protected $logger;
 
@@ -61,6 +63,16 @@ class Webhookold extends Action
     protected $orderRepository;
 
     /**
+     * @var \Magento\Sales\Api\OrderManagementInterface
+     */
+    protected $orderManagement;
+
+    /**
+     * @var YounitedClient
+     */
+    private $client;
+
+    /**
      * Webhook constructor.
      *
      * @param JsonFactory $resultJsonFactory
@@ -68,8 +80,10 @@ class Webhookold extends Action
      * @param \Magento\Sales\Api\OrderRepositoryInterface $orderRepository
      * @param \Magento\Sales\Model\RefundOrder $refundOrder
      * @param \Magento\Sales\Model\Order\Creditmemo\ItemCreationFactory $itemCreationFactory
-     * @param \YounitedCredit\YounitedPay\Model\YounitedLogger $logger
+     * @param \YounitedCredit\YounitedPay\Model\Logger\YounitedLogger $logger
      * @param \Magento\Framework\App\Action\Context $context
+     * @param \Magento\Sales\Api\OrderManagementInterface $orderManagement
+     * @param YounitedClient $client
      */
     public function __construct(
         JsonFactory $resultJsonFactory,
@@ -77,8 +91,10 @@ class Webhookold extends Action
         \Magento\Sales\Api\OrderRepositoryInterface $orderRepository,
         \Magento\Sales\Model\RefundOrder $refundOrder,
         \Magento\Sales\Model\Order\Creditmemo\ItemCreationFactory $itemCreationFactory,
-        \YounitedCredit\YounitedPay\Model\YounitedLogger $logger,
-        \Magento\Framework\App\Action\Context $context
+        \YounitedCredit\YounitedPay\Model\Logger\YounitedLogger $logger,
+        \Magento\Framework\App\Action\Context $context,
+        \Magento\Sales\Api\OrderManagementInterface $orderManagement,
+        YounitedClient $client
     ) {
         $this->resultJsonFactory = $resultJsonFactory;
         $this->maturityHelper = $maturityHelper;
@@ -86,6 +102,8 @@ class Webhookold extends Action
         $this->refundOrder = $refundOrder;
         $this->itemCreationFactory = $itemCreationFactory;
         $this->logger = $logger;
+        $this->client = $client;
+        $this->orderManagement = $orderManagement;
 
         parent::__construct($context);
     }
@@ -100,71 +118,131 @@ class Webhookold extends Action
         $action = $this->getRequest()->getParam('action');
         $orderId = $this->getRequest()->getParam('order');
 
-        if ($action == "cancel" && $orderId) {
-            try {
-                $order = $this->orderRepository->get($orderId);
-            } catch (\Magento\Framework\Exception\NoSuchEntityException $e) {
-                $order = false;
-            }
+        if ($action != "cancel") {
+            return $this->returnResponse(400, false,"Order with id " . $orderId . " - webhook action is not treated: " . $action);
+        }
 
-            // @see https://magento.stackexchange.com/questions/221702/magento-2-programmatically-create-a-credit-memo-by-script
-//            \Zend_Debug::dump($order->canCreditMemo());
-            if ($order && $order->getId() && $order->canCreditMemo() && $order->getPayment()) {
-                $payment = $order->getPayment();
-                $informations = $payment->getAdditionalInformation();
+        if (!$orderId || empty($orderId)) {
+            return $this->returnResponse(400, false, "Order id not provided for webhook with action cancel");
+        }
 
-                // We look at yp contract to be sure that it is CANCELED
-                $client = new YounitedClient();
-                $body = new LoadContract();
-                $request = new LoadContractRequest();
-                $credentials = $this->maturityHelper->getApiCredentials($order->getStoreId());
+        try {
+            $order = $this->orderRepository->get($orderId);
+        } catch (\Magento\Framework\Exception\NoSuchEntityException $e) {
+            $order = false;
+        }
 
-                $body->setContractReference($informations['Payment ID']);
-                $request = $request->setModel($body);
-                if ($credentials['mode'] === 'dev') {
-                    $request = $request->enableSandbox();
-                }
+        if (!$order || !$order->getPayment() || !$order->getId()) {
+            return $this->returnResponse(404, false, 'No order or no payment found');
+        }
 
-                $response = $client->setCredential(
-                    $credentials['clientId'],
-                    $credentials['clientSecret']
-                )->sendRequest($request);
+        $credentials = $this->maturityHelper->getApiCredentials($order->getStoreId());
+        $webHookSecret = $credentials['webHookSecret'] ?? null;
+        if (empty($webHookSecret)) {
+            $this->logger->debug('[younited pay] - webhook refused no secret configured for store with id ' . $order->getStoreId());
+            return $this->returnResponse(400, false, "Webhook secret is not configured for this store");
+        }
 
-                $isContractCanceled = false;
-                if ($response->getStatusCode() == 200) {
-                    $output = json_decode($response->getBody(), true);
-                    if (isset($output['status']) && $output['status'] == 'CANCELED') {
-                        $isContractCanceled = true;
-                    }
-                }
+        $client = new Client();
+        $client->setCredential('', $webHookSecret);
 
-                if ($isContractCanceled && $informations['Payment Status'] != Config::CREDIT_STATUS_CANCELED) {
-//                    \Zend_Debug::dump($order->getIncrementId());
-                    $itemIdsToRefund = [];
-                    /** @var \Magento\Sales\Api\Data\OrderItemInterface $item */
-                    foreach ($order->getItems() as $item) {
-//                    \Zend_Debug::dump($item->getItemId());
-//                    \Zend_Debug::dump($item->getQtyInvoiced());
-                        $creditmemoItem = $this->itemCreationFactory->create();
-                        $creditmemoItem
-                            ->setQty($item->getQtyInvoiced())
-                            ->setOrderItemId($item->getItemId());
-                        $itemIdsToRefund[] = $creditmemoItem;
-                    }
+        /** @var AbstractResponse $response */
+        $response = $client->retrieveCallbackResponse();
+        if ($response->getStatusCode() === 401) {
+            $this->logger->debug('[younited pay] - Webhook is not valid - invalid secret or bad signature.');
+            return $this->returnResponse(401, false, "Webhook is not valid - invalid secret or bad signature.");
+        }
 
-                    $payment = $order->getPayment();
-                    $informations = $payment->getAdditionalInformation();
-                    $informations['Payment Status'] = Config::CREDIT_STATUS_CANCELED;
+        $payment = $order->getPayment();
+        $informations = $payment->getAdditionalInformation();
 
-                    $order->getPayment()->setAdditionalInformation($informations);
+        // We look at yp contract to be sure that it is CANCELED
+        $client = $this->client;
+        $body = new LoadContract();
+        $request = new LoadContractRequest();
 
-                    $this->refundOrder->execute($orderId, $itemIdsToRefund);
-                }
+        $body->setContractReference($informations['Payment ID']);
+        $request = $request->setModel($body);
+        if ($credentials['mode'] === 'dev') {
+            $request = $request->enableSandbox();
+        }
+
+        $response = $client->setCredential(
+            $credentials['clientId'],
+            $credentials['clientSecret']
+        )->sendRequest($request);
+
+        $isContractCanceled = false;
+        if ($response->getStatusCode() == 200) {
+            $output = json_decode($response->getBody(), true);
+            if (isset($output['status']) && $output['status'] == 'CANCELED') {
+                $isContractCanceled = true;
             }
         }
 
+        $message = 'Contract already canceled';
+        $debugMessage = 'Status on API response : ' . ($output['status'] ?? 'Unknown');
+        if ($isContractCanceled === false) {
+            $message = 'Contract not canceled on API response.';
+        }
+        if ($isContractCanceled && $informations['Payment Status'] !== Config::CREDIT_STATUS_CANCELED) {
+            $orderWithMemo = false;
+            try {
+                $orderWithMemo = $order->canCreditMemo();
+            } catch(\Exception $e) {
+                // Do nothing => we will only cancel the order without refund if we cannot check credit memo
+            }
+            if ($orderWithMemo === true) {
+                // We have an invoice : refund
+                $itemIdsToRefund = [];
+                /** @var \Magento\Sales\Api\Data\OrderItemInterface $item */
+                foreach ($order->getItems() as $item) {
+                    $creditmemoItem = $this->itemCreationFactory->create();
+                    $creditmemoItem
+                        ->setQty($item->getQtyInvoiced())
+                        ->setOrderItemId($item->getItemId());
+                    $itemIdsToRefund[] = $creditmemoItem;
+                }
+                $this->refundOrder->execute($orderId, $itemIdsToRefund);
+                $message = "Refunding order with id " . $orderId . " after contract cancellation.";
+            } else {
+                // We do not have an invoice: cancel
+                $message = "Cancelling (no memo so no refund) of order with id " . $orderId . " after contract cancellation.";
+                try {
+                    $canceled = $this->orderManagement->cancel($orderId);
+                    if ($canceled === false) {
+                        $this->logger->debug('[younited pay] - Cannot cancel order with id ' . $orderId);
+                    }
+                } catch (\Exception $e) {
+                    // Do nothing
+                    $this->logger->debug('[younited pay] - Cannot cancel order with id ' . $orderId);
+                    $this->logger->debug('[younited pay] - debug cancel order exception : ' . $e->getMessage());
+                }
+            }
+
+            $payment = $order->getPayment();
+            $informations = $payment->getAdditionalInformation();
+            $informations['Payment Status'] = Config::CREDIT_STATUS_CANCELED;
+
+            $order->getPayment()->setAdditionalInformation($informations);
+        }
+
+        return $this->returnResponse(200, true, $message, $debugMessage);
+    }
+
+    /**
+     * Return response for Webhooks
+     * @param mixed $code - HTTP response code
+     * @param mixed $accepted - if the webhook is accepted or not
+     * @param mixed $message - message to log and return in response
+     * @param mixed $debugMessage - debug message only logged and not returned in response
+     * @return \Magento\Framework\Controller\Result\Json
+     */
+    protected function returnResponse($code = 200, $accepted = true, $message = '', $debugMessage = '')
+    {
+        $this->logger->debug($message . (empty($debugMessage) === false ? ' - ' . $debugMessage : ''));
         $resultJson = $this->resultJsonFactory->create();
-        return $resultJson->setData(['response_code' => 200]);
+        return $resultJson->setData(['response_code' => $code, 'accepted' => $accepted, 'message' => $message]);
     }
 
     /**

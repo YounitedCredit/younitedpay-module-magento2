@@ -103,7 +103,9 @@ class Maturity extends \Magento\Framework\App\Action\Action
                 return $resultRaw->setContents($block->toHtml());    
             }
             $data[$oneParam] = $request->getParam($oneParam);
-            $data[$oneParam] = $oneParam === 'amount' ? str_replace('-', '.', $data[$oneParam]) : $data[$oneParam];
+            if ($oneParam === 'amount') {
+                $data[$oneParam] = str_replace('-', '.', $data[$oneParam]);
+            }
         }
         $data['location'] = 'ajax';
 

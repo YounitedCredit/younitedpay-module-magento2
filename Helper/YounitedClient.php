@@ -3,10 +3,8 @@
 namespace YounitedCredit\YounitedPay\Helper;
 
 use Magento\Framework\App\ProductMetadataInterface;
-use Magento\Framework\App\ProductMetadata;
-use Magento\Framework\Module\ModuleList;
 use Magento\Framework\Module\ModuleListInterface;
-use YounitedCredit\YounitedPay\Model\YounitedLogger;
+use YounitedCredit\YounitedPay\Model\Logger\YounitedLogger;
 use YounitedCredit\YounitedPay\Model\YounitedCacheHandler;
 use YounitedPaySDK\Client;
 use YounitedPaySDK\Exception\RequestException;
@@ -68,13 +66,18 @@ class YounitedClient extends Client
     /**
      * Create new cURL http client object
      */
-    public function __construct() {
+    public function __construct(
+        YounitedLogger $logger,
+        YounitedCacheHandler $cacheHandler,
+        ProductMetadataInterface $productMetadata,
+        ModuleListInterface $moduleListInterface
+    ) 
+    {
         self::$MAX_BODY_SIZE = 1024 * 1024;
-        $objectManager = \Magento\Framework\App\ObjectManager::getInstance(); 
-        $this->productMetadata = $objectManager->get(ProductMetadata::class);
-        $this->moduleList = $objectManager->get(ModuleList::class);
-        $this->logger = new YounitedLogger();
-        $this->cacheHandler = $objectManager->get(YounitedCacheHandler::class);
+        $this->productMetadata = $productMetadata;
+        $this->moduleList = $moduleListInterface;
+        $this->logger = $logger;
+        $this->cacheHandler = $cacheHandler;
     }
 
     /**
@@ -101,7 +104,7 @@ class YounitedClient extends Client
      */
     private function getToken($tenantId)
     {
-        $cacheKey = base64_encode($this->clientId . $this->clientSecret);
+        $cacheKey = hash('sha256', $this->clientId . $this->clientSecret);
         $cacheToken = $this->cacheHandler->getCache($cacheKey, 'token');
         if ($cacheToken !== false) {
              return $cacheToken;
