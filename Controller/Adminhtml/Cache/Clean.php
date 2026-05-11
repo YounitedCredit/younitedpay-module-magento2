@@ -24,6 +24,8 @@ use Magento\Framework\Controller\ResultFactory;
 
 class Clean extends Action
 {
+    const ADMIN_RESOURCE = 'YounitedCredit_YounitedPay::general_settings';
+    
     /**
      * @var \Magento\Framework\App\Cache\TypeListInterface
      */

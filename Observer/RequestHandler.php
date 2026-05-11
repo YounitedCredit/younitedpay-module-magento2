@@ -23,9 +23,12 @@ use Magento\Framework\Event\Observer;
 use Magento\Framework\Event\ObserverInterface;
 use Magento\Framework\Message\ManagerInterface;
 use Magento\Framework\Stdlib\DateTime\DateTime;
-use YounitedCredit\YounitedPay\Model\YounitedLogger;
 use YounitedCredit\YounitedPay\Helper\Maturity;
-Use YounitedCredit\YounitedPay\Helper\YounitedClient;
+use YounitedCredit\YounitedPay\Helper\YounitedClient;
+use YounitedCredit\YounitedPay\Model\Logger\YounitedLogger;
+use YounitedPaySDK\Model\ActivateContract;
+use YounitedPaySDK\Model\ConfirmContract;
+use YounitedPaySDK\Model\WithdrawContract;
 
 abstract class RequestHandler implements ObserverInterface
 {
@@ -50,23 +53,31 @@ abstract class RequestHandler implements ObserverInterface
     protected $logger;
 
     /**
+     * @var YounitedClient
+     */
+    private $client;
+
+    /**
      * RequestHandler constructor.
      *
      * @param Maturity $maturityHelper
      * @param DateTime $date
      * @param ManagerInterface $messageManager
      * @param YounitedLogger $logger
+     * @param YounitedClient $client
      */
     public function __construct(
         Maturity $maturityHelper,
         DateTime $date,
         ManagerInterface $messageManager,
-        YounitedLogger $logger
+        YounitedLogger $logger,
+        YounitedClient $client
     ) {
         $this->maturityHelper = $maturityHelper;
         $this->date = $date;
         $this->messageManager = $messageManager;
         $this->logger = $logger;
+        $this->client = $client;
     }
 
     /**
@@ -79,7 +90,7 @@ abstract class RequestHandler implements ObserverInterface
     /**
      * Send API request
      *
-     * @param \YounitedPaySDK\Model\AbstractModel $body
+     * @param ConfirmContract|ActivateContract|WithdrawContract $body
      * @param \YounitedPaySDK\Request\AbstractRequest $request
      * @param string[] $informations
      * @param int $storeId
@@ -92,15 +103,15 @@ abstract class RequestHandler implements ObserverInterface
      * @throws \Magento\Framework\Exception\NoSuchEntityException
      */
     protected function sendRequest(
-        $body,
-        $request,
-        $informations,
-        $storeId,
-        $status = false,
+        ConfirmContract|ActivateContract|WithdrawContract $body,
+        \YounitedPaySDK\Request\AbstractRequest $request,
+        array $informations,
+        int $storeId,
+        bool $status = false,
         string $errorMessage = '',
         string $successMessage = ''
     ) {
-        $client = new YounitedClient();
+        $client = $this->client ;
         $credentials = $this->maturityHelper->getApiCredentials($storeId);
 
         $body->setContractReference($informations['Payment ID']);
@@ -137,7 +148,7 @@ abstract class RequestHandler implements ObserverInterface
                     )
                 );
             }
-        } catch (Exception $e) {
+        } catch (\Exception $e) {
             $this->logger->critical(
                 'Younited Credit confirmation failed. Younited API Error',
                 ['exception' => $e]

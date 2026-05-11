@@ -17,15 +17,16 @@
  * @license   https://opensource.org/licenses/AFL-3.0  Academic Free License (AFL 3.0)
  */
 
-namespace YounitedCredit\YounitedPay\Model;
+namespace YounitedCredit\YounitedPay\Model\Logger;
 
-use YounitedCredit\YounitedPay\Helper\Config;
 use Magento\Framework\App\Config\ScopeConfigInterface;
 use Magento\Store\Model\ScopeInterface;
+use YounitedCredit\YounitedPay\Helper\Config;
+use YounitedCredit\YounitedPay\Model\Logger\YounitedLoggerMonolog;
 
 class YounitedLogger
 {
-    /** @var \Zend_Log */
+    /** @var YounitedLoggerMonolog */
     private $logger;
 
     /**
@@ -43,13 +44,13 @@ class YounitedLogger
      *
      * @return void
      */
-    public function __construct()
+    public function __construct(
+        YounitedLoggerMonolog $logger,
+        ScopeConfigInterface $scopeConfig
+    )
     {
-        $writer = new \Zend_Log_Writer_Stream(BP . '/var/log/younited-' . date('Ymd') . '.log');
-        $this->logger = new \Zend_Log();
-        $this->logger->addWriter($writer);
-        $objectManager = \Magento\Framework\App\ObjectManager::getInstance(); 
-        $this->scopeConfig = $objectManager->get(ScopeConfigInterface::class);
+        $this->scopeConfig = $scopeConfig;
+        $this->logger = $logger;
         $this->debugAPI = (bool) $this->scopeConfig->getValue(Config::XML_PATH_API_DEBUG, ScopeInterface::SCOPE_STORE);
     }
 
@@ -60,7 +61,7 @@ class YounitedLogger
 
     public function warning($message)
     {
-        $this->logger->warn($message);
+        $this->logger->warning($message);
     }
 
     public function debug($message)
@@ -68,9 +69,13 @@ class YounitedLogger
         $this->logger->debug($message);
     }
 
+    public function critical($message, array $context = [])
+    {
+        $this->logger->critical($message, $context);
+    }
+
     public function log($message)
     {
-        if (isset($_GET['debugAPI'])) $this->debugAPI = true;
         if ($this->debugAPI === true) {
             $this->info($message);
         }

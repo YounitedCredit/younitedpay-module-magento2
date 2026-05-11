@@ -22,7 +22,7 @@ namespace YounitedCredit\YounitedPay\Observer;
 use Magento\Framework\App\Cache\TypeListInterface;
 use Magento\Framework\App\Cache\Frontend\Pool;
 use YounitedCredit\YounitedPay\Model\Cache\YounitedCache;
-use YounitedCredit\YounitedPay\Model\YounitedLogger;
+use YounitedCredit\YounitedPay\Model\Logger\YounitedLogger;
 
 class ObserverConfig
 {

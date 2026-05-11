@@ -19,6 +19,9 @@
 
 namespace YounitedCredit\YounitedPay\Block\Adminhtml\System\Config;
 
+use Magento\Framework\App\ObjectManager;
+use Magento\Backend\Block\Template\Context;
+use Magento\Framework\View\Helper\SecureHtmlRenderer;
 use Magento\Store\Model\ScopeInterface;
 use YounitedCredit\YounitedPay\Helper\Config;
 Use YounitedCredit\YounitedPay\Helper\YounitedClient;
@@ -26,7 +29,34 @@ use YounitedPaySDK\Model\BestPrice;
 use YounitedPaySDK\Request\BestPriceRequest;
 
 class Requirements extends \Magento\Config\Block\System\Config\Form\Field
-{
+    {
+        /**
+         * @var SecureHtmlRenderer
+         */
+        private $secureRenderer;
+
+    /**
+     * @var YounitedClient
+     */
+    private $client;
+
+    /**
+     * @param Context $context
+     * @param array $data
+     * @param YounitedClient $client
+     * @param SecureHtmlRenderer|null $secureRenderer
+     */
+    public function __construct(
+        Context $context,
+        YounitedClient $client,
+        array $data = [],
+        ?SecureHtmlRenderer $secureRenderer = null
+    ) {
+        parent::__construct($context, $data);
+        $this->client = $client;
+        $this->secureRenderer = $secureRenderer ?? ObjectManager::getInstance()->get(SecureHtmlRenderer::class);
+    }
+
     /**
      * Render method
      *
@@ -194,7 +224,7 @@ class Requirements extends \Magento\Config\Block\System\Config\Form\Field
             return false;
         }
 
-        $client = new YounitedClient();
+        $client = $this->client;
         $body = new BestPrice();
         $body->setBorrowedAmount(149.01);
 

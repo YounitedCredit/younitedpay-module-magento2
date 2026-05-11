@@ -72,7 +72,7 @@ class Contract extends \Magento\Checkout\Controller\Onepage
     protected $productMetadata;
 
     /**
-     * @var \YounitedCredit\YounitedPay\Model\YounitedLogger
+     * @var \YounitedCredit\YounitedPay\Model\Logger\YounitedLogger
      */
     protected $logger;
 
@@ -80,6 +80,11 @@ class Contract extends \Magento\Checkout\Controller\Onepage
      * @var bool
      */
     protected $isPhoneError = false;
+
+    /**
+     * @var YounitedClient
+     */
+    private $client;
 
     /**
      * Contract constructor.
@@ -105,7 +110,8 @@ class Contract extends \Magento\Checkout\Controller\Onepage
      * @param \Magento\Framework\Stdlib\DateTime\DateTime $date
      * @param UrlInterface $urlBuilder
      * @param \Magento\Framework\App\ProductMetadataInterface $productMetadata
-     * @param \YounitedCredit\YounitedPay\Model\YounitedLogger $logger
+     * @param \YounitedCredit\YounitedPay\Model\Logger\YounitedLogger $logger
+     * @param YounitedClient $client
      */
     public function __construct(
         \Magento\Framework\App\Action\Context $context,
@@ -129,12 +135,14 @@ class Contract extends \Magento\Checkout\Controller\Onepage
         \Magento\Framework\Stdlib\DateTime\DateTime $date,
         UrlInterface $urlBuilder,
         \Magento\Framework\App\ProductMetadataInterface $productMetadata,
-        \YounitedCredit\YounitedPay\Model\YounitedLogger $logger
+        \YounitedCredit\YounitedPay\Model\Logger\YounitedLogger $logger,
+        YounitedClient $client
     ) {
         $this->orderRepository = $orderRepository;
         $this->maturityHelper = $maturityHelper;
         $this->orderManagement = $orderManagement;
         $this->cartRepository = $cartRepository;
+        $this->client = $client;
         $this->urlBuilder = $urlBuilder;
         $this->date = $date;
         $this->productMetadata = $productMetadata;
@@ -237,7 +245,7 @@ class Contract extends \Magento\Checkout\Controller\Onepage
 
         $address = $order->getBillingAddress();
         $phoneNumber = $address->getTelephone();
-        $isInternationalPhone = $this->checkIfInternationalPhone($address->getTelephone(), $order);
+        $isInternationalPhone = $this->checkIfInternationalPhone($address->getTelephone());
         if ($isInternationalPhone !== true) {
             $phoneNumber = '';
         }
@@ -273,14 +281,19 @@ class Contract extends \Magento\Checkout\Controller\Onepage
 //        $customerInfo->setBirthDate($order->getCustomerDob());
 //        $customerInfo->setGenderCode($order->getCustomerGender());
 
-        $client = new YounitedClient();
+        $client = $this->client;
         $body = new InitializeContract();
 
         $body->setBasket($cart);
         $body->setMerchantOrderContext($context);
         $body->setMerchantUrls($merchantUrls);
         $body->setPersonalInformation($customerInfo);
-        $body->setRequestedMaturity((int)$this->getRequest()->getParam('maturity'));
+        $allowedMaturities = $this->maturityHelper->getConfigValue(round($order->getGrandTotal(), 2), $order->getStoreId());
+        $selectedMaturity = $this->getRequest()->getParam('maturity');
+        if (isset($allowedMaturities[$selectedMaturity]) === false) {
+            return $this->redirectOnError($order, __('Selected maturity is not allowed for this order'));
+        }
+        $body->setRequestedMaturity((int) $selectedMaturity);
 
         $credentials = $this->maturityHelper->getApiCredentials($storeCode);
         $request = (new InitializeContractRequest());
@@ -306,7 +319,7 @@ class Contract extends \Magento\Checkout\Controller\Onepage
                     $response->getReasonPhrase()
                 ));
             }
-        } catch (Exception $e) {
+        } catch (\Exception $e) {
             $this->logger->critical('Younited API Error', ['exception' => $e]);
             return $this->redirectOnError($order, __($e->getMessage()));
         }
@@ -321,7 +334,7 @@ class Contract extends \Magento\Checkout\Controller\Onepage
         $informations = $order->getPayment()->getAdditionalInformation();
         $informations['Payment ID'] = $result["contractReference"];
         $informations['Payment Status'] = Config::CREDIT_STATUS_TO_CONFIRME;
-        $informations['Maturity'] = $this->getRequest()->getParam('maturity');
+        $informations['Maturity'] = $selectedMaturity;
         $informations['Payment Date'] = $date;
         $informations['Payment Status updated on'] = $date;
 
@@ -395,7 +408,7 @@ class Contract extends \Magento\Checkout\Controller\Onepage
     /** 
      * Check if phone number of billing address is in expected format
     */
-    private function checkIfInternationalPhone(string $phone, $order)
+    private function checkIfInternationalPhone(string $phone)
     {
         $defaultPhoneAreaCode = '+33';
         $countryCode = $this->scopeConfig->getValue(
@@ -409,6 +422,9 @@ class Contract extends \Magento\Checkout\Controller\Onepage
         }
         $this->isPhoneError = false;
         if (substr($phone, 0, 3) !== $defaultPhoneAreaCode) {
+            return false;
+        }
+        if (!preg_match('/^\+\d{11,14}$/', $phone)) {
             return false;
         }
 

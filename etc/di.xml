@@ -1,0 +1,30 @@
+<?xml version="1.0"?>
+ <config xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="urn:magento:framework:ObjectManager/etc/config.xsd">
+    <type name="YounitedCredit\YounitedPay\Model\Logger\YounitedLoggerHandler">
+        <arguments>
+            <argument name="filesystem" xsi:type="object">Magento\Framework\Filesystem\Driver\File</argument>
+        </arguments>
+    </type>
+    <type name="YounitedCredit\YounitedPay\Model\Logger\YounitedLoggerMonolog">
+        <arguments>
+            <argument name="name" xsi:type="string">younitedLogger</argument>
+            <argument name="handlers"  xsi:type="array">
+                <item name="system" xsi:type="object">YounitedCredit\YounitedPay\Model\Logger\YounitedLoggerHandler</item>
+            </argument>
+        </arguments>
+    </type>
+    <type name="YounitedCredit\YounitedPay\Model\Logger\YounitedLogger">
+        <arguments>
+            <argument name="logger" xsi:type="object">YounitedCredit\YounitedPay\Model\Logger\YounitedLoggerMonolog</argument>
+            <argument name="scopeConfig" xsi:type="object">Magento\Framework\App\Config\ScopeConfigInterface</argument>
+        </arguments>
+    </type>
+    <type name="YounitedCredit\YounitedPay\Helper\YounitedClient">
+        <arguments>
+            <argument name="logger" xsi:type="object">YounitedCredit\YounitedPay\Model\Logger\YounitedLogger</argument>
+            <argument name="cacheHandler" xsi:type="object">YounitedCredit\YounitedPay\Model\YounitedCacheHandler</argument>
+            <argument name="productMetadata" xsi:type="object">Magento\Framework\App\ProductMetadataInterface</argument>
+            <argument name="moduleListInterface" xsi:type="object">Magento\Framework\Module\ModuleListInterface</argument>
+        </arguments>
+    </type>
+</config>

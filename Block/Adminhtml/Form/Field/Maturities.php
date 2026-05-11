@@ -38,19 +38,27 @@ class Maturities extends \Magento\Framework\View\Element\Html\Select
     private $_maturities;
 
     /**
+     * @var YounitedClient
+     */
+    private $client;
+
+    /**
      * Maturities constructor.
      *
      * @param Context $context
      * @param Maturity $maturityHelper
+     * @param YounitedClient $client
      * @param array $data
      */
     public function __construct(
         Context $context,
         Maturity $maturityHelper,
+        YounitedClient $client,
         array $data = []
     ) {
         parent::__construct($context, $data);
         $this->maturityHelper = $maturityHelper;
+        $this->client = $client;
 
         $this->setData('cache_key', $this->getCacheKey());
         $this->setData('cache_lifetime', 31536000);
@@ -73,11 +81,11 @@ class Maturities extends \Magento\Framework\View\Element\Html\Select
     /**
      * Retrieve allowed maturities
      *
-     * @param int $maturity return name by customer group id
+     * @param int|null $maturity return name by customer group id
      *
-     * @return array|string
+     * @return array|string|null
      */
-    protected function getMaturities($maturity = null)
+    protected function getMaturities(int|null $maturity = null)
     {
         if ($this->_maturities === null) {
             $this->_maturities = [];
@@ -93,7 +101,7 @@ class Maturities extends \Magento\Framework\View\Element\Html\Select
                 return [];
             }
 
-            $client = new YounitedClient();
+            $client = $this->client;
             $body = new BestPrice();
             $body->setBorrowedAmount(3500);
 
