@@ -27,6 +27,7 @@ use YounitedCredit\YounitedPay\Helper\Maturity;
 use YounitedCredit\YounitedPay\Helper\YounitedClient;
 use YounitedCredit\YounitedPay\Model\Logger\YounitedLogger;
 use YounitedPaySDK\Model\ActivateContract;
+use YounitedPaySDK\Model\CancelContract;
 use YounitedPaySDK\Model\ConfirmContract;
 use YounitedPaySDK\Model\WithdrawContract;
 
@@ -90,7 +91,7 @@ abstract class RequestHandler implements ObserverInterface
     /**
      * Send API request
      *
-     * @param ConfirmContract|ActivateContract|WithdrawContract $body
+     * @param ConfirmContract|ActivateContract|WithdrawContract|CancelContract $body
      * @param \YounitedPaySDK\Request\AbstractRequest $request
      * @param string[] $informations
      * @param int $storeId
@@ -103,11 +104,11 @@ abstract class RequestHandler implements ObserverInterface
      * @throws \Magento\Framework\Exception\NoSuchEntityException
      */
     protected function sendRequest(
-        ConfirmContract|ActivateContract|WithdrawContract $body,
+        ConfirmContract|ActivateContract|WithdrawContract|CancelContract $body,
         \YounitedPaySDK\Request\AbstractRequest $request,
         array $informations,
         int $storeId,
-        bool $status = false,
+        string $status = Config::CREDIT_STATUS_TO_CONFIRME,
         string $errorMessage = '',
         string $successMessage = ''
     ) {
