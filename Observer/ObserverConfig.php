@@ -19,8 +19,9 @@
 
 namespace YounitedCredit\YounitedPay\Observer;
 
-use Magento\Framework\App\Cache\TypeListInterface;
 use Magento\Framework\App\Cache\Frontend\Pool;
+use Magento\Framework\App\Cache\TypeListInterface;
+use Magento\Framework\Encryption\EncryptorInterface;
 use YounitedCredit\YounitedPay\Model\Cache\YounitedCache;
 use YounitedCredit\YounitedPay\Model\Logger\YounitedLogger;
 
@@ -40,16 +41,50 @@ class ObserverConfig
      * @var YounitedLogger
      */
     private $logger;
- 
+
+    /**
+     * @var EncryptorInterface
+     */
+    private $encryptor;
+
     public function __construct(
-        TypeListInterface $cacheTypeList, 
+        TypeListInterface $cacheTypeList,
         Pool $cacheFrontendPool,
-        YounitedLogger $logger
+        YounitedLogger $logger,
+        EncryptorInterface $encryptor
     ) {
-    
         $this->cacheTypeList = $cacheTypeList;
         $this->cacheFrontendPool = $cacheFrontendPool;
         $this->logger = $logger;
+        $this->encryptor = $encryptor;
+    }
+
+    /**
+     * Prevent sensitive data to be saved again if not updated
+     *
+     * @param \Magento\Config\Model\Config $subject
+     *
+     * @return void
+     */
+    public function beforeSave(
+        \Magento\Config\Model\Config $subject
+    ) {
+        $data = $subject->getData();
+
+        $pathTocheck = [
+            'client_secret',
+            'client_secret_production',
+            'secret_webhook',
+            'secret_webhook_production',
+        ];
+
+        foreach ($pathTocheck as $onePath) {
+            // If saved previously and not changed (crypted in database)
+            if (isset($data[$onePath]) && strpos($data[$onePath], '****') !== false) {
+                unset($data[$onePath]);
+            }
+        }
+        $subject->setData($data);
     }
 
     public function aroundSave(
@@ -66,14 +101,12 @@ class ObserverConfig
         $_types = [
             strtolower(YounitedCache::CACHE_TAG),
         ];
-    
-        foreach ($_types as $type) 
-        {
+
+        foreach ($_types as $type) {
             $this->cacheTypeList->cleanType($type);
         }
 
-        foreach ($this->cacheFrontendPool as $cacheFrontend) 
-        {
+        foreach ($this->cacheFrontendPool as $cacheFrontend) {
             $cacheFrontend->getBackend()->clean();
         }
 

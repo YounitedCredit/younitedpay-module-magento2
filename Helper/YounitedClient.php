@@ -3,6 +3,7 @@
 namespace YounitedCredit\YounitedPay\Helper;
 
 use Magento\Framework\App\ProductMetadataInterface;
+use Magento\Framework\Encryption\EncryptorInterface;
 use Magento\Framework\Module\ModuleListInterface;
 use YounitedCredit\YounitedPay\Model\Logger\YounitedLogger;
 use YounitedCredit\YounitedPay\Model\YounitedCacheHandler;
@@ -64,13 +65,19 @@ class YounitedClient extends Client
     protected $moduleList;
 
     /**
+     * @var EncryptorInterface
+     */
+    private $encryptor;
+
+    /**
      * Create new cURL http client object
      */
     public function __construct(
         YounitedLogger $logger,
         YounitedCacheHandler $cacheHandler,
         ProductMetadataInterface $productMetadata,
-        ModuleListInterface $moduleListInterface
+        ModuleListInterface $moduleListInterface,
+        EncryptorInterface $encryptor
     ) 
     {
         self::$MAX_BODY_SIZE = 1024 * 1024;
@@ -78,6 +85,7 @@ class YounitedClient extends Client
         $this->moduleList = $moduleListInterface;
         $this->logger = $logger;
         $this->cacheHandler = $cacheHandler;
+        $this->encryptor = $encryptor;
     }
 
     /**
@@ -91,7 +99,7 @@ class YounitedClient extends Client
     public function setCredential($clientId, $clientSecret)
     {
         $this->clientId = $clientId;
-        $this->clientSecret = $clientSecret;
+        $this->clientSecret = $this->encryptor->decrypt($clientSecret);
 
         return $this;
     }
