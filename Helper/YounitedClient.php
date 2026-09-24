@@ -10,6 +10,9 @@ use YounitedCredit\YounitedPay\Model\YounitedCacheHandler;
 use YounitedPaySDK\Client;
 use YounitedPaySDK\Exception\RequestException;
 use YounitedPaySDK\Request\AbstractRequest;
+use YounitedPaySDK\Response\AbstractResponse;
+use YounitedPaySDK\Response\CallbackResponse;
+use YounitedPaySDK\Response\DefaultResponse;
 use YounitedPaySDK\Response\ErrorResponse;
 use YounitedPaySDK\Response\ResponseBuilder;
 
@@ -68,6 +71,11 @@ class YounitedClient extends Client
      * @var EncryptorInterface
      */
     private $encryptor;
+
+    /**
+     * @var \YounitedSDK\Stream
+     */
+    private $stream;
 
     /**
      * Create new cURL http client object
@@ -261,5 +269,113 @@ class YounitedClient extends Client
         };
 
         return $options;
+    }
+
+    /**
+     * Retrieve a callback request from API
+     *
+     * @param bool $isLegacy - Change behaviour depending old / new API
+     *
+     * @return AbstractResponse
+     *
+     * @throws RuntimeException Failure to create stream
+     */
+    public function retrieveCallbackResponse($isLegacy = true)
+    {
+        try {
+            $this->stream = new \YounitedPaySDK\Stream();
+            $content = fopen('php://temp', 'w+b');
+            if ($content === false) {
+                $body = $this->stream->create();
+                $this->logger->debug('[younited pay] No stream content on webhook - created.');
+            } else {
+                $body = $this->stream->create($content);
+                $this->logger->debug('[younited pay] Stream with content: ' . stream_get_contents($content));
+            }
+        } catch (InvalidArgumentException $e) {
+            throw new RuntimeException('Unable to create stream "php://temp"');
+        }
+
+        $message = DefaultResponse::getInstance(CallbackResponse::class)->withBody($body);
+
+        $response = (new ResponseBuilder($message))->getResponse();
+        $headers = $this->get_apache_nginx_headers();
+
+        $headerSignatureRequest = '';
+        $headerDatetimeRequest = '';
+        if ($isLegacy === true) {
+            if (isset($headers['X-YC-SIGNATURE-256']) === false || isset($headers['X-YC-DATETIME']) === false) {
+                $this->logger->debug('[younited pay] No signature or datetime header');
+                return $response->withStatus(401, 'No Signature or Datetime header');
+            }
+
+            $headerSignatureRequest = $headers['X-YC-SIGNATURE-256'];
+            $headerDatetimeRequest = $headers['X-YC-DATETIME'];
+        } else {
+            if (isset($headers['X-YOUNITED-HMACSHA256-SIGNATURE']) === false || isset($headers['X-YOUNITED-DATETIME']) === false) {
+                return $response->withStatus(401, 'No Signature or Datetime header');
+            }
+
+            $headerSignatureRequest = $headers['X-YOUNITED-HMACSHA256-SIGNATURE'];
+            $headerDatetimeRequest = $headers['X-YOUNITED-DATETIME'];
+        }
+
+        if (empty($headerSignatureRequest) === true || empty($headerDatetimeRequest) === true) {
+            $this->logger->debug('[younited pay] Hash not accepted - timestamp or signature empty');
+            $this->logger->debug('[younited pay] Header Signature: ' . $headerSignatureRequest . ', Header Datetime: ' . $headerDatetimeRequest);
+            return $response->withStatus(401, 'Signature or Datetime header empty');
+        }
+
+        $currentWebhookUrl = (isset($_SERVER['HTTPS']) && $_SERVER['HTTPS'] === 'on' ? 'https' : 'http') . "://$_SERVER[HTTP_HOST]$_SERVER[REQUEST_URI]";
+        $payload = file_get_contents('php://input');
+
+        $hashData = implode('|', [
+            $currentWebhookUrl,
+            $payload,
+            $headerDatetimeRequest,
+        ]);
+
+        $expectedSignature = hash_hmac('sha256', $hashData, $this->clientSecret);
+
+        if ($headerSignatureRequest !== $expectedSignature) {
+            $this->logger->log('[younited pay] Hash not accepted - signature mismatch');
+            $this->logger->log('[younited pay] Payload: ' . $payload);
+            $this->logger->log('[younited pay] Current Webhook URL: ' . $currentWebhookUrl);
+            $this->logger->log('[younited pay] Expected Signature: ' . $expectedSignature);
+            $this->logger->log('[younited pay] Hash Data: ' . $hashData);
+            return $response->withStatus(401, 'Hash not accepted.');
+        }
+
+        if (null !== $response->getBody()) {
+            $response->getBody()->write($payload !== false ? $payload : '');
+        }
+
+        return $response;
+    }
+
+    /**
+     * Function to get apache / ngynx headers
+     *
+     * @return string[] $headers
+     */
+    private function get_apache_nginx_headers()
+    {
+        $headers = [];
+
+        foreach ($_SERVER as $name => $value) {
+            if (substr($name, 0, 5) == 'HTTP_') {
+                $name = substr($name, 5);
+                $name = str_replace('_', ' ', $name);
+                $name = ucwords($name);
+                $name = str_replace(' ', '-', $name);
+                $name = strtoupper($name);
+                $headers[$name] = $value;
+            } elseif (strpos($name, 'X-YC-') !== false) {
+                $name = strtoupper($name);
+                $headers[$name] = $value;
+            }
+        }
+
+        return $headers;
     }
 }

@@ -181,11 +181,9 @@ class Success extends \Magento\Checkout\Controller\Onepage implements \Magento\F
                 return $this->returnResponse(400, false, "Webhook secret is not configured for this store");
             }
 
-            $client = new Client();
-            $client->setCredential('', $webHookSecret);
-
+            $this->client->setCredential('', $webHookSecret);
             /** @var AbstractResponse $response */
-            $response = $client->retrieveCallbackResponse();
+            $response = $this->client->retrieveCallbackResponse();
             if ($response->getStatusCode() === 401) {
                 $this->logger->debug('[younited pay] - Webhook is not valid - invalid secret or bad signature.');
                 return $this->returnResponse(401, false, "Webhook is not valid - invalid secret or bad signature.");
