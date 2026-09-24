@@ -143,7 +143,7 @@ class Webhookold extends Action
             return $this->returnResponse(400, false, "Webhook secret is not configured for this store");
         }
 
-        $client = new Client();
+        $client = $this->client;
         $client->setCredential('', $webHookSecret);
 
         /** @var AbstractResponse $response */

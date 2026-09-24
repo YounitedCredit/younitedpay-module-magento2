@@ -496,7 +496,7 @@ class Maturity
      *
      * @param string $path
      * @param bool|int|string $storeId
-     * @param ScopeInterface $scope
+     * @param string $scope
      *
      * @return mixed
      */
