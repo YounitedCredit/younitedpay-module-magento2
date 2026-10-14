@@ -22,6 +22,7 @@ namespace YounitedCredit\YounitedPay\Block\Adminhtml\System\Config;
 use Magento\Framework\App\ObjectManager;
 use Magento\Backend\Block\Template\Context;
 use Magento\Framework\View\Helper\SecureHtmlRenderer;
+use Magento\Framework\Encryption\EncryptorInterface;
 use Magento\Store\Model\ScopeInterface;
 use YounitedCredit\YounitedPay\Helper\Config;
 Use YounitedCredit\YounitedPay\Helper\YounitedClient;
@@ -29,11 +30,16 @@ use YounitedPaySDK\Model\BestPrice;
 use YounitedPaySDK\Request\BestPriceRequest;
 
 class Requirements extends \Magento\Config\Block\System\Config\Form\Field
-    {
-        /**
-         * @var SecureHtmlRenderer
-         */
-        private $secureRenderer;
+{
+    /**
+     * @var SecureHtmlRenderer
+     */
+    private $secureRenderer;
+
+    /**
+     * @var EncryptorInterface
+     */
+    private $encryptor;
 
     /**
      * @var YounitedClient
@@ -49,12 +55,14 @@ class Requirements extends \Magento\Config\Block\System\Config\Form\Field
     public function __construct(
         Context $context,
         YounitedClient $client,
+        EncryptorInterface $encryptor,
         array $data = [],
         ?SecureHtmlRenderer $secureRenderer = null
     ) {
         parent::__construct($context, $data);
         $this->client = $client;
         $this->secureRenderer = $secureRenderer ?? ObjectManager::getInstance()->get(SecureHtmlRenderer::class);
+        $this->encryptor = $encryptor;
     }
 
     /**
@@ -171,21 +179,21 @@ class Requirements extends \Magento\Config\Block\System\Config\Form\Field
             return false;
         }
 
-        if ($storeId) {
-            $webHookValue = $this->_scopeConfig->getValue(
-                Config::XML_PATH_API_SECRET_WEBHOOK,
-                ScopeInterface::SCOPE_STORE,
-                $storeId
-            );
-        } else {
-            $webHookValue = $this->_scopeConfig->getValue(
-                Config::XML_PATH_API_SECRET_WEBHOOK,
-                ScopeInterface::SCOPE_WEBSITE,
-                $websiteId
-            );
+        $scope = ScopeInterface::SCOPE_STORE;
+        if ($websiteId !== false && !$storeId) {
+            $storeId = $websiteId;
+            $scope = ScopeInterface::SCOPE_WEBSITE;
         }
 
-        return $webHookValue;
+        $apiMode = $this->getConfig(Config::XML_PATH_API_DEV_MODE, $storeId, $scope);
+        $production = $apiMode != 'dev' ? '_production' : '';
+        $webHookValue = $this->getConfig(
+            Config::XML_PATH_API_SECRET_WEBHOOK . $production,
+            $storeId,
+            $scope
+        );
+
+        return $this->encryptor->decrypt($webHookValue);
     }
 
     /**
