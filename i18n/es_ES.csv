@@ -35,7 +35,7 @@
 "The credit will be activated when the order changes to the selected status.","El préstamo se activará cuando el pedido pase al estado seleccionado."
 "If you have any problem or the informations in the module aren't up to date you can empty the cache, new data will be fetched automatically.","Si tienes algún problema o si la información del módulo no está actualizada, puedes borrar la caché y los nuevos datos se recuperarán automáticamente."
 "Flush cache","Borrar caché"
-"Taking out a loan is a commitment with an obligation of repayment. Verify your ability to repay the loan before committing.","Empieza a pagar dentro de 30 días."
+"Warning ! Taking out a loan costs money and must be repaid.","¡Atención! Un crédito cuesta dinero y debe ser reembolsado."
 "Total amount due of","El importe total adeudado asciende a"
 "You pay back","Pagarás"
 "installements of","cuotas mensuales de"
